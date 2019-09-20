@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 /** Simple controller to test Spring Boot. */
 @RestController
-public class HelloController             {
+public class HelloController              {
 
   @RequestMapping("/greetings")
   public String greet() {
