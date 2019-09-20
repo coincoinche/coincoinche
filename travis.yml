@@ -1,0 +1,5 @@
+jobs:
+  include:
+    - stage: test
+      script:
+        - echo test
