@@ -11,7 +11,11 @@ To format java files, we use [google-java-format](https://github.com/google/goog
 - Download google-java-format-1.7-all-deps.jar from https://github.com/google/google-java-format/releases
 - Move google-java-format-1.7-all-deps.jar at the root of the repository
 - Run `cp ./.git/hooks/pre-commit.sample ./.git/hooks/pre-commit`
-- Add this line to the top of the pre-commit file: `java -jar google-java-format-1.7-all-deps.jar -i $(git ls-files|grep \.java$)`.
+- Add the following lines to the top of the pre-commit file:
+
+`java -jar google-java-format-1.7-all-deps.jar -i $(git ls-files|grep \.java$)`
+
+`git add $(git ls-files|grep \.java$)`
 
 ## Run the tests
 `./mvnw test`
