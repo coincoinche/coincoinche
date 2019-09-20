@@ -5,7 +5,13 @@ For the moment, this repository only contains boilerplate from Spring Boot, as w
 
 `checkstyle` is used for linting. We adhere to the rules defined in the [Google style guide](https://google.github.io/styleguide/javaguide.html).
 
-For formatting java files, it is possible to use [google-java-format](https://github.com/google/google-java-format). To format all java files, run `java -jar google-java-format-1.7-all-deps.jar -i $(git ls-files|grep \.java$)`.
+## Local setup
+### Automatically format java files before commit.
+To format java files, we use [google-java-format](https://github.com/google/google-java-format).
+- Download google-java-format-1.7-all-deps.jar from https://github.com/google/google-java-format/releases
+- Move google-java-format-1.7-all-deps.jar at the root of the repository
+- Run `cp ./.git/hooks/pre-commit.sample ./.git/hooks/pre-commit`
+- Add this line to the top of the pre-commit file: `java -jar google-java-format-1.7-all-deps.jar -i $(git ls-files|grep \.java$)`.
 
 ## Run the tests
 `./mvnw test`
