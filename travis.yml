@@ -3,3 +3,4 @@ jobs:
     - stage: test
       script:
         - echo test
+        - ./mvnw test
