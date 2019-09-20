@@ -7,6 +7,9 @@ For the moment, this repository only contains boilerplate from Spring Boot, as w
 
 For formatting java files, it is possible to use [google-java-format](https://github.com/google/google-java-format). To format all java files, run `java -jar google-java-format-1.7-all-deps.jar -i $(git ls-files|grep \.java$)`.
 
+## Run the tests
+`./mvnw test`
+
 ## Build the application
 
 ### Linux
