@@ -13,16 +13,18 @@ For formatting java files, it is possible to use [google-java-format](https://gi
 
 `./mvnw test`
 
-## Build the application
 ### Integration tests
 
-### Linux
 `./mvnw failsafe:integration-test`
 
-`./mvnw package`
+## Build and run the application
 
-**NB:** if you want to skip style check, add the `-Dcheckstyle.skip` option.
+### Linux
 
-## Run the application
+You can build and run the application by using `./mvnw spring-boot:run`.
 
-`java -jar target/coincoinche-0.0.1-SNAPSHOT.jar`
+Alternatively, you can:
+- build the JAR file with `./mvnw clean package`
+- then run the JAR file with `java -jar target/coincoinche-0.0.1-SNAPSHOT.jar`
+
+**NB:** if you want to skip style check when building the application, add the `-Dcheckstyle.skip` option.
