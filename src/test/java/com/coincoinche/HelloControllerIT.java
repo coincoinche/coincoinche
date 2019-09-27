@@ -14,7 +14,10 @@ import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 
-/** Full-stack integration test for the Hello controller. */
+/**
+ * Full-stack integration test for the Hello controller. TODO nockty: remove this code when no
+ * longer necessary.
+ */
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class HelloControllerIT {

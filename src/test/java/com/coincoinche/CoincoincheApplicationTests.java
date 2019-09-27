@@ -8,6 +8,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+// TODO nockty: remove this code when no longer necessary.
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class CoincoincheApplicationTests {
