@@ -16,7 +16,6 @@ public class HelloController {
   /** Test endpoint for greetings. */
   @RequestMapping("/greetings")
   public String greet() {
-    logger.trace("this is a TRACE log");
     logger.debug("this is a DEBUG log");
     logger.info("this is a INFO log");
     logger.warn("this is a WARN log");
