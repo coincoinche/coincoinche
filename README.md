@@ -18,16 +18,23 @@ To format java files, we use [google-java-format](https://github.com/google/goog
 `git add $(git diff --name-only HEAD|grep \.java$)`
 
 ## Run the tests
+
+### Unit tests
+
 `./mvnw test`
 
-## Build the application
+### Integration tests
+
+`./mvnw failsafe:integration-test`
+
+## Build and run the application
 
 ### Linux
 
-`./mvnw package`
+You can build and run the application by using `./mvnw spring-boot:run`.
 
-**NB:** if you want to skip style check, add the `-Dcheckstyle.skip` option.
+Alternatively, you can:
+- build the JAR file with `./mvnw clean package`
+- then run the JAR file with `java -jar target/coincoinche-0.0.1-SNAPSHOT.jar`
 
-## Run the application
-
-`java -jar target/coincoinche-0.0.1-SNAPSHOT.jar`
+**NB:** if you want to skip style check when building the application, add the `-Dcheckstyle.skip` option.
