@@ -11,9 +11,15 @@ import org.springframework.stereotype.Controller;
 public class HelloSocketController {
   private static final Logger logger = LoggerFactory.getLogger(HelloSocketController.class);
 
+  /**
+   * Sample websocket endpoint.
+   *
+   * @param message - incoming message.
+   * @return message acknowledging reception.
+   */
   @MessageMapping("/hello")
   @SendTo("/topic/greetings")
-  public SocketMessage greeting(@Payload SocketMessage message) throws Exception {
+  public SocketMessage greeting(@Payload SocketMessage message) {
     logger.debug(String.format("Received message: %s", message.getContent()));
     return new SocketMessage(
         String.format("Server received message: %s", message.getContent()),

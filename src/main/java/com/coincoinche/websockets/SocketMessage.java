@@ -6,6 +6,13 @@ public class SocketMessage {
   private String from;
   private String type;
 
+  /**
+   * Sample websocket message.
+   *
+   * @param content - content of the message
+   * @param from - who sends the message.
+   * @param type - type of message.
+   */
   public SocketMessage(String content, String from, String type) {
     this.content = content;
     this.from = from;
