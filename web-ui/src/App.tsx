@@ -3,8 +3,8 @@ import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import './App.css';
 import MainMenu from "./MainMenu/MainMenu";
 import './App.css';
-import MainGameScreen from "./MainGame/MainGameScreen";
-import Ladder from "./Ladder/Ladder";
+import MainGameScreen from "./pages/MainGame/MainGameScreen";
+import Ladder from "./pages/Ladder/Ladder";
 
 const App: React.FC = () => {
   return (
