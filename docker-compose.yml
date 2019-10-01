@@ -10,8 +10,8 @@ services:
     build:
       context: server # Use an image built from the specified dockerfile in the `server` directory.
       dockerfile: Dockerfile
-    expose:
-      - "8080" # Exposed port 8080 on the container
+    ports:
+      - "8080:8080" # Map the exposed port 8080 on the container to port 8080 on the host machine
     restart: always
     networks: # Networks to join (Services on the same network can communicate with each other using their name)
       - frontend
@@ -22,7 +22,7 @@ services:
       context: web-ui # Use an image built from the specified dockerfile in the `web-ui` directory.
       dockerfile: Dockerfile
       args:
-        REACT_APP_API_BASE_URL: http://server:8080/api
+        REACT_APP_API_BASE_URL: http://localhost:8080/api
     ports:
       - "3000:80" # Map the exposed port 80 on the container to port 3000 on the host machine
     restart: always
