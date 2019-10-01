@@ -1,20 +1,30 @@
 import React from 'react';
-import logo from './assets/coincoinche_logo.png';
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import './App.css';
-import TestComponent from "./TestComponent";
 import MainMenu from "./MainMenu/MainMenu";
 import './App.css';
-import TestWebSocket from "./websocket/TestWebSocket";
+import MainGameScreen from "./MainGame/MainGameScreen";
+import Ladder from "./Ladder/Ladder";
 
 const App: React.FC = () => {
   return (
     <div className="App">
       <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <TestComponent />
-        <TestWebSocket />
       </header>
-      <MainMenu />
+
+      <Router>
+          <Switch>
+            <Route path="/game">
+              <MainGameScreen />
+            </Route>
+            <Route path="/ladder">
+              <Ladder />
+            </Route>
+            <Route path="/">
+              <MainMenu />
+            </Route>
+          </Switch>
+      </Router>
     </div>
   );
 };
