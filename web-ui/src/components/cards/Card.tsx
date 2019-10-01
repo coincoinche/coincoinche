@@ -2,16 +2,16 @@ import styled from "styled-components";
 
 type Props = {
   rotationDegrees: number;
-  translationX: number;
-  translationY: number;
+  translationX?: number;
+  translationY?: number;
   scale?: number;
 }
 
-const applyTransformation = (rotationDegrees: number, translationX: number, translationY: number, scale?: number) => `
+const getTransformationCSS = (rotationDegrees: number, translationX?: number, translationY?: number, scale?: number) => `
   rotate(${rotationDegrees}deg)
   scale(${scale || 1})
-  translateX(${translationX}px)
-  translateY(${translationY}px)
+  translateX(${translationX || 0}px)
+  translateY(${translationY || 0}px)
 `;
 
 const Card = styled.img`
@@ -20,9 +20,9 @@ const Card = styled.img`
   height: 150px;
   border-radius: 10px;
   transform: ${
-    ({rotationDegrees, translationX, translationY, scale}: Props) => applyTransformation(rotationDegrees, translationX, translationY, scale)};
+    ({rotationDegrees, translationX, translationY, scale}: Props) => getTransformationCSS(rotationDegrees, translationX, translationY, scale)};
   &:hover {
-    transform: ${({translationX, scale}: Props) => applyTransformation(0, translationX, 0,(scale || 1) * 1.2)}
+    transform: ${({translationX, scale}: Props) => getTransformationCSS(0, translationX, 0,(scale || 1) * 1.2)}
 `;
 
 export default Card;

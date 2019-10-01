@@ -31,6 +31,12 @@ const cards = {
   'ad': require('./AD.png'),
   'ah': require('./AH.png'),
   'as': require('./AS.png'),
+  blue_back: require('./blue_back.png'),
+  gray_back: require('./gray_back.png'),
+  green_back: require('./green_back.png'),
+  purple_back: require('./purple_back.png'),
+  red_back: require('./red_back.png'),
+  yellow_back: require('./yellow_back.png'),
 };
 
 export default cards;

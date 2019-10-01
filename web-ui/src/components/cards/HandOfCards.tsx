@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from "styled-components";
-import Card from "./cards/Card";
+import Card from "./Card";
 
 type Props = {
   cards: NodeRequire[];

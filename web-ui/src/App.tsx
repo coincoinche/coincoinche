@@ -9,9 +9,6 @@ import Ladder from "./pages/Ladder/Ladder";
 const App: React.FC = () => {
   return (
     <div className="App">
-      <header className="App-header">
-      </header>
-
       <Router>
           <Switch>
             <Route path="/game">

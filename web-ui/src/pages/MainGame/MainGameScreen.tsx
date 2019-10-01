@@ -1,27 +1,22 @@
 import React from 'react';
-import HandOfCards from "../../components/HandOfCards";
+import HandOfCards from "../../components/cards/HandOfCards";
 import cards from '../../assets/cards';
-import styled from "styled-components";
-
-type ContainerProps = {
-  direction: 'row' | 'column';
-}
-
-const Container = styled.div`
-  display: flex;
-  flex-direction: ${({direction}: ContainerProps) => direction};
-  align-items: center;
-  justify-content: center;
-  margin: 50px;
-`;
+import Container from "../../components/utils/Container";
+import CardBoard from "../../components/cards/CardBoard";
 
 export default class MainGameScreen extends React.Component {
   render() {
     return <Container direction="column">
-      <HandOfCards cards={[cards.jc, cards.jd, cards.jh, cards.js]} rotationDegrees={180} scale={0.8} />
-      <Container direction="row">
-        <HandOfCards cards={[cards.jc, cards.jd, cards.jh, cards.js]} rotationDegrees={90}  scale={0.8} />
-        <HandOfCards cards={[cards.jc, cards.jd, cards.jh, cards.js]} rotationDegrees={-90} scale={0.8} />
+      <HandOfCards cards={[cards.red_back, cards.red_back, cards.red_back, cards.red_back]} rotationDegrees={180} scale={0.8} />
+      <Container direction="row" justifyContent="space-between">
+        <HandOfCards cards={[cards.red_back, cards.red_back, cards.red_back, cards.red_back]} rotationDegrees={90}  scale={0.8} />
+        <CardBoard
+          leftCard={cards.jc}
+          rightCard={cards.jd}
+          bottomCard={cards.jh}
+          topCard={cards.js}
+        />
+        <HandOfCards cards={[cards.red_back, cards.red_back, cards.red_back, cards.red_back]} rotationDegrees={-90} scale={0.8} />
       </Container>
       <HandOfCards cards={[cards.jc, cards.jd, cards.jh, cards.js]} rotationDegrees={0} />
     </Container>;
