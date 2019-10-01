@@ -1,0 +1,10 @@
+#chat {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: row;
+}
+
+#chat>div {
+    margin: 3px 10px;
+}
