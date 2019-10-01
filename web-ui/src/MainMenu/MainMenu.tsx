@@ -60,6 +60,5 @@ export default class MainMenu extends React.Component<{}, State> {
         </Link>
       </div>
     </Container>;
-
   }
 }
