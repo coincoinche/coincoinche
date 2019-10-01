@@ -1,6 +1,13 @@
 import React from 'react';
 import styled from 'styled-components';
-import logo from "../assets/cards/AC.png";
+import {Link} from "react-router-dom";
+import casual from "../assets/menu/casual.png";
+import ranked from "../assets/menu/ranked.png";
+import ladder from "../assets/menu/ladder.png";
+
+import logo from '../assets/coincoinche_logo.png';
+import TestComponent from "../TestComponent";
+import TestWebSocket from "../websocket/TestWebSocket";
 
 type State = {};
 
@@ -13,6 +20,13 @@ const applyTransformation = (rotationDegrees: number, scale: number) => `
   translateY(${Math.abs(rotationDegrees)}px)
   translateX(${rotationDegrees}px)
   scale(${scale})
+`;
+
+const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 `;
 
 const Rectangle = styled.img`
@@ -29,12 +43,23 @@ const Rectangle = styled.img`
 `;
 
 export default class MainMenu extends React.Component<{}, State> {
-
   render() {
-    return <div>
-      <Rectangle src={logo} className="App-logo" alt="logo" rotationDegrees={-30} />
-      <Rectangle src={logo} className="App-logo" alt="logo" rotationDegrees={0} />
-      <Rectangle src={logo} className="App-logo" alt="logo" rotationDegrees={30} />
-    </div>;
+    return <Container>
+      <img src={logo} className="App-logo" alt="logo" />
+      {/*<TestComponent />*/}
+      {/*<TestWebSocket />*/}
+      <div>
+        <Link to="/game">
+          <Rectangle src={casual} className="App-logo" alt="logo" rotationDegrees={-20} />
+        </Link>
+        <Link to="/game">
+          <Rectangle src={ranked} className="App-logo" alt="logo" rotationDegrees={0} />
+        </Link>
+        <Link to="/ladder">
+          <Rectangle src={ladder} className="App-logo" alt="logo" rotationDegrees={20} />
+        </Link>
+      </div>
+    </Container>;
+
   }
 }
