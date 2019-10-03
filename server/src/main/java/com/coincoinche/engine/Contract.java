@@ -8,29 +8,73 @@ import java.util.List;
 /** Contract of the bidding phase of the game. */
 public class Contract {
 
-  private int value;
-  private boolean capot;
-  private boolean generale;
+  private enum Value {
+    EIGHTY(80),
+    NINETY(90),
+    HUNDRED(100),
+    HUNDRED_TEN(110),
+    HUNDRED_TWENTY(120),
+    HUNDRED_THIRTY(130),
+    HUNDRED_FOURTY(140),
+    HUNDRED_FIFTY(150),
+    HUNDRED_SIXTY(160),
+    CAPOT(250),
+    GENERALE(500);
+
+    private final int points;
+
+    private Value(int points) {
+      this.points = points;
+    }
+
+    public static Value valueOfByPoints(int points) throws IllegalArgumentException {
+      for (Value value : Value.values()) {
+        // can't get CAPOT or GENERALE value from points
+        if (value == CAPOT || value == GENERALE) {
+          continue;
+        }
+        if (value.getPoints() == points) {
+          return value;
+        }
+      }
+      throw new IllegalArgumentException("Value with points " + points + " doesn't exist.");
+    }
+
+    public int getPoints() {
+      return points;
+    }
+
+    @Override
+    public String toString() {
+      if (this == CAPOT) {
+        return "CAP";
+      }
+      if (this == GENERALE) {
+        return "GEN";
+      }
+      return String.format("%d", this.points);
+    }
+  }
+
+  private Value value;
   // TODO nockty: figure out how to change this when we handle all trumps & no trumps
   private Suit suit;
   private Player player;
 
-  private Contract(int value, boolean capot, boolean generale, Suit suit) {
+  private Contract(Value value, Suit suit) {
     this.value = value;
-    this.capot = capot;
-    this.generale = generale;
     this.suit = suit;
   }
 
   /**
    * Create a contract based on points.
    *
-   * @param value is a value between 80 and 160 representing the points claimed by the contract.
+   * @param points is a value between 80 and 160 representing the points claimed by the contract.
    * @param suit is the suit of the contract.
    * @return the newly constructed contract.
    */
-  public static Contract pointsContract(int value, Suit suit) {
-    return new Contract(value, false, false, suit);
+  public static Contract pointsContract(int points, Suit suit) throws IllegalArgumentException {
+    return new Contract(Value.valueOfByPoints(points), suit);
   }
 
   /**
@@ -40,7 +84,7 @@ public class Contract {
    * @return the newly constructed contract.
    */
   public static Contract capotContract(Suit suit) {
-    return new Contract(-1, true, false, suit);
+    return new Contract(Value.CAPOT, suit);
   }
 
   /**
@@ -50,7 +94,7 @@ public class Contract {
    * @return the newly constructed contract.
    */
   public static Contract generaleContract(Suit suit) {
-    return new Contract(-1, false, true, suit);
+    return new Contract(Value.GENERALE, suit);
   }
 
   /**
@@ -61,13 +105,9 @@ public class Contract {
   public static List<Contract> generateAllContracts() {
     List<Contract> allContracts = new ArrayList<>();
     for (Suit suit : Suit.values()) {
-      // points contracts
-      for (int value = 80; value <= 160; value += 10) {
-        allContracts.add(pointsContract(value, suit));
+      for (Value value : Value.values()) {
+        allContracts.add(new Contract(value, suit));
       }
-      // capot & generale
-      allContracts.add(capotContract(suit));
-      allContracts.add(generaleContract(suit));
     }
     return allContracts;
   }
@@ -79,25 +119,10 @@ public class Contract {
    * @return true if the other contract is strictly lower.
    */
   public boolean isHigherThan(Contract other) {
-    // handle case where other is null
     if (other == null) {
       return true;
     }
-    // special cases: generale > capot > all other values
-    if (other.generale) {
-      return false;
-    }
-    if (this.generale) {
-      return true;
-    }
-    if (other.capot) {
-      return false;
-    }
-    if (this.capot) {
-      return true;
-    }
-    // general case: value must be strictly higher
-    return this.value > other.value;
+    return this.value.compareTo(other.value) > 0;
   }
 
   /**
@@ -109,22 +134,6 @@ public class Contract {
   public Contract withPlayer(Player player) {
     this.player = player;
     return this;
-  }
-
-  /**
-   * Get the contract's value. The value of capot is 250. The value of generale is 500.
-   *
-   * @return an int representing the contract's value
-   */
-  public int getValue() {
-    // TODO nockty change capot and generale to special move enum w/ their value
-    if (generale) {
-      return 500;
-    }
-    if (capot) {
-      return 250;
-    }
-    return value;
   }
 
   public Suit getSuit() {
@@ -154,7 +163,7 @@ public class Contract {
     if (!this.suit.equals(otherContract.suit)) {
       return false;
     }
-    return this.getValue() == otherContract.getValue();
+    return this.value == otherContract.value;
   }
 
   @Override
@@ -164,13 +173,7 @@ public class Contract {
       prettyString.append(player.toString());
       prettyString.append(": ");
     }
-    if (generale) {
-      prettyString.append("GEN");
-    } else if (capot) {
-      prettyString.append("CAP");
-    } else {
-      prettyString.append(value);
-    }
+    prettyString.append(this.value.toString());
     prettyString.append(suit.toString());
     return prettyString.toString();
   }
