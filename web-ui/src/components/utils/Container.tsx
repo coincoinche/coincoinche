@@ -11,5 +11,4 @@ export default styled.div`
   flex-direction: ${({direction}: Props) => direction};
   align-items: ${({alignItems}: Props) => alignItems || 'center'};
   justify-content: ${({justifyContent}: Props) => justifyContent || 'center'};
-  width: 100%;
 `;

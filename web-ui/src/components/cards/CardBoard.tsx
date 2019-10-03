@@ -20,12 +20,14 @@ const CardBoard = ({top, left, right, bottom}: Props) => {
             // @ts-ignore
             src={left ? cards[left] : cards[CardValue.card_placeholder]}
             rotationDegrees={90}
+            translationY={80}
             disableHoverTransformation
         />
         <Card
             // @ts-ignore
             src={right ? cards[right] : cards[CardValue.card_placeholder]}
             rotationDegrees={-90}
+            translationY={80}
             disableHoverTransformation
         />
       </Container>

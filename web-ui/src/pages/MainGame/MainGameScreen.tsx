@@ -9,7 +9,7 @@ const CLEAN_TRICK_TIMOUT_MS = 2000;
 
 const makeOtherPlayer = () => ({
   authorisedPlays: [CardValue.blue_back],
-  cardsInHand: new Array(4).fill(CardValue.blue_back),
+  cardsInHand: new Array(8).fill(CardValue.blue_back),
 });
 
 const players = {
@@ -18,7 +18,7 @@ const players = {
   [Position.left]: makeOtherPlayer(),
   [Position.bottom]: {
     authorisedPlays: [CardValue.ac, CardValue.ad, CardValue.ah, CardValue.as, CardValue.jc, CardValue.jd, CardValue.jh, CardValue.js],
-    cardsInHand: [CardValue.jc, CardValue.jd, CardValue.jh, CardValue.js],
+    cardsInHand: [CardValue.jc, CardValue.jd, CardValue.jh, CardValue.js, CardValue.jc, CardValue.jd, CardValue.jh, CardValue.js],
   }
 };
 
