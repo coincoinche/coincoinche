@@ -3,7 +3,9 @@ import HandOfCards from "../../components/cards/HandOfCards";
 import {CardValue} from '../../assets/cards';
 import Container from "../../components/utils/Container";
 import CardBoard from "../../components/cards/CardBoard";
-import {GameState, Position} from "./types";
+import {GameState, Position, Trick} from "./types";
+
+const CLEAN_TRICK_TIMOUT_MS = 2000;
 
 const makeOtherPlayer = () => ({
   authorisedPlays: [CardValue.blue_back],
@@ -39,11 +41,46 @@ const getNextPlayer = (currentPlayer: Position): Position => {
   throw new Error('Unknown position');
 };
 
+const emptyTrick: Trick = { top: undefined, left: undefined, right: undefined, bottom: undefined };
+
+const isFull = (trick: Trick): boolean => !!trick.top && !!trick.bottom && !!trick.left && !!trick.right;
+
 export default class MainGameScreen extends React.Component<{}, GameState> {
   state = {
     players,
     currentPlayer: Position.bottom,
-    currentTrick: { top: undefined, left: undefined, right: undefined, bottom: undefined },
+    currentTrick: {...emptyTrick},
+  };
+
+  componentDidUpdate(): void {
+    if (isFull(this.state.currentTrick)) {
+      setTimeout(() => {
+        this.setState({currentTrick: {...emptyTrick}})
+      }, CLEAN_TRICK_TIMOUT_MS)
+    }
+  }
+
+  playCard = (player: Position, card: CardValue) => {
+    this.setState(prevState => {
+      const player = prevState.currentPlayer;
+      const playerCards = prevState.players[player].cardsInHand;
+      playerCards.splice(playerCards.indexOf(card), 1);
+
+      return ({
+        currentPlayer: getNextPlayer(player),
+        currentTrick: {
+          ...this.state.currentTrick,
+          [player]: card,
+        },
+        players: {
+          ...prevState.players,
+          [player]: {
+            authorisedPlays: prevState.players[player].authorisedPlays,
+            cardsInHand: playerCards,
+          }
+        }
+      })
+    })
   };
 
   onCardPlayed = (player: Position, card: CardValue) => {
@@ -55,20 +92,7 @@ export default class MainGameScreen extends React.Component<{}, GameState> {
       return;
     }
 
-    this.setState(prevState => ({
-      currentPlayer: getNextPlayer(prevState.currentPlayer),
-      currentTrick: {
-        ...this.state.currentTrick,
-        [prevState.currentPlayer]: card,
-      },
-      players: {
-        ...prevState.players,
-        [prevState.currentPlayer]: {
-          authorisedPlays: [],
-          cardsInHand: prevState.players[prevState.currentPlayer].cardsInHand.filter(cardInHand => cardInHand !== card),
-        }
-      }
-    }))
+    this.playCard(player, card);
   };
 
   render() {
@@ -79,7 +103,7 @@ export default class MainGameScreen extends React.Component<{}, GameState> {
           scale={0.8}
           onCardPlayed={(card: CardValue) => this.onCardPlayed(Position.top, card)}
       />
-      <Container direction="row" justifyContent="space-between">
+      <Container direction="row" justifyContent="space-around">
         <HandOfCards
           cards={this.state.players[Position.left].cardsInHand}
           rotationDegrees={90}
