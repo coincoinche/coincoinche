@@ -7,7 +7,7 @@ import java.util.List;
 public class Player {
 
   private List<Card> cards;
-  private Player teamMate;
+  private Team team;
   private String username;
 
   public Player(String username) {
@@ -36,10 +36,10 @@ public class Player {
    * @return true if players are team mates.
    */
   public boolean isTeamMate(Player player) {
-    return player.equals(teamMate) || player.equals(this);
+    return team.containsPlayer(player);
   }
 
-  public void setTeamMate(Player teamMate) {
-    this.teamMate = teamMate;
+  public void setTeam(Team team) {
+    this.team = team;
   }
 }

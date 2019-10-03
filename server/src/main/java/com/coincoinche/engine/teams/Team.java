@@ -1,5 +1,7 @@
 package com.coincoinche.engine.teams;
 
+import java.util.ArrayList;
+import java.util.List;
 
 /** Team. TODO nockty: check that this is useful. */
 public class Team {
@@ -8,24 +10,28 @@ public class Team {
     BLUE
   }
 
-  private Player[] players = new Player[2];
+  private List<Player> players;
   private Color color;
 
   /**
    * Create a new team of two players.
+   *
    * @param player1 is the first player.
    * @param player2 is the second player.
    * @param color is the team's color (red or blue).
    */
   public Team(Player player1, Player player2, Color color) {
-    this.players[0] = player1;
-    this.players[1] = player2;
-    player1.setTeamMate(player2);
-    player2.setTeamMate(player1);
+    player1.setTeam(this);
+    player2.setTeam(this);
+    this.players = new ArrayList<>(List.of(player1, player2));
     this.color = color;
   }
 
-  public Player[] getPlayers() {
+  public boolean containsPlayer(Player player) {
+    return players.contains(player);
+  }
+
+  public List<Player> getPlayers() {
     return players;
   }
 
