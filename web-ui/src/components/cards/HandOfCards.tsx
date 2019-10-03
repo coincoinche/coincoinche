@@ -1,9 +1,10 @@
 import React from 'react';
 import styled from "styled-components";
 import Card from "./Card";
+import cardsImages from '../../assets/cards';
 
 type Props = {
-  cards: NodeRequire[];
+  cards: string[];
   rotationDegrees: number;
   scale?: number;
 }
@@ -33,7 +34,7 @@ const HandOfCards = ({cards, rotationDegrees, scale}: Props) => {
             return (
                 <Card
                     // @ts-ignore
-                    src={card}
+                    src={cardsImages[card]}
                     alt="card"
                     rotationDegrees={cards.length > 1 ? -1 * ROTATION_MAX_DEGREE_ANGLE + index * rotationStep : 0}
                     translationX = {((cards.length / 2) - index) * 5 * cards.length}
