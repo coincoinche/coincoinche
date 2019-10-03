@@ -1,24 +1,46 @@
 import React from 'react';
 import HandOfCards from "../../components/cards/HandOfCards";
-import cards from '../../assets/cards';
+import {CardValue} from '../../assets/cards';
 import Container from "../../components/utils/Container";
 import CardBoard from "../../components/cards/CardBoard";
+import {GameState, Position} from "./types";
 
-export default class MainGameScreen extends React.Component {
+const makeOtherPlayer = () => ({
+  authorisedPlays: [],
+  cardsInHand: new Array(8).fill(CardValue.blue_back),
+});
+
+const players = {
+  top: makeOtherPlayer(),
+  right: makeOtherPlayer(),
+  left: makeOtherPlayer(),
+  bottom: {
+    authorisedPlays: [],
+    cardsInHand: [CardValue.ac, CardValue.ad, CardValue.ah, CardValue.as, CardValue.jc, CardValue.jd, CardValue.jh, CardValue.js],
+  }
+};
+
+export default class MainGameScreen extends React.Component<{}, GameState> {
+  state = {
+    players,
+    currentPlayer: Position.bottom,
+    currentTrick: { topCard: undefined, leftCard: undefined, rightCard: undefined, bottomCard: undefined },
+  };
+
   render() {
     return <Container direction="column">
-      <HandOfCards cards={[cards.red_back, cards.red_back, cards.red_back, cards.red_back]} rotationDegrees={180} scale={0.8} />
+      <HandOfCards cards={this.state.players.top.cardsInHand} rotationDegrees={180} scale={0.8} />
       <Container direction="row" justifyContent="space-between">
-        <HandOfCards cards={[cards.red_back, cards.red_back, cards.red_back, cards.red_back]} rotationDegrees={90}  scale={0.8} />
+        <HandOfCards cards={this.state.players.left.cardsInHand} rotationDegrees={90}  scale={0.8} />
         <CardBoard
-          leftCard={cards.jc}
-          rightCard={cards.jd}
-          bottomCard={cards.jh}
-          topCard={cards.js}
+          leftCard={this.state.currentTrick.leftCard}
+          rightCard={this.state.currentTrick.rightCard}
+          bottomCard={this.state.currentTrick.bottomCard}
+          topCard={this.state.currentTrick.topCard}
         />
-        <HandOfCards cards={[cards.red_back, cards.red_back, cards.red_back, cards.red_back]} rotationDegrees={-90} scale={0.8} />
+        <HandOfCards cards={this.state.players.right.cardsInHand} rotationDegrees={-90} scale={0.8} />
       </Container>
-      <HandOfCards cards={[cards.jc, cards.jd, cards.jh, cards.js]} rotationDegrees={0} />
+      <HandOfCards cards={this.state.players.bottom.cardsInHand} rotationDegrees={0} />
     </Container>;
   }
 }
