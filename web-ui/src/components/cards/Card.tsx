@@ -5,6 +5,7 @@ type Props = {
   translationX?: number;
   translationY?: number;
   scale?: number;
+  disableHoverTransformation?: boolean;
 }
 
 const getTransformationCSS = (rotationDegrees: number, translationX?: number, translationY?: number, scale?: number) => `
@@ -15,14 +16,13 @@ const getTransformationCSS = (rotationDegrees: number, translationX?: number, tr
 `;
 
 const Card = styled.img`
-  background-color: cornflowerblue;
   width: 100px;
   height: 150px;
   border-radius: 10px;
   transform: ${
     ({rotationDegrees, translationX, translationY, scale}: Props) => getTransformationCSS(rotationDegrees, translationX, translationY, scale)};
   &:hover {
-    transform: ${({translationX, scale}: Props) => getTransformationCSS(0, translationX, 0,(scale || 1) * 1.2)}
+    transform: ${({translationX, scale, disableHoverTransformation}: Props) => !disableHoverTransformation && getTransformationCSS(0, translationX, 0,(scale || 1) * 1.2)}
 `;
 
 export default Card;
