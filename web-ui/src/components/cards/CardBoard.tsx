@@ -2,36 +2,42 @@ import React from 'react';
 import Card from "./Card";
 import Container from "../utils/Container";
 import {Trick} from "../../pages/MainGame/types";
-import cards from "../../assets/cards";
+import cards, {CardValue} from "../../assets/cards";
 
 type Props = Trick;
 
 const CardBoard = ({top, left, right, bottom}: Props) => {
   return (
-      <Container direction="column">
-        {top && <Card
+    <Container direction="column">
+      <Card
           // @ts-ignore
-          src={cards[top]}
+          src={top ? cards[top] : cards[CardValue.card_placeholder]}
           rotationDegrees={180}
-        />}
-        <Container direction="row" justifyContent="space-between">
-          {left && <Card
+          disableHoverTransformation
+      />
+      <Container direction="row" justifyContent="space-between" minWidth="100px">
+        <Card
             // @ts-ignore
-            src={cards[left]}
+            src={left ? cards[left] : cards[CardValue.card_placeholder]}
             rotationDegrees={90}
-          />}
-          {right && <Card
+            translationY={80}
+            disableHoverTransformation
+        />
+        <Card
             // @ts-ignore
-            src={cards[right]}
+            src={right ? cards[right] : cards[CardValue.card_placeholder]}
             rotationDegrees={-90}
-          />}
-        </Container>
-        {bottom && <Card
-          // @ts-ignore
-          src={cards[bottom]}
-          rotationDegrees={0}
-        />}
+            translationY={80}
+            disableHoverTransformation
+        />
       </Container>
+      <Card
+          // @ts-ignore
+          src={bottom ? cards[bottom] : cards[CardValue.card_placeholder]}
+          rotationDegrees={0}
+          disableHoverTransformation
+      />
+    </Container>
   );
 };
 
