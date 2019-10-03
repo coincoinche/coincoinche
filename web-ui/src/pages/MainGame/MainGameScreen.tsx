@@ -103,7 +103,7 @@ export default class MainGameScreen extends React.Component<{}, GameState> {
           scale={0.8}
           onCardPlayed={(card: CardValue) => this.onCardPlayed(Position.top, card)}
       />
-      <Container direction="row" justifyContent="space-around">
+      <Container direction="row" justifyContent="space-around" width="100%">
         <HandOfCards
           cards={this.state.players[Position.left].cardsInHand}
           rotationDegrees={90}

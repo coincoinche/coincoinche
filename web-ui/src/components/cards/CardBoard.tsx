@@ -15,7 +15,7 @@ const CardBoard = ({top, left, right, bottom}: Props) => {
           rotationDegrees={180}
           disableHoverTransformation
       />
-      <Container direction="row" justifyContent="space-between">
+      <Container direction="row" justifyContent="space-between" minWidth="100px">
         <Card
             // @ts-ignore
             src={left ? cards[left] : cards[CardValue.card_placeholder]}
