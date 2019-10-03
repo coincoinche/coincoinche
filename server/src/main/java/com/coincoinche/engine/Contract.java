@@ -171,9 +171,9 @@ public class Contract {
     StringBuffer prettyString = new StringBuffer();
     if (player != null) {
       prettyString.append(player.toString());
-      prettyString.append(": ");
+      prettyString.append(":");
     }
-    prettyString.append(this.value.toString());
+    prettyString.append(value.toString());
     prettyString.append(suit.toString());
     return prettyString.toString();
   }
