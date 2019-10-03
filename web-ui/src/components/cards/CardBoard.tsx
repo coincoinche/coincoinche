@@ -6,29 +6,29 @@ import cards from "../../assets/cards";
 
 type Props = Trick;
 
-const CardBoard = ({topCard, leftCard, rightCard, bottomCard}: Props) => {
+const CardBoard = ({top, left, right, bottom}: Props) => {
   return (
       <Container direction="column">
-        {topCard && <Card
+        {top && <Card
           // @ts-ignore
-          src={cards[topCard]}
+          src={cards[top]}
           rotationDegrees={180}
         />}
         <Container direction="row" justifyContent="space-between">
-          {leftCard && <Card
+          {left && <Card
             // @ts-ignore
-            src={cards[leftCard]}
+            src={cards[left]}
             rotationDegrees={90}
           />}
-          {rightCard && <Card
+          {right && <Card
             // @ts-ignore
-            src={cards[rightCard]}
+            src={cards[right]}
             rotationDegrees={-90}
           />}
         </Container>
-        {bottomCard && <Card
+        {bottom && <Card
           // @ts-ignore
-          src={cards[bottomCard]}
+          src={cards[bottom]}
           rotationDegrees={0}
         />}
       </Container>

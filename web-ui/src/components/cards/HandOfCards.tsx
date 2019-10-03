@@ -1,12 +1,13 @@
 import React from 'react';
 import styled from "styled-components";
 import Card from "./Card";
-import cardsImages from '../../assets/cards';
+import cardsImages, {CardValue} from '../../assets/cards';
 
 type Props = {
-  cards: string[];
+  cards: CardValue[];
   rotationDegrees: number;
   scale?: number;
+  onCardPlayed: (card: CardValue) => void;
 }
 
 type ContainerProps = {
@@ -23,7 +24,7 @@ const Container = styled.div`
 
 const ROTATION_MAX_DEGREE_ANGLE = 20;
 
-const HandOfCards = ({cards, rotationDegrees, scale}: Props) => {
+const HandOfCards = ({cards, rotationDegrees, scale, onCardPlayed}: Props) => {
   const rotationStep = cards.length > 1 ? 2 * ROTATION_MAX_DEGREE_ANGLE / (cards.length - 1) : 0;
   const yTranslationMax = 15 * cards.length;
   const yTranslationStep = 2 * yTranslationMax / (cards.length - 1);
@@ -40,6 +41,7 @@ const HandOfCards = ({cards, rotationDegrees, scale}: Props) => {
                     translationX = {((cards.length / 2) - index) * 5 * cards.length}
                     translationY = {Math.round(Math.abs(-1 * yTranslationMax + index * yTranslationStep))}
                     scale={scale}
+                    onClick={() => onCardPlayed(card)}
                 />
             )
           })

@@ -1,6 +1,8 @@
+import { CardValue } from "../../assets/cards";
+
 export type Player = {
-  authorisedPlays: string[];
-  cardsInHand: string[];
+  authorisedPlays: CardValue[];
+  cardsInHand: CardValue[];
 };
 
 export enum Position {
@@ -11,17 +13,17 @@ export enum Position {
 }
 
 export type Players = {
-  top: Player;
-  left: Player;
-  right: Player;
-  bottom: Player;
+  [Position.top]: Player;
+  [Position.left]: Player;
+  [Position.right]: Player;
+  [Position.bottom]: Player;
 };
 
 export type Trick = {
-  topCard?: string;
-  leftCard?: string;
-  rightCard?: string;
-  bottomCard?: string;
+  [Position.top]?: CardValue;
+  [Position.left]?: CardValue;
+  [Position.right]?: CardValue;
+  [Position.bottom]?: CardValue;
 };
 
 export type GameState = {
