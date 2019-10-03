@@ -12,6 +12,11 @@ export enum Position {
   left = 'left',
 }
 
+export enum GamePhase {
+  bidding = 'bidding',
+  main = 'main',
+}
+
 export type Players = {
   [Position.top]: Player;
   [Position.left]: Player;
@@ -30,4 +35,26 @@ export type GameState = {
   players: Players;
   currentPlayer: Position;
   currentTrick: Trick;
+  currentPhase: GamePhase;
 };
+
+export enum ContractValue {
+  EIGHTY = '80',
+  NINETY = '90',
+  HUNDRED = '100',
+  HUNDRED_TEN = '110',
+  HUNDRED_TWENTY = '120',
+  HUNDRED_THIRTY = '130',
+  HUNDRED_FOURTY = '140',
+  HUNDRED_FIFTY = '150',
+  HUNDRED_SIXTY = '160',
+  CAPOT = 'CAPOT',
+  GENERALE = 'GENERALE',
+}
+
+export enum Suit {
+  DIAMOND = 'diamond',
+  SPADE = 'spade',
+  CLOVER = 'clover',
+  HEART = 'heart',
+}

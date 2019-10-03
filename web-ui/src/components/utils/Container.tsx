@@ -6,6 +6,9 @@ type Props = {
   justifyContent?: string;
   width?: string;
   minWidth?: string;
+  backgroundColor?: string;
+  borderRadius?: string;
+  padding?: string;
 }
 
 export default styled.div`
@@ -15,4 +18,7 @@ export default styled.div`
   justify-content: ${({justifyContent}: Props) => justifyContent || 'center'};
   width: ${({width}: Props) => width || ''};
   min-width: ${({minWidth}: Props) => minWidth || ''};
+  background-color: ${({backgroundColor}: Props) => backgroundColor || ''};
+  border-radius: ${({borderRadius}: Props) => borderRadius || ''};
+  padding: ${({padding}: Props) => padding || ''};
 `;
