@@ -11,9 +11,9 @@ import com.coincoinche.engine.teams.Player;
 import com.coincoinche.engine.teams.Team;
 
 /**
- * Several helper methods for initializing the game.
+ * Several helper methods and classes to help with testing the game engine.
  */
-public class CommonTestHelper {
+public class GameEngineTestHelper {
 
   protected Player p1;
   protected Player p2;
@@ -32,7 +32,7 @@ public class CommonTestHelper {
       this.name = name;
     }
 
-    void run() {
+    public void run() {
       try {
         runAssertions();
       } catch (AssertionError e) {
