@@ -6,6 +6,7 @@ type Props = {
   translationY?: number;
   scale?: number;
   disableHoverTransformation?: boolean;
+  highlightBorder?: boolean;
 }
 
 const getTransformationCSS = (rotationDegrees: number, translationX?: number, translationY?: number, scale?: number) => `
@@ -19,6 +20,7 @@ const Card = styled.img`
   width: 100px;
   height: 150px;
   border-radius: 10px;
+  border: ${({highlightBorder}: Props) => highlightBorder ? '3px solid green' : ''};
   transform: ${
     ({rotationDegrees, translationX, translationY, scale}: Props) => getTransformationCSS(rotationDegrees, translationX, translationY, scale)};
   &:hover {

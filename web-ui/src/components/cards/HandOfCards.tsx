@@ -8,6 +8,7 @@ type Props = {
   rotationDegrees: number;
   scale?: number;
   onCardPlayed: (card: CardValue) => void;
+  cardsBorderHighlight?: boolean[];
 }
 
 type ContainerProps = {
@@ -24,7 +25,7 @@ const Container = styled.div`
 
 const ROTATION_MAX_DEGREE_ANGLE = 20;
 
-const HandOfCards = ({cards, rotationDegrees, scale, onCardPlayed}: Props) => {
+const HandOfCards = ({cards, rotationDegrees, scale, onCardPlayed, cardsBorderHighlight}: Props) => {
   const rotationStep = cards.length > 1 ? 2 * ROTATION_MAX_DEGREE_ANGLE / (cards.length - 1) : 0;
   const yTranslationMax = 15 * cards.length;
   const yTranslationStep = 2 * yTranslationMax / (cards.length - 1);
@@ -42,6 +43,7 @@ const HandOfCards = ({cards, rotationDegrees, scale, onCardPlayed}: Props) => {
                     translationY = {Math.round(Math.abs(-1 * yTranslationMax + index * yTranslationStep))}
                     scale={scale}
                     onClick={() => onCardPlayed(card)}
+                    highlightBorder={cardsBorderHighlight ? cardsBorderHighlight[index] : false}
                 />
             )
           })
