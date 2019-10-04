@@ -14,30 +14,17 @@ import org.junit.Test;
  */
 public class ContractTest {
 
-  abstract class TwoContractsTestCase extends GameEngineTestHelper.TestCase {
-    protected Contract contractOne;
-    protected Contract contractTwo;
-    protected boolean expected;
-
-    TwoContractsTestCase(String name, Contract contractOne, Contract contractTwo, boolean expected) {
-      super(name);
-      this.contractOne = contractOne;
-      this.contractTwo = contractTwo;
-      this.expected = expected;
-    }
-  }
-
   @Test
   public void isHigherThan() {
-    class TestCase extends TwoContractsTestCase {
+    class TestCase extends GameEngineTestHelper.ComparisonTestCase<Contract> {
 
-      TestCase(String name, Contract contractOne, Contract contractTwo, boolean expected) {
-        super(name, contractOne, contractTwo, expected);
+      TestCase(String name, Contract c1, Contract c2, boolean expected) {
+        super(name, c1, c2, expected);
       }
 
       @Override
       protected void runAssertions() {
-        assertThat(contractOne.isHigherThan(contractTwo)).as("Check contract is higher").isEqualTo(expected);
+        assertThat(o1.isHigherThan(o2)).as("Check contract is higher").isEqualTo(expected);
       }
     }
 
@@ -120,15 +107,15 @@ public class ContractTest {
 
   @Test
   public void equals() {
-    class TestCase extends TwoContractsTestCase {
+    class TestCase extends GameEngineTestHelper.ComparisonTestCase<Contract> {
 
-      TestCase(String name, Contract contractOne, Contract contractTwo, boolean expected) {
-        super(name, contractOne, contractTwo, expected);
+      TestCase(String name, Contract c1, Contract c2, boolean expected) {
+        super(name, c1, c2, expected);
       }
 
       @Override
       protected void runAssertions() {
-        assertThat(contractOne.equals(contractTwo)).as("Check contract equality").isEqualTo(expected);
+        assertThat(o1.equals(o2)).as("Check contract equality").isEqualTo(expected);
       }
 
     }
