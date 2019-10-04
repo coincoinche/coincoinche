@@ -2,8 +2,9 @@ import React from 'react';
 import HandOfCards from "../../components/cards/HandOfCards";
 import {CardValue} from '../../assets/cards';
 import Container from "../../components/utils/Container";
+import {ContractValue, GamePhase, GameState, Position, Suit, Trick} from "./types";
 import CardBoard from "../../components/cards/CardBoard";
-import {GameState, Position, Trick} from "./types";
+import BiddingBoard from "../../components/bidding/BiddingBoard";
 
 const CLEAN_TRICK_TIMOUT_MS = 2000;
 
@@ -18,7 +19,7 @@ const players = {
   [Position.left]: makeOtherPlayer(),
   [Position.bottom]: {
     authorisedPlays: [true, true, true, false, false, true, true, false],
-    cardsInHand: [CardValue.jc, CardValue.jd, CardValue.jh, CardValue.js, CardValue.jc, CardValue.jd, CardValue.jh, CardValue.js],
+    cardsInHand: [CardValue.jc, CardValue.jd, CardValue.jh, CardValue.js, CardValue.ac, CardValue.ad, CardValue.ah, CardValue.as],
   }
 };
 
@@ -50,6 +51,7 @@ export default class MainGameScreen extends React.Component<{}, GameState> {
     players,
     currentPlayer: Position.bottom,
     currentTrick: {...emptyTrick},
+    currentPhase: GamePhase.bidding,
   };
 
   componentDidUpdate(): void {
@@ -113,12 +115,20 @@ export default class MainGameScreen extends React.Component<{}, GameState> {
           scale={0.8}
           onCardPlayed={(card: CardValue) => this.onCardPlayed(Position.left, card)}
         />
-        <CardBoard
-          left={currentTrick[Position.left]}
-          right={currentTrick[Position.right]}
-          bottom={currentTrick[Position.bottom]}
-          top={currentTrick[Position.top]}
-        />
+        {
+          this.state.currentPhase === GamePhase.bidding && <BiddingBoard
+            contractValues={Object.values(ContractValue)}
+            contractSuits={Object.values(Suit)}
+          />
+        }
+        {
+          this.state.currentPhase === GamePhase.main && <CardBoard
+            left={currentTrick[Position.left]}
+            right={currentTrick[Position.right]}
+            bottom={currentTrick[Position.bottom]}
+            top={currentTrick[Position.top]}
+          />
+        }
         <HandOfCards
           cards={players[Position.right].cardsInHand}
           rotationDegrees={-90}
