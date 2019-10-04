@@ -37,6 +37,7 @@ export enum CardValue {
     purple_back = 'purple_back',
     red_back = 'red_back',
     yellow_back = 'yellow_back',
+    card_placeholder = 'card_placeholder',
 }
 
 const cards = {
@@ -78,6 +79,7 @@ const cards = {
   [CardValue.purple_back]: require('./purple_back.png'),
   [CardValue.red_back]: require('./red_back.png'),
   [CardValue.yellow_back]: require('./yellow_back.png'),
+  [CardValue.card_placeholder]: require('./card_placeholder.png'),
 };
 
 export default cards;

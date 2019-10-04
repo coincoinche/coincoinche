@@ -1,7 +1,7 @@
 import { CardValue } from "../../assets/cards";
 
 export type Player = {
-  authorisedPlays: CardValue[];
+  authorisedPlays: boolean[];
   cardsInHand: CardValue[];
 };
 
