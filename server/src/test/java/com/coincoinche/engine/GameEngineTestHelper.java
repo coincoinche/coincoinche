@@ -43,6 +43,20 @@ public class GameEngineTestHelper {
     protected abstract void runAssertions();
   }
 
+  public static abstract class ComparisonTestCase<T> extends TestCase {
+    protected T o1;
+    protected T o2;
+    protected boolean expected;
+
+    ComparisonTestCase(String name, T o1, T o2, boolean expected) {
+      super(name);
+      this.o1 = o1;
+      this.o2 = o2;
+      this.expected = expected;
+    }
+
+  }
+
   /**
    * Create two teams of two players.
    */
