@@ -36,7 +36,7 @@ const BiddingBoard = ({ contractValues, contractSuits }: Props) => {
             contractValues
                 .filter(value => ![ContractValue.CAPOT, ContractValue.GENERALE].includes(value))
                 .map(value => (
-                  <ValueSelector>
+                  <ValueSelector key={value}>
                     {value}
                   </ValueSelector>
             ))
@@ -59,7 +59,7 @@ const BiddingBoard = ({ contractValues, contractSuits }: Props) => {
         <SuitGroup>
           {
             contractSuits.map(suit => (
-                <SuitSelector src={require(`../../assets/${suit}.png`)}/>
+                <SuitSelector src={require(`../../assets/${suit}.png`)} key={suit} />
             ))
           }
         </SuitGroup>

@@ -44,6 +44,7 @@ const HandOfCards = ({cards, rotationDegrees, scale, onCardPlayed, cardsBorderHi
                     scale={scale}
                     onClick={() => onCardPlayed(card)}
                     highlightBorder={cardsBorderHighlight ? cardsBorderHighlight[index] : false}
+                    key={index}
                 />
             )
           })

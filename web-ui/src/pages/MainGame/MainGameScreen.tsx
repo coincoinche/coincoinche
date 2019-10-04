@@ -19,7 +19,7 @@ const players = {
   [Position.left]: makeOtherPlayer(),
   [Position.bottom]: {
     authorisedPlays: [true, true, true, false, false, true, true, false],
-    cardsInHand: [CardValue.jc, CardValue.jd, CardValue.jh, CardValue.js, CardValue.jc, CardValue.jd, CardValue.jh, CardValue.js],
+    cardsInHand: [CardValue.jc, CardValue.jd, CardValue.jh, CardValue.js, CardValue.ac, CardValue.ad, CardValue.ah, CardValue.as],
   }
 };
 
