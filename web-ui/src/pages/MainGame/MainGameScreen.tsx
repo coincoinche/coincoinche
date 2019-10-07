@@ -2,7 +2,7 @@ import React from 'react';
 import HandOfCards from "../../components/cards/HandOfCards";
 import {CardValue} from '../../assets/cards';
 import Container from "../../components/utils/Container";
-import {ContractValue, GamePhase, GameState, Position, SpecialBidding, Suit, Trick} from "./types";
+import {Contract, ContractValue, GamePhase, GameState, Position, SpecialBidding, Suit, Trick} from "./types";
 import CardBoard from "../../components/cards/CardBoard";
 import BiddingBoard from "../../components/bidding/BiddingBoard";
 
@@ -52,6 +52,7 @@ export default class MainGameScreen extends React.Component<{}, GameState> {
     currentPlayer: Position.bottom,
     currentTrick: {...emptyTrick},
     currentPhase: GamePhase.bidding,
+    contract: null,
   };
 
   componentDidUpdate(): void {
@@ -99,6 +100,10 @@ export default class MainGameScreen extends React.Component<{}, GameState> {
     this.playCard(player, card);
   };
 
+  onContractPicked = (contract: Contract) => {
+    setTimeout(() => this.setState({ contract, currentPhase: GamePhase.main }), 3000);
+  };
+
   render() {
     const { players, currentTrick } = this.state;
     return <Container direction="column">
@@ -120,6 +125,7 @@ export default class MainGameScreen extends React.Component<{}, GameState> {
             contractValues={Object.values(ContractValue)}
             contractSuits={Object.values(Suit)}
             specialBiddings={Object.values(SpecialBidding)}
+            onContractPicked={this.onContractPicked}
           />
         }
         {

@@ -4,16 +4,18 @@ export type SelectorProps = {
   disabled?: boolean;
 }
 
-export const getBackgroundColor = ({selectedByOpponent, disabled}: SelectorProps) =>
-    selectedByOpponent ? 'coral' :
-        disabled ? 'gray' : 'darkgreen';
+export const getBackgroundColor = ({selectedByOpponent, disabled, selectedByPlayer}: SelectorProps) =>
+  disabled ? 'gray' :
+    selectedByPlayer ? 'yellowgreen':
+      selectedByOpponent ? 'coral' : 'darkgreen';
 
-export const getColor = ({selectedByOpponent, disabled}: SelectorProps) =>
-    selectedByOpponent ? 'darkred' :
-        disabled ? 'darkgray' : 'yellowgreen';
+export const getColor = ({selectedByOpponent, disabled, selectedByPlayer}: SelectorProps) =>
+  disabled ? 'darkgray' :
+    selectedByPlayer ? 'darkgreen':
+      selectedByOpponent ? 'darkred' : 'yellowgreen';
 
 export const getHoverBackgroundColor = (selectable: boolean) =>
-    selectable ? 'yellowgreen' : '';
+  selectable ? 'yellowgreen' : '';
 
 export const getHoverColor = (selectable: boolean) =>
-    selectable ? 'darkgreen' : '';
+  selectable ? 'darkgreen' : '';
