@@ -52,9 +52,15 @@ export enum ContractValue {
   GENERALE = 'GENERALE',
 }
 
+export enum SpecialBidding {
+  COINCHE = 'COINCHE',
+  SURCOINCHE = 'SURCOINCHE',
+  PASS = 'PASS',
+}
+
 export enum Suit {
-  DIAMOND = 'diamond',
   SPADE = 'spade',
-  CLOVER = 'clover',
   HEART = 'heart',
+  CLOVER = 'clover',
+  DIAMOND = 'diamond',
 }

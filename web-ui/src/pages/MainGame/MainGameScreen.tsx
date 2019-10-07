@@ -2,7 +2,7 @@ import React from 'react';
 import HandOfCards from "../../components/cards/HandOfCards";
 import {CardValue} from '../../assets/cards';
 import Container from "../../components/utils/Container";
-import {ContractValue, GamePhase, GameState, Position, Suit, Trick} from "./types";
+import {ContractValue, GamePhase, GameState, Position, SpecialBidding, Suit, Trick} from "./types";
 import CardBoard from "../../components/cards/CardBoard";
 import BiddingBoard from "../../components/bidding/BiddingBoard";
 
@@ -119,6 +119,7 @@ export default class MainGameScreen extends React.Component<{}, GameState> {
           this.state.currentPhase === GamePhase.bidding && <BiddingBoard
             contractValues={Object.values(ContractValue)}
             contractSuits={Object.values(Suit)}
+            specialBiddings={Object.values(SpecialBidding)}
           />
         }
         {
