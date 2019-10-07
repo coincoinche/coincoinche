@@ -69,4 +69,5 @@ export enum Suit {
 export type Contract = {
   value: ContractValue;
   suit: Suit;
+  specialBidding?: SpecialBidding;
 }

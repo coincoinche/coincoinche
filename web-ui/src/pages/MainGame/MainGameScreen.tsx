@@ -122,10 +122,13 @@ export default class MainGameScreen extends React.Component<{}, GameState> {
         />
         {
           this.state.currentPhase === GamePhase.bidding && <BiddingBoard
-            contractValues={Object.values(ContractValue)}
-            contractSuits={Object.values(Suit)}
-            specialBiddings={Object.values(SpecialBidding)}
+            authorisedContractValues={Object.values(ContractValue).splice(3, Object.values(ContractValue).length - 1)}
+            authorisedSpecialBiddings={Object.values(SpecialBidding)}
             onContractPicked={this.onContractPicked}
+            lastContract={{
+              value: ContractValue.HUNDRED_TEN,
+              suit: Suit.CLOVER,
+            }}
           />
         }
         {

@@ -25,118 +25,146 @@ const Separator = styled.div`
 `;
 
 type Props = {
-  contractValues: ContractValue[];
-  contractSuits: Suit[];
-  specialBiddings: SpecialBidding[];
+  authorisedContractValues: ContractValue[];
+  authorisedSpecialBiddings: SpecialBidding[];
+  lastContract?: Contract;
   onContractPicked: (contract: Contract) => void;
 };
 
 type State = {
   selectedValue: ContractValue | null;
   selectedSuit: Suit | null;
+  selectedSpecialBidding: SpecialBidding | null;
 }
 
 export default class BiddingBoard extends React.Component<Props, State> {
   state = {
     selectedValue: null,
     selectedSuit: null,
+    selectedSpecialBidding: null,
   };
 
   onValueClicked = (value: ContractValue) => {
-    this.setState({selectedValue: value});
+    this.setState({
+      selectedValue: value,
+      selectedSpecialBidding: null,
+    });
   };
 
   onSuitClicked = (suit: Suit) => {
-    this.setState({selectedSuit: suit});
+    this.setState({
+      selectedSuit: suit,
+      selectedSpecialBidding: null,
+    });
   };
 
+  onSpecialBiddingClicked = (bidding: SpecialBidding) => {
+    this.setState({
+      selectedValue: null,
+      selectedSuit: null,
+      selectedSpecialBidding : bidding
+    });
+  };
+
+
   componentDidUpdate() {
-    const { selectedSuit, selectedValue } = this.state;
+    const { selectedSuit, selectedValue, selectedSpecialBidding } = this.state;
+
+    if (selectedSpecialBidding !== null) {
+      this.props.onContractPicked({
+        value: (this.props.lastContract || {}).value!,
+        suit: (this.props.lastContract || {}).suit!,
+        specialBidding: selectedSpecialBidding!,
+      });
+    }
+
     if (selectedSuit !== null && selectedValue !== null) {
       this.props.onContractPicked({
         value: selectedValue!,
         suit: selectedSuit!,
+        specialBidding: (this.props.lastContract || {}).specialBidding,
       });
     }
   }
 
   render() {
-    const { contractValues, contractSuits, specialBiddings } = this.props;
+    const { authorisedContractValues, authorisedSpecialBiddings, lastContract } = this.props;
+    const contractValues = Object.values(ContractValue);
+    const contractSuits = Object.values(Suit);
+    const specialBiddings = Object.values(SpecialBidding);
+
     return (
+      <Container
+          direction="column"
+          backgroundColor="darkgreen"
+          borderRadius="50px"
+          minWidth="300px"
+          padding="20px"
+      >
         <Container
-            direction="column"
-            backgroundColor="darkgreen"
-            borderRadius="50px"
-            minWidth="300px"
-            padding="20px"
+            direction="row"
         >
-          <Container
-              direction="row"
-          >
-            <ValuesGroup>
-              {
-                contractValues
-                    .filter(value => ![ContractValue.CAPOT, ContractValue.GENERALE].includes(value))
-                    .map((value, index) => (
-                        <ValueSelector
-                            key={value}
-                            selectedByOpponent={index===3}
-                            disabled={index<3}
-                            onClick={index<=3 ? () => {} : () => this.onValueClicked(value)}
-                            selectedByPlayer={this.state.selectedValue === value}
-                        >
-                          {value}
-                        </ValueSelector>
-                    ))
-              }
-              {
-                contractValues.includes(ContractValue.CAPOT) && (
-                    <ValueSelector
-                        minWidth="85px"
-                        onClick={() => this.onValueClicked(ContractValue.CAPOT)}
-                        selectedByPlayer={this.state.selectedValue === ContractValue.CAPOT}
-                    >
-                      {ContractValue.CAPOT}
-                    </ValueSelector>
-                )
-              }
-              {
-                contractValues.includes(ContractValue.GENERALE) && (
-                    <ValueSelector
-                        minWidth="85px"
-                        onClick={() => this.onValueClicked(ContractValue.GENERALE)}
-                        selectedByPlayer={this.state.selectedValue === ContractValue.GENERALE}
-                    >
-                      {ContractValue.GENERALE}
-                    </ValueSelector>
-                )
-              }
-            </ValuesGroup>
-            <SuitGroup>
-              {
-                contractSuits.map((suit, index) => (
-                    <SuitSelector
-                        src={require(`../../assets/${suit}.png`)}
-                        key={suit}
-                        selectedByOpponent={index===2}
-                        onClick={() => this.onSuitClicked(suit)}
-                        selectedByPlayer={this.state.selectedSuit === suit}
-                    />
-                ))
-              }
-            </SuitGroup>
-          </Container>
-          <Separator />
-          <Container direction="row">
+          <ValuesGroup>
             {
-              specialBiddings.map(bidding => (
-                  <ValueSelector key={bidding} minWidth="90px" >
-                    {bidding}
-                  </ValueSelector>
+              contractValues
+                .map(value => {
+                  const disabled = !authorisedContractValues.includes(value) && value !== (lastContract || {}).value;
+                  const onClick = disabled || value === (lastContract || {}).value ? () => {} : () => this.onValueClicked(value);
+                  const minWidth = [ContractValue.CAPOT, ContractValue.GENERALE].includes(value) ? '85px' : undefined;
+
+                  return (
+                    <ValueSelector
+                      minWidth={minWidth}
+                      key={value}
+                      selectedByOpponent={(lastContract || {}).value === value}
+                      disabled={disabled}
+                      onClick={onClick}
+                      selectedByPlayer={this.state.selectedValue === value}
+                    >
+                      {value}
+                    </ValueSelector>
+                  )
+                })
+            }
+          </ValuesGroup>
+          <SuitGroup>
+            {
+              contractSuits.map(suit => (
+                <SuitSelector
+                  src={require(`../../assets/${suit}.png`)}
+                  key={suit}
+                  selectedByOpponent={(lastContract || {}).suit === suit}
+                  onClick={() => this.onSuitClicked(suit)}
+                  selectedByPlayer={this.state.selectedSuit === suit}
+                />
               ))
             }
-          </Container>
+          </SuitGroup>
         </Container>
+        <Separator />
+        <Container direction="row">
+          {
+            specialBiddings
+              .map(bidding => {
+                const disabled = !authorisedSpecialBiddings.includes(bidding) && bidding !== (lastContract || {}).specialBidding;
+                const onClick = disabled || bidding === (lastContract || {}).specialBidding ? () => {} : () => this.onSpecialBiddingClicked(bidding);
+
+                return (
+                  <ValueSelector
+                    minWidth="90px"
+                    key={bidding}
+                    selectedByOpponent={(lastContract || {}).specialBidding === bidding}
+                    disabled={disabled}
+                    onClick={onClick}
+                    selectedByPlayer={this.state.selectedSpecialBidding === bidding}
+                  >
+                    {bidding}
+                  </ValueSelector>
+                )
+              })
+          }
+        </Container>
+      </Container>
     )
   }
 }
