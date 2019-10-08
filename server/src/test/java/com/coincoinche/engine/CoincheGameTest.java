@@ -1,14 +1,13 @@
 package com.coincoinche.engine;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.spy;
 
 import com.coincoinche.engine.game.GameResult;
 import com.coincoinche.engine.teams.Team;
-
 import org.junit.Before;
 import org.junit.Test;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.doReturn;
 
 /** Unit tests for the coinche global game. */
 public class CoincheGameTest extends GameEngineTestHelper {
@@ -21,9 +20,7 @@ public class CoincheGameTest extends GameEngineTestHelper {
 
   @Test
   public void initialization() {
-    assertThat(coincheGame.getCurrentRound())
-        .as("Check first round isn't null")
-        .isNotNull();
+    assertThat(coincheGame.getCurrentRound()).as("Check first round isn't null").isNotNull();
     assertThat(coincheGame.getCurrentPlayerIndex())
         .as("Check first player index is 0")
         .isEqualTo(0);
@@ -88,5 +85,4 @@ public class CoincheGameTest extends GameEngineTestHelper {
         .as("FINISHED GAME - Check that the game has finished")
         .isTrue();
   }
-
 }
