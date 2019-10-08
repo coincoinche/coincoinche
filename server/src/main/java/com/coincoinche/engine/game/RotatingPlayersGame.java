@@ -23,7 +23,7 @@ public class RotatingPlayersGame<P> {
 
   /** Rotate players turn. */
   protected void rotatePlayers() {
-    currentPlayerIndex = currentPlayerIndex + 1 % players.size();
+    currentPlayerIndex = (currentPlayerIndex + 1) % players.size();
   }
 
   public int getCurrentPlayerIndex() {
