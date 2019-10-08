@@ -14,10 +14,10 @@ import org.junit.Test;
 public class BiddingGameStateTest extends GameEngineTestHelper {
 
   private class TestCase extends GameEngineTestHelper.TestCase {
-    private BiddingGameState input;
+    private GameStateBidding input;
     private List<BiddingMove> expected;
 
-    TestCase(String name, BiddingGameState input, List<BiddingMove> expected) {
+    TestCase(String name, GameStateBidding input, List<BiddingMove> expected) {
       super(name);
       this.input = input;
       this.expected = expected;
@@ -25,7 +25,7 @@ public class BiddingGameStateTest extends GameEngineTestHelper {
 
     @Override
     protected void runAssertions() {
-      List<MoveInterface> actual = input.getLegalMoves();
+      List<Move> actual = input.getLegalMoves();
       int expectedSize = expected.size();
       int actualSize = actual.size();
       assertThat(actualSize).as("Check sizes").isEqualTo(expectedSize);
@@ -48,7 +48,7 @@ public class BiddingGameStateTest extends GameEngineTestHelper {
       // TODO nockty: reshuffle when 4 players pass
       new TestCase(
         "No Contract",
-        new BiddingGameState(
+        new GameStateBidding(
           p1,
           null,
           false,
@@ -104,7 +104,7 @@ public class BiddingGameStateTest extends GameEngineTestHelper {
       ),
       new TestCase(
         "Team mate has contract - not coinched",
-        new BiddingGameState(
+        new GameStateBidding(
           p1,
           Contract.pointsContract(100, Suit.CLUBS).withPlayer(p3),
           false,
@@ -148,7 +148,7 @@ public class BiddingGameStateTest extends GameEngineTestHelper {
       ),
       new TestCase(
         "Team mate has contract - coinched",
-        new BiddingGameState(
+        new GameStateBidding(
           p1,
           Contract.pointsContract(90, Suit.DIAMONDS).withPlayer(p3),
           true,
@@ -161,7 +161,7 @@ public class BiddingGameStateTest extends GameEngineTestHelper {
       ),
       new TestCase(
         "Player has contract - coinched",
-        new BiddingGameState(
+        new GameStateBidding(
           p1,
           Contract.capotContract(Suit.HEARTS).withPlayer(p1),
           true,
@@ -174,7 +174,7 @@ public class BiddingGameStateTest extends GameEngineTestHelper {
       ),
       new TestCase(
         "Opponent has contract - not coinched",
-        new BiddingGameState(
+        new GameStateBidding(
           p2,
           Contract.pointsContract(80, Suit.HEARTS).withPlayer(p1),
           false,
@@ -227,7 +227,7 @@ public class BiddingGameStateTest extends GameEngineTestHelper {
       ),
       new TestCase(
         "Opponent has contract - coinched",
-        new BiddingGameState(
+        new GameStateBidding(
           p4,
           Contract.pointsContract(100, Suit.CLUBS).withPlayer(p1),
           true,
