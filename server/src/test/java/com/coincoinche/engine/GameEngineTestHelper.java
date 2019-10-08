@@ -23,7 +23,6 @@ public class GameEngineTestHelper {
   protected Team t1;
   protected Team t2;
 
-  protected GameStateInterface gameState;
 
   public static abstract class TestCase {
     private String name;
