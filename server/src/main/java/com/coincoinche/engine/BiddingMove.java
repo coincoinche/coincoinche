@@ -1,6 +1,7 @@
 package com.coincoinche.engine;
 
 import com.coincoinche.engine.teams.Player;
+import java.util.List;
 
 /**
  * BiddingMove represents a move during the bidding phase of the game. It can be:
@@ -12,7 +13,7 @@ import com.coincoinche.engine.teams.Player;
  *   <li>a contract higher than the previous one
  * </ul>
  */
-public class BiddingMove implements MoveInterface, Comparable<BiddingMove> {
+public class BiddingMove extends Move implements Comparable<BiddingMove> {
 
   public enum Special {
     PASS,
@@ -63,6 +64,34 @@ public class BiddingMove implements MoveInterface, Comparable<BiddingMove> {
    */
   public static BiddingMove surcoincheMove() {
     return new BiddingMove(null, Special.SURCOINCHE);
+  }
+
+  @Override
+  protected void applyOnRoundState(GameState state) throws IllegalMoveException {
+    if (!(state instanceof GameStateBidding)) {
+      throw new IllegalMoveException(this + " must be applied to a bidding state");
+    }
+    GameStateBidding biddingGameState = (GameStateBidding) state;
+    List<Move> legalMoves = biddingGameState.getLegalMoves();
+    if (!legalMoves.contains(this)) {
+      throw new IllegalMoveException(this + " is not legal on state " + state);
+    }
+    if (specialMove != null) {
+      switch (specialMove) {
+        case PASS:
+          break;
+        case COINCHE:
+          biddingGameState.setCoinched(true);
+          break;
+        case SURCOINCHE:
+          biddingGameState.setSurcoinched(true);
+          break;
+        default:
+          break;
+      }
+      return;
+    }
+    biddingGameState.setHighestBidding(contract.withPlayer(biddingGameState.getCurrentPlayer()));
   }
 
   @Override
