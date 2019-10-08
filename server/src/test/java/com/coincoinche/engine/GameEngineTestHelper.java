@@ -64,8 +64,8 @@ public class GameEngineTestHelper {
     p2 = new Player("Player 2");
     p3 = new Player("Player 3");
     p4 = new Player("Player 4");
-    t1 = new Team(p1, p3, Team.Color.BLUE);
-    t2 = new Team(p2, p4, Team.Color.RED);
+    t1 = new Team(p1, p3, Team.Color.RED);
+    t2 = new Team(p2, p4, Team.Color.BLUE);
   }
 
   /**
