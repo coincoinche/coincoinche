@@ -2,7 +2,7 @@ import React from 'react';
 import HandOfCards from "../../components/cards/HandOfCards";
 import {CardValue} from '../../assets/cards';
 import Container from "../../components/utils/Container";
-import {ContractValue, GamePhase, GameState, Position, SpecialBidding, Suit, Trick} from "./types";
+import {Contract, ContractValue, GamePhase, GameState, Position, SpecialBidding, Suit, Trick} from "./types";
 import CardBoard from "../../components/cards/CardBoard";
 import BiddingBoard from "../../components/bidding/BiddingBoard";
 
@@ -52,6 +52,7 @@ export default class MainGameScreen extends React.Component<{}, GameState> {
     currentPlayer: Position.bottom,
     currentTrick: {...emptyTrick},
     currentPhase: GamePhase.bidding,
+    contract: null,
   };
 
   componentDidUpdate(): void {
@@ -99,6 +100,10 @@ export default class MainGameScreen extends React.Component<{}, GameState> {
     this.playCard(player, card);
   };
 
+  onContractPicked = (contract: Contract) => {
+    setTimeout(() => this.setState({ contract, currentPhase: GamePhase.main }), 3000);
+  };
+
   render() {
     const { players, currentTrick } = this.state;
     return <Container direction="column">
@@ -117,9 +122,14 @@ export default class MainGameScreen extends React.Component<{}, GameState> {
         />
         {
           this.state.currentPhase === GamePhase.bidding && <BiddingBoard
-            contractValues={Object.values(ContractValue)}
-            contractSuits={Object.values(Suit)}
-            specialBiddings={Object.values(SpecialBidding)}
+            authorisedContractValues={Object.values(ContractValue).splice(3, Object.values(ContractValue).length - 1)}
+            authorisedSpecialBiddings={Object.values(SpecialBidding)}
+            authorisedContractSuits={Object.values(Suit)}
+            onContractPicked={this.onContractPicked}
+            lastContract={{
+              value: ContractValue.HUNDRED_TEN,
+              suit: Suit.CLUB,
+            }}
           />
         }
         {
