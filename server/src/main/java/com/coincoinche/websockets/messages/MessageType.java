@@ -1,7 +1,8 @@
-package com.coincoinche.websockets;
+package com.coincoinche.websockets.messages;
 
 public enum MessageType {
-  HELLO("HELLO");
+  HELLO("HELLO"),
+  SEARCH_GAME("SEARCH_GAME");
 
   private String type;
 

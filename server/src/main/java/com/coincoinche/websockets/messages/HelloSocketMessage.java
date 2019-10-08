@@ -1,10 +1,9 @@
-package com.coincoinche.websockets;
+package com.coincoinche.websockets.messages;
 
-public class SocketMessage {
+public class HelloSocketMessage extends SocketMessage {
 
   private String content;
   private String from;
-  private String type;
 
   /**
    * Sample websocket message.
@@ -13,10 +12,10 @@ public class SocketMessage {
    * @param from - who sends the message.
    * @param type - type of message.
    */
-  public SocketMessage(String content, String from, String type) {
+  public HelloSocketMessage(String content, String from, MessageType type) {
+    super(type);
     this.content = content;
     this.from = from;
-    this.type = type;
   }
 
   public String getContent() {
@@ -33,13 +32,5 @@ public class SocketMessage {
 
   public void setFrom(String from) {
     this.from = from;
-  }
-
-  public String getType() {
-    return type;
-  }
-
-  public void setType(String type) {
-    this.type = type;
   }
 }

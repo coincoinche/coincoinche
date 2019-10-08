@@ -5,6 +5,7 @@ import MainMenu from "./MainMenu/MainMenu";
 import './App.css';
 import MainGameScreen from "./pages/MainGame/MainGameScreen";
 import Ladder from "./pages/Ladder/Ladder";
+import TestWebSocket from "./components/websocket/TestWebSocket";
 
 const App: React.FC = () => {
   return (
@@ -22,6 +23,7 @@ const App: React.FC = () => {
             </Route>
           </Switch>
       </Router>
+      <TestWebSocket />
     </div>
   );
 };
