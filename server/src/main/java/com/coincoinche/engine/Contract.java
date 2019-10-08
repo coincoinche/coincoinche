@@ -144,6 +144,10 @@ public class Contract {
     return player;
   }
 
+  public int getPoints() {
+    return value.getPoints();
+  }
+
   public void setPlayer(Player player) {
     this.player = player;
   }

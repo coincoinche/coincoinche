@@ -1,22 +1,23 @@
 import styled from "styled-components";
+import {getBackgroundColor, getColor, getHoverBackgroundColor, getHoverColor, SelectorProps} from "./selector-style";
 
-type Props = {
+type Props = SelectorProps & {
   minWidth?: string;
 }
 
 export default styled.div`
-  background-color: darkgreen;
+  background-color: ${(props: Props) => getBackgroundColor(props)};
   font-weight: bold;
-  color: yellowgreen;
+  color: ${(props: Props) => getColor(props)};
   text-align: center;
   line-height: 50px;
   min-width: ${({minWidth}: Props) => minWidth || '50px'};
   min-height: 50px;
   border-radius: 50px;
-  border: 3px solid black;
+  border: 3px solid ${({disabled}: Props) => disabled ? 'darkgray' : 'black'};
   margin: 5px;
   &:hover {
-    background-color: yellowgreen;
-    color: darkgreen;
+    background-color: ${({selectedByOpponent, disabled}: Props) => getHoverBackgroundColor(!selectedByOpponent && !disabled)};
+    color: ${({selectedByOpponent, disabled}: Props) => getHoverColor(!selectedByOpponent && !disabled)};
   }
 `;

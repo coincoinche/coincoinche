@@ -36,6 +36,7 @@ export type GameState = {
   currentPlayer: Position;
   currentTrick: Trick;
   currentPhase: GamePhase;
+  contract: Contract | null;
 };
 
 export enum ContractValue {
@@ -61,6 +62,12 @@ export enum SpecialBidding {
 export enum Suit {
   SPADE = 'spade',
   HEART = 'heart',
-  CLOVER = 'clover',
+  CLUB = 'club',
   DIAMOND = 'diamond',
+}
+
+export type Contract = {
+  value: ContractValue;
+  suit: Suit;
+  specialBidding?: SpecialBidding;
 }
