@@ -13,7 +13,7 @@ import org.springframework.stereotype.Controller;
 
 @Controller
 public class LobbyController {
-  private static final Logger logger = LoggerFactory.getLogger(HelloSocketController.class);
+  private static final Logger logger = LoggerFactory.getLogger(LobbyController.class);
 
   @Autowired private SimpMessagingTemplate template;
 

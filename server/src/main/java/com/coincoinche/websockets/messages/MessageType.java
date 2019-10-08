@@ -1,7 +1,6 @@
 package com.coincoinche.websockets.messages;
 
 public enum MessageType {
-  HELLO("HELLO"),
   INVALID_MESSAGE("INVALID_MESSAGE"),
   SUCCESS("SUCCESS"),
   JOIN_LOBBY("JOIN_LOBBY"),
