@@ -62,11 +62,12 @@ public class GameStateBidding implements GameStateTerminal {
 
   /**
    * Return a boolean indicating if the game state must change, i.e. if the game gets to a state
-   * other than the bidding state. This method makes sense if it is called after a move was applied
-   * to the game.
+   * other than the bidding state. This method makes sense if it's called after players have
+   * rotated. to the game.
    */
   @Override
   public boolean mustChange() {
+    // TODO nockty: handle the case when all players pass
     return surcoinched || currentPlayer.equals(highestBidding.getPlayer());
   }
 

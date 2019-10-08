@@ -197,6 +197,6 @@ public class BiddingGameStateTest extends GameEngineTestHelper {
                     new GameStateBidding(
                         p4, Contract.pointsContract(100, Suit.CLUBS).withPlayer(p1), true, false),
                     new ArrayList<>(List.of(BiddingMove.passMove())))));
-    testCases.stream().forEach(TestCase::run);
+    testCases.forEach(TestCase::run);
   }
 }
