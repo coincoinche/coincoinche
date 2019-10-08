@@ -27,6 +27,7 @@ const Separator = styled.div`
 type Props = {
   authorisedContractValues: ContractValue[];
   authorisedSpecialBiddings: SpecialBidding[];
+  authorisedContractSuits: Suit[];
   lastContract?: Contract;
   onContractPicked: (contract: Contract) => void;
 };
@@ -88,7 +89,7 @@ export default class BiddingBoard extends React.Component<Props, State> {
   }
 
   render() {
-    const { authorisedContractValues, authorisedSpecialBiddings, lastContract } = this.props;
+    const { authorisedContractValues, authorisedSpecialBiddings, authorisedContractSuits, lastContract } = this.props;
     const contractValues = Object.values(ContractValue);
     const contractSuits = Object.values(Suit);
     const specialBiddings = Object.values(SpecialBidding);
@@ -129,15 +130,21 @@ export default class BiddingBoard extends React.Component<Props, State> {
           </ValuesGroup>
           <SuitGroup>
             {
-              contractSuits.map(suit => (
-                <SuitSelector
-                  src={require(`../../assets/${suit}.png`)}
-                  key={suit}
-                  selectedByOpponent={(lastContract || {}).suit === suit}
-                  onClick={() => this.onSuitClicked(suit)}
-                  selectedByPlayer={this.state.selectedSuit === suit}
-                />
-              ))
+              contractSuits.map(suit => {
+                const disabled = !authorisedContractSuits.includes(suit) && suit !== (lastContract || {}).suit;
+                const onClick = disabled ? () => {} : () => this.onSuitClicked(suit);
+
+                return (
+                  <SuitSelector
+                    src={require(`../../assets/${suit}.png`)}
+                    key={suit}
+                    selectedByOpponent={(lastContract || {}).suit === suit}
+                    onClick={onClick}
+                    selectedByPlayer={this.state.selectedSuit === suit}
+                    disabled={disabled}
+                  />
+                )
+              })
             }
           </SuitGroup>
         </Container>

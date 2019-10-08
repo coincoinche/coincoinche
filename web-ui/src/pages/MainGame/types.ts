@@ -62,7 +62,7 @@ export enum SpecialBidding {
 export enum Suit {
   SPADE = 'spade',
   HEART = 'heart',
-  CLOVER = 'clover',
+  CLUB = 'club',
   DIAMOND = 'diamond',
 }
 
