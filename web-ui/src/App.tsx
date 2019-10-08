@@ -3,8 +3,8 @@ import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import './App.css';
 import MainMenu from "./MainMenu/MainMenu";
 import './App.css';
-import MainGameScreen from "./pages/MainGame/MainGameScreen";
 import Ladder from "./pages/Ladder/Ladder";
+import Lobby from "./pages/Lobby";
 
 const App: React.FC = () => {
   return (
@@ -12,7 +12,7 @@ const App: React.FC = () => {
       <Router>
           <Switch>
             <Route path="/game">
-              <MainGameScreen />
+              <Lobby />
             </Route>
             <Route path="/ladder">
               <Ladder />
