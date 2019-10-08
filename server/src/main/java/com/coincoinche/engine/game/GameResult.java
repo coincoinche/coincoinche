@@ -13,11 +13,11 @@ public class GameResult<T> {
     this.winnerPoints = winnerPoints;
   }
 
-  public static <T> GameResult<T> UnfinishedResult() {
+  public static <T> GameResult<T> unfinishedResult() {
     return new GameResult<T>(false, null, -1);
   }
 
-  public static <T> GameResult<T> FinishedResult(T winnerTeam, int winnerPoints) {
+  public static <T> GameResult<T> finishedResult(T winnerTeam, int winnerPoints) {
     return new GameResult<T>(true, winnerTeam, winnerPoints);
   }
 
