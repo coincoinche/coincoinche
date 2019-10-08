@@ -44,7 +44,6 @@ public class BiddingGameStateTest extends GameEngineTestHelper {
     List<TestCase> testCases =
         new ArrayList<>(
             List.of(
-                // TODO nockty: reshuffle when 4 players pass
                 new TestCase(
                     "No Contract",
                     new GameStateBidding(p1, null, false, false),
