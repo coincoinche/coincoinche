@@ -20,7 +20,9 @@ public class GameEngineTestHelper {
   protected Team t1;
   protected Team t2;
 
-  public abstract static class TestCase {
+  protected CoincheGame coincheGame;
+
+  public static abstract class TestCase {
     private String name;
 
     TestCase(String name) {
@@ -62,17 +64,24 @@ public class GameEngineTestHelper {
   }
 
   /**
-   * Assign cards to players according to a map. <strong>Teams should be created before this method
-   * is called.</strong>
-   *
-   * @param cards maps an integer representing the player to a list of strings representing the
-   *     cards. Typical strings would be:
-   *     <ul>
-   *       <li>Ah -> ace of hearts
-   *       <li>5c -> five of clubs
-   *       <li>Td -> ten of diamonds
-   *       <li>Qs -> queen of spades
-   *     </ul>
+   * Create a new coinche game by using the two teans.
+   * <strong>Teams should be created before this method is called.</strong>
+   */
+  protected void createCoincheGame() {
+    coincheGame = new CoincheGame(t1, t2);
+  }
+
+  /**
+   * Assign cards to players according to a map.
+   * <strong>Teams should be created before this method is called.</strong>
+   * @param cards maps an integer representing the player to a list of strings
+   * representing the cards. Typical strings would be:
+   * <ul>
+   *  <li>Ah -> ace of hearts</li>
+   *  <li>5c -> five of clubs</li>
+   *  <li>Td -> ten of diamonds</li>
+   *  <li>Qs -> queen of spades</li>
+   * </ul>
    */
   protected void assignCards(Map<Integer, List<String>> cards) {
     Map<Integer, Player> players = new HashMap<>();
