@@ -1,10 +1,12 @@
 package com.coincoinche.engine.teams;
 
+import com.coincoinche.engine.game.TeamInterface;
 import java.util.ArrayList;
 import java.util.List;
 
-/** Team. TODO nockty: check that this is useful. */
-public class Team {
+/** Team of two coinche players. */
+public class Team implements TeamInterface<Player> {
+  // TODO nockty: delete this if it happens to be useless
   public enum Color {
     RED,
     BLUE
@@ -12,6 +14,7 @@ public class Team {
 
   private List<Player> players;
   private Color color;
+  private int points;
 
   /**
    * Create a new team of two players.
@@ -31,12 +34,22 @@ public class Team {
     return players.contains(player);
   }
 
-  public List<Player> getPlayers() {
-    return players;
+  public void addPoints(int points) {
+    this.points += points;
   }
 
   // TODO nockty: check that this is useful.
   public Color getColor() {
     return color;
+  }
+
+  @Override
+  public List<Player> getPlayers() {
+    return players;
+  }
+
+  @Override
+  public int getPoints() {
+    return points;
   }
 }

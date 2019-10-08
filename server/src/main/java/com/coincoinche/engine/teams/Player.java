@@ -39,6 +39,10 @@ public class Player {
     return team.containsPlayer(player);
   }
 
+  public Team getTeam() {
+    return team;
+  }
+
   public void setTeam(Team team) {
     this.team = team;
   }
