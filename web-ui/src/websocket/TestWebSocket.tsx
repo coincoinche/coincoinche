@@ -1,5 +1,5 @@
 import * as React from "react";
-import {SocketMessage, MESSAGE_TYPE, SOCKET_ENDPOINT, TOPIC} from "./types";
+import {HelloMessage, MESSAGE_TYPE, SOCKET_ENDPOINT, SocketMessage, TOPIC} from "./types";
 import './TestWebSocket.css';
 
 const Stomp = require('stompjs');
@@ -11,10 +11,13 @@ type State = {
 
 class TestWebSocket extends React.Component<{}, State> {
   stompClient: any = null;
-  message: SocketMessage = {
+  helloMessage: HelloMessage = {
     type: MESSAGE_TYPE.HELLO,
     content: 'Hello from a client',
     from: 'Client'
+  };
+  joinLobbyMessage: SocketMessage = {
+    type: MESSAGE_TYPE.JOIN_LOBBY,
   };
   state = {
     messages: []
@@ -24,8 +27,12 @@ class TestWebSocket extends React.Component<{}, State> {
     this.connect();
   }
 
-  onMessageReceived = (message: { body: string }) => {
-    const parsedMessage: SocketMessage = JSON.parse(message.body);
+  onMessageReceived = (helloMessage: { body: string, type: string }) => {
+    const parsedMessage: SocketMessage = JSON.parse(helloMessage.body);
+    console.log(helloMessage.type);
+    if (helloMessage.type === MESSAGE_TYPE.GAME_START) {
+      console.log('GAME STARTED');
+    }
     this.setState((prevState: State) => ({ messages: [...prevState.messages, parsedMessage] }))
   };
 
@@ -42,12 +49,13 @@ class TestWebSocket extends React.Component<{}, State> {
   onConnected = () => {
     // Subscribing to the greetings topic where the server sends the response
     this.stompClient.subscribe(TOPIC.GREETINGS, this.onMessageReceived);
+    this.stompClient.subscribe(TOPIC.LOBBY, this.onMessageReceived);
   };
 
-  sendMessage = (message: SocketMessage) => {
+  sendMessage = (helloMessage: SocketMessage) => {
     if (this.stompClient) {
-      this.stompClient.send(SOCKET_ENDPOINT.HELLO, {}, JSON.stringify(message));
-      this.setState((prevState: State) => ({ messages: [...prevState.messages, message] }))
+      this.stompClient.send(SOCKET_ENDPOINT.JOIN_LOBBY, {}, JSON.stringify(helloMessage));
+      this.setState((prevState: State) => ({ messages: [...prevState.messages, helloMessage] }))
     }
   };
 
@@ -56,16 +64,16 @@ class TestWebSocket extends React.Component<{}, State> {
         <div>
           <h3>Messages</h3>
           {
-            this.state.messages.map((message: SocketMessage) => (
+            this.state.messages.map((helloMessage: HelloMessage) => (
               <div id='chat'>
                 <strong>From:</strong>
-                <div>{message.from}</div>
+                <div>{helloMessage.from}</div>
                 <strong>Content:</strong>
-                <div>{message.content}</div>
+                <div>{helloMessage.content}</div>
               </div>
             ))
           }
-          <button onClick={() => this.sendMessage(this.message)} >Send Message</button>
+          <button onClick={() => this.sendMessage(this.joinLobbyMessage)} >Send Message</button>
         </div>
     );
   }

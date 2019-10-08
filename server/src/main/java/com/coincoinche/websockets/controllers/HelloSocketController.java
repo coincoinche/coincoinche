@@ -1,4 +1,4 @@
-package com.coincoinche.websockets;
+package com.coincoinche.websockets.controllers;
 
 import com.coincoinche.websockets.messages.HelloSocketMessage;
 import com.coincoinche.websockets.messages.MessageType;

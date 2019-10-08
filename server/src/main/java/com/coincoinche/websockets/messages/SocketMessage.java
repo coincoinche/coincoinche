@@ -1,6 +1,6 @@
 package com.coincoinche.websockets.messages;
 
-class SocketMessage {
+public class SocketMessage {
   protected MessageType type;
 
   public SocketMessage(MessageType type) {
