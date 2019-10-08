@@ -21,7 +21,7 @@ public class GameStateBidding implements GameStateTerminal {
     this.surcoinched = surcoinched;
   }
 
-  public static GameStateBidding InitialGameStateBidding(Player firstPlayer) {
+  public static GameStateBidding initialGameStateBidding(Player firstPlayer) {
     return new GameStateBidding(firstPlayer, null, false, false);
   }
 
