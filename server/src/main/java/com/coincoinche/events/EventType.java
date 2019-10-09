@@ -1,11 +1,17 @@
 package com.coincoinche.events;
 
 public enum EventType {
+  // communication utility events
   INVALID_MESSAGE("INVALID_MESSAGE"),
   SUCCESS("SUCCESS"),
-  JOIN_LOBBY("JOIN_LOBBY"),
-  GAME_START("GAME_START"),
-  ROUND_START("ROUND_START");
+  CLIENT_READY("CLIENT_READY"),
+
+  // player events
+  PLAYER_JOINED_LOBBY("PLAYER_JOINED_LOBBY"),
+
+  // server events
+  GAME_STARTED("GAME_STARTED"),
+  ROUND_STARTED("ROUND_STARTED");
 
   private String type;
 

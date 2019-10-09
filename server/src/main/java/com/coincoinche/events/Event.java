@@ -1,19 +1,15 @@
-package com.coincoinche.websockets.messages;
+package com.coincoinche.events;
 
-public class SocketMessage {
-  protected MessageType type;
+public class Event {
+  protected EventType type;
 
-  public SocketMessage() {}
+  public Event() {}
 
-  public SocketMessage(MessageType type) {
+  public Event(EventType type) {
     this.type = type;
   }
 
-  public MessageType getType() {
+  public EventType getType() {
     return type;
-  }
-
-  public void setType(MessageType type) {
-    this.type = type;
   }
 }
