@@ -20,6 +20,8 @@ public class GameEngineTestHelper {
   protected Team t1;
   protected Team t2;
 
+  protected CoincheGame coincheGame;
+
   public abstract static class TestCase {
     private String name;
 
@@ -59,6 +61,14 @@ public class GameEngineTestHelper {
     p4 = new Player("Player 4");
     t1 = new Team(p1, p3, Team.Color.RED);
     t2 = new Team(p2, p4, Team.Color.BLUE);
+  }
+
+  /**
+   * Create a new coinche game by using the two teans. <strong>Teams should be created before this
+   * method is called.</strong>
+   */
+  protected void createCoincheGame() {
+    coincheGame = new CoincheGame(t1, t2);
   }
 
   /**
