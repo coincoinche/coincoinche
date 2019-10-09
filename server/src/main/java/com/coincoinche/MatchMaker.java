@@ -1,4 +1,4 @@
-package com.coincoinche.lobby;
+package com.coincoinche;
 
 import com.coincoinche.websockets.controllers.LobbyController;
 import java.util.LinkedList;

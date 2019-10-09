@@ -1,6 +1,6 @@
 package com.coincoinche.websockets.controllers;
 
-import com.coincoinche.lobby.MatchMaker;
+import com.coincoinche.MatchMaker;
 import com.coincoinche.websockets.messages.MessageType;
 import com.coincoinche.websockets.messages.SocketMessage;
 import org.slf4j.Logger;
