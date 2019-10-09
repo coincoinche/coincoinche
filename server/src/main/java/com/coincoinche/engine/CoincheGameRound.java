@@ -1,5 +1,6 @@
 package com.coincoinche.engine;
 
+import com.coincoinche.engine.cards.Deck;
 import com.coincoinche.engine.game.GameResult;
 import com.coincoinche.engine.game.RedBlueRotatingPlayersGame;
 import com.coincoinche.engine.teams.Player;
@@ -13,6 +14,7 @@ public class CoincheGameRound extends RedBlueRotatingPlayersGame<Player> {
 
   public CoincheGameRound(Team redTeam, Team blueTeam) {
     super(redTeam, blueTeam);
+    new Deck().dealCardsToTeams(redTeam, blueTeam);
   }
 
   /**
