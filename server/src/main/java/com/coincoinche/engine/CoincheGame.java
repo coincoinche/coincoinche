@@ -32,10 +32,12 @@ public class CoincheGame extends RedBlueRotatingPlayersGame<Player> {
   }
 
   private Team getWinnerTeam() {
-    if (redTeam.getPoints() > WINNING_POINTS) {
+    int redPoints = redTeam.getPoints();
+    int bluePoints = blueTeam.getPoints();
+    if (redPoints >= WINNING_POINTS && redPoints > bluePoints) {
       return (Team) redTeam;
     }
-    if (blueTeam.getPoints() > WINNING_POINTS) {
+    if (bluePoints >= WINNING_POINTS && bluePoints > redPoints) {
       return (Team) blueTeam;
     }
     return null;
