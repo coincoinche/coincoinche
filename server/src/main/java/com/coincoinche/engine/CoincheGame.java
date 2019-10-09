@@ -66,6 +66,12 @@ public class CoincheGame extends RedBlueRotatingPlayersGame<Player> {
     this.currentRound = currentRound;
   }
 
+  /**
+   * Get a player by his username.
+   *
+   * @param username - username of the player to retrieve.
+   * @return the retrieved player.
+   */
   public Player getPlayer(String username) {
     for (Player player : this.getBlueTeam().getPlayers()) {
       if (player.getUsername().equals(username)) {
