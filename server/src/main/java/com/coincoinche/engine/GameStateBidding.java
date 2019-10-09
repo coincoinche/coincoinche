@@ -67,7 +67,6 @@ public class GameStateBidding implements GameStateTerminal {
    */
   @Override
   public boolean mustChange() {
-    // TODO nockty: handle the case when all players pass
     return surcoinched || currentPlayer.equals(highestBidding.getPlayer());
   }
 

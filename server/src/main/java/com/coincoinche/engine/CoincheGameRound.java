@@ -15,7 +15,12 @@ public class CoincheGameRound extends RedBlueRotatingPlayersGame<Player> {
     super(redTeam, blueTeam);
   }
 
+  /**
+   * This should be called after a move was applied to a game round. It rotates players in the round
+   * and change its state if necessary.
+   */
   GameResult<Team> moveWasApplied() {
+    // TODO nockty: handle the case when all players pass
     // rotate players before checking if the state must change
     rotatePlayers();
     Player newPlayer = getCurrentPlayer();

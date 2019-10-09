@@ -27,7 +27,7 @@ public class CoincheGame extends RedBlueRotatingPlayersGame<Player> {
     if (winnerTeam != null) {
       return GameResult.finishedResult(winnerTeam, winnerTeam.getPoints());
     }
-    updateGameRound();
+    startNextRound();
     return GameResult.unfinishedResult();
   }
 
@@ -41,7 +41,7 @@ public class CoincheGame extends RedBlueRotatingPlayersGame<Player> {
     return null;
   }
 
-  private void updateGameRound() {
+  private void startNextRound() {
     rotatePlayers();
     initializeGameRound();
   }
