@@ -67,22 +67,24 @@ public class LobbyController {
     CoincheGameRound currentRound = game.getCurrentRound();
 
     List<Card> cardsList1 = player1.getCards();
-    List<Card> cardsList2 = player1.getCards();
-    List<Card> cardsList3 = player1.getCards();
-    List<Card> cardsList4 = player1.getCards();
-
     System.out.println("Player 1");
     for (Card card : cardsList1) {
       System.out.print(card + ", ");
     }
+
+    List<Card> cardsList2 = player2.getCards();
     System.out.println("Player 2");
     for (Card card : cardsList2) {
       System.out.print(card + ", ");
     }
+
+    List<Card> cardsList3 = player3.getCards();
     System.out.println("Player 3");
     for (Card card : cardsList3) {
       System.out.print(card + ", ");
     }
+
+    List<Card> cardsList4 = player4.getCards();
     System.out.println("Player 4");
     for (Card card : cardsList4) {
       System.out.print(card + ", ");
