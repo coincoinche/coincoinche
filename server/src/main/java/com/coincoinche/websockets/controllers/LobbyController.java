@@ -50,9 +50,14 @@ public class LobbyController {
     return new SocketMessage(MessageType.SUCCESS);
   }
 
+  /**
+   * Send a signal to all player that the game started.
+   *
+   * @param usernames - players usernames.
+   */
   public void gameStart(String[] usernames) {
     if (usernames.length != 4) {
-      throw new IllegalArgumentException("The game must start with exactly 4 players");
+      throw new IllegalArgumentException("The game must start with exactly 4 players.");
     }
 
     Player player1 = new Player(usernames[0]);
