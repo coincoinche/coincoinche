@@ -1,15 +1,13 @@
-# coincoinche-web
-Web front end for the coincoinche app.
+# Coincoinche -- frontend
 
-## Available Scripts
+The web frontend for the coincoinche app is coded in TypeScript and React, using Node `8.12.0`.
 
-In the project directory, you can run:
+## Development
 
-### `yarn start`
+### Run the app in development mode
 
-Runs the app in the development mode.<br>
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+Use `yarn start` to run the app in the development mode. Open [http://localhost:3000](http://localhost:3000) to see it in the browser.
 
-### `yarn test`
+### Run tests
 
-Launches the test runner in the interactive watch mode.<br>
+Use `yarn test` to launch the test runner in the interactive watch mode.
