@@ -1,5 +1,7 @@
 package com.coincoinche.engine.cards;
 
+import com.fasterxml.jackson.annotation.JsonValue;
+
 /** Card represents a card, represented by a suit and a rank. */
 public class Card {
   private Suit suit;
@@ -15,6 +17,7 @@ public class Card {
   }
 
   @Override
+  @JsonValue
   public String toString() {
     return rank.toString() + suit.toString();
   }

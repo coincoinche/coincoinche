@@ -1,14 +1,15 @@
-package com.coincoinche.websockets.messages;
+package com.coincoinche.events;
 
-public enum MessageType {
+public enum EventType {
   INVALID_MESSAGE("INVALID_MESSAGE"),
   SUCCESS("SUCCESS"),
   JOIN_LOBBY("JOIN_LOBBY"),
-  GAME_START("GAME_START");
+  GAME_START("GAME_START"),
+  ROUND_START("ROUND_START");
 
   private String type;
 
-  MessageType(String type) {
+  EventType(String type) {
     this.type = type;
   }
 
