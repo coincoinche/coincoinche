@@ -39,7 +39,7 @@ public class LobbyController {
       return new SocketMessage(MessageType.INVALID_MESSAGE);
     }
 
-    this.matchMaker.register("testUsername");
+    this.matchMaker.register("testUsername2");
 
     return new SocketMessage(MessageType.SUCCESS);
   }
