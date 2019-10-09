@@ -1,7 +1,8 @@
 package com.coincoinche.websockets.controllers;
 
 import com.coincoinche.lobby.MatchMaker;
-import com.coincoinche.websockets.messages.*;
+import com.coincoinche.websockets.messages.MessageType;
+import com.coincoinche.websockets.messages.SocketMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,19 +32,19 @@ public class LobbyController {
    */
   @MessageMapping("/lobby/join")
   @SendTo("/topic/lobby")
-  public SocketMessage joinLobby(@Payload SearchGame message) {
+  public SocketMessage joinLobby(@Payload SocketMessage message) {
     logger.debug(String.format("Received message %s", message.getType()));
 
     if (!message.getType().equals(MessageType.JOIN_LOBBY)) {
-      return new InvalidMessage();
+      return new SocketMessage(MessageType.INVALID_MESSAGE);
     }
 
     this.matchMaker.register("testUsername");
 
-    return new SuccessMessage();
+    return new SocketMessage(MessageType.SUCCESS);
   }
 
   public void gameStart() {
-    this.template.convertAndSend("/topic/lobby", new GameStart());
+    this.template.convertAndSend("/topic/lobby", new SocketMessage(MessageType.GAME_START));
   }
 }

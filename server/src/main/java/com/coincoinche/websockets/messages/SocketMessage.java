@@ -3,6 +3,8 @@ package com.coincoinche.websockets.messages;
 public class SocketMessage {
   protected MessageType type;
 
+  public SocketMessage() {}
+
   public SocketMessage(MessageType type) {
     this.type = type;
   }
