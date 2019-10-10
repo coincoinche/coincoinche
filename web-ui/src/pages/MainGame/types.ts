@@ -84,11 +84,30 @@ export enum SpecialBidding {
 }
 
 export enum Suit {
-  SPADE = 's',
-  HEART = 'h',
-  CLUB = 'c',
-  DIAMOND = 'd',
+  SPADES = 'spades',
+  HEARTS = 'hearts',
+  CLUBS = 'clubs',
+  DIAMONDS = 'diamonds',
 }
+
+export const fromLetter = (letter: string): Suit => {
+  if (letter === 's') {
+    return Suit.SPADES;
+  }
+
+  if (letter === 'h') {
+    return Suit.HEARTS;
+  }
+
+  if (letter === 'c') {
+    return Suit.CLUBS;
+  }
+
+  if (letter === 'd') {
+    return Suit.DIAMONDS;
+  }
+  throw new Error('Invalid suit letter');
+};
 
 export type Contract = {
   value: ContractValue;

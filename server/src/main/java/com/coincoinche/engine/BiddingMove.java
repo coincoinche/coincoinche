@@ -1,6 +1,7 @@
 package com.coincoinche.engine;
 
 import com.coincoinche.engine.teams.Player;
+import com.coincoinche.events.PlayerBadeEvent;
 import com.fasterxml.jackson.annotation.JsonValue;
 import java.util.List;
 
@@ -65,6 +66,30 @@ public class BiddingMove extends Move implements Comparable<BiddingMove> {
    */
   public static BiddingMove surcoincheMove() {
     return new BiddingMove(null, Special.SURCOINCHE);
+  }
+
+  /**
+   * Create a bidding move from a PlayerBade event.
+   *
+   * @param event - player bade event from the client.
+   * @return the newly constructed bidding move.
+   */
+  public static BiddingMove fromEvent(PlayerBadeEvent event) {
+    Special special = event.getSpecial();
+    if (special == null) {
+      return contractMove(Contract.pointsContract(event.getValue(), event.getSuit()));
+    }
+
+    switch (special) {
+      case PASS:
+        return passMove();
+      case COINCHE:
+        return coincheMove();
+      case SURCOINCHE:
+        return surcoincheMove();
+      default:
+        throw new IllegalArgumentException("Invalid special move.");
+    }
   }
 
   @Override
