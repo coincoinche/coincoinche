@@ -12,12 +12,12 @@ public class Card {
     this.rank = rank;
   }
 
+  @JsonValue
   public String getShortName() {
     return rank.getShortName() + suit.getShortName();
   }
 
   @Override
-  @JsonValue
   public String toString() {
     return rank.toString() + suit.toString();
   }
