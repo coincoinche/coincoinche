@@ -5,6 +5,8 @@ import Container from "../../components/utils/Container";
 import {Contract, ContractValue, GamePhase, GameState, Position, SpecialBidding, Suit, Trick} from "./types";
 import CardBoard from "../../components/cards/CardBoard";
 import BiddingBoard from "../../components/bidding/BiddingBoard";
+import {InjectedProps} from "../../websocket/withWebsocketConnection";
+import {MESSAGE_TYPE, TOPIC_TEMPLATE} from "../../websocket/types";
 
 const CLEAN_TRICK_TIMOUT_MS = 2000;
 
@@ -46,7 +48,16 @@ const emptyTrick: Trick = { top: undefined, left: undefined, right: undefined, b
 
 const isFull = (trick: Trick): boolean => !!trick.top && !!trick.bottom && !!trick.left && !!trick.right;
 
-export default class MainGameScreen extends React.Component<{}, GameState> {
+type Props = InjectedProps & {
+  gameId: string;
+  username: string;
+}
+
+const getGameTopic = (gameId: string, username: string) => TOPIC_TEMPLATE.GAME
+  .replace('{gameId}', gameId)
+  .replace('{username}', username);
+
+export default class MainGameScreen extends React.Component<Props, GameState> {
   state = {
     players,
     currentPlayer: Position.bottom,
@@ -55,19 +66,49 @@ export default class MainGameScreen extends React.Component<{}, GameState> {
     contract: null,
   };
 
-  componentDidUpdate(): void {
+  componentDidMount(): void {
+    this.props.registerOnMessageReceivedCallback(
+      getGameTopic(this.props.gameId, this.props.username),
+      MESSAGE_TYPE.ROUND_STARTED,
+      ({ playerCards }) => this.updatePlayerCards(playerCards),
+    );
+    this.props.subscribe(getGameTopic(this.props.gameId, this.props.username));
+    // TODO replace socket endpoint by Socket endpoint template
+    this.props.sendMessage(`/app/game/${this.props.gameId}/player/${this.props.username}/ready`, { type: MESSAGE_TYPE.CLIENT_READY })
+  }
+
+  componentDidUpdate(prevProps: Readonly<InjectedProps>): void {
     if (isFull(this.state.currentTrick)) {
       setTimeout(() => {
         this.setState({currentTrick: {...emptyTrick}})
       }, CLEAN_TRICK_TIMOUT_MS)
     }
+
+    if (!prevProps.socketConnected && this.props.socketConnected) {
+      this.props.subscribe(getGameTopic(this.props.gameId, 'test'));
+      console.log("subscribe to topic: ", getGameTopic(this.props.gameId, 'test'))
+    }
   }
 
+  updatePlayerCards = (newCards: CardValue[]) => {
+    this.setState(prevState => ({
+      players: {
+        ...prevState.players,
+        [Position.bottom]: {
+          ...prevState.players[Position.bottom],
+          cardsInHand: newCards,
+        }
+      }
+    }))
+  };
+
   playCard = (player: Position, card: CardValue) => {
+    const playerCards = this.state.players[player].cardsInHand;
+    playerCards.splice(playerCards.indexOf(card), 1);
+    this.updatePlayerCards(playerCards);
+
     this.setState(prevState => {
       const player = prevState.currentPlayer;
-      const playerCards = prevState.players[player].cardsInHand;
-      playerCards.splice(playerCards.indexOf(card), 1);
 
       return ({
         currentPlayer: getNextPlayer(player),
@@ -75,13 +116,6 @@ export default class MainGameScreen extends React.Component<{}, GameState> {
           ...this.state.currentTrick,
           [player]: card,
         },
-        players: {
-          ...prevState.players,
-          [player]: {
-            authorisedPlays: prevState.players[player].authorisedPlays,
-            cardsInHand: playerCards,
-          }
-        }
       })
     })
   };

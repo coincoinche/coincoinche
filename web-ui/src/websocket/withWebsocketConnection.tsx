@@ -1,24 +1,25 @@
 import * as React from "react";
-import { MESSAGE_TYPE, SOCKET_ENDPOINT, SocketMessage, TOPIC } from "./types";
+import { MESSAGE_TYPE, SocketMessage } from "./types";
 
 const Stomp = require('stompjs');
 const SockJS = require('sockjs-client');
 
 export type InjectedProps = {
-  sendMessage: (socketEndpoint: SOCKET_ENDPOINT, message: SocketMessage) => void;
-  registerOnMessageReceivedCallback: (topic: TOPIC, messageType: MESSAGE_TYPE, callback: MessageCallback) => void;
+  sendMessage: (socketEndpoint: string, message: SocketMessage) => void;
+  registerOnMessageReceivedCallback: (topic: string, messageType: MESSAGE_TYPE, callback: MessageCallback) => void;
   socketConnected: boolean;
+  subscribe: (topic: string) => void;
 }
 
 type WrappedComponentProps<BaseProps> = BaseProps & InjectedProps;
 
 type RawSocketMessage = { body: string };
 
-type MessageCallback = (message: SocketMessage) => void;
+type MessageCallback = (message: SocketMessage & any) => void;
 
 type State = {
   callbacks: {
-    [k in TOPIC]?: {
+    [topic: string]: {
       [k in MESSAGE_TYPE]?: MessageCallback;
     };
   }
@@ -37,8 +38,9 @@ function withWebsocketConnection<BaseProps>(WrappedComponent: React.ComponentTyp
       this.connect();
     }
 
-    onMessageReceived = (topic: TOPIC, message: RawSocketMessage) => {
+    onMessageReceived = (topic: string, message: RawSocketMessage) => {
       const parsedMessage: SocketMessage = JSON.parse(message.body);
+      console.log("onMessageReceived", parsedMessage);
       // @ts-ignore
       if (!!this.state.callbacks[topic] && !!this.state.callbacks[topic][parsedMessage.type]) {
         // @ts-ignore
@@ -47,7 +49,7 @@ function withWebsocketConnection<BaseProps>(WrappedComponent: React.ComponentTyp
     };
 
     registerCallback = (
-      topic: TOPIC,
+      topic: string,
       messageType: MESSAGE_TYPE,
       callback: MessageCallback,
     ) => {
@@ -74,24 +76,30 @@ function withWebsocketConnection<BaseProps>(WrappedComponent: React.ComponentTyp
     };
 
     onConnected = () => {
-      Object.values(TOPIC).forEach(
-        topic =>
-          this.stompClient.subscribe(
-            topic,
-            (message: RawSocketMessage) => this.onMessageReceived(topic, message)
-          )
-      );
       this.setState({socketConnected: true});
     };
 
-    sendMessage = (socketEndpoint: SOCKET_ENDPOINT, message: SocketMessage) => {
+    subscribe = (topic: string) => {
+      this.stompClient.subscribe(
+        topic,
+        (message: RawSocketMessage) => this.onMessageReceived(topic, message)
+      )
+    };
+
+    sendMessage = (socketEndpoint: string, message: SocketMessage) => {
       if (this.stompClient) {
         this.stompClient.send(socketEndpoint, {}, JSON.stringify(message));
       }
     };
 
     render() {
-      return <WrappedComponent socketConnected={this.state.socketConnected} sendMessage={this.sendMessage} registerOnMessageReceivedCallback={this.registerCallback} {...this.props} />
+      return <WrappedComponent
+        socketConnected={this.state.socketConnected}
+        sendMessage={this.sendMessage}
+        registerOnMessageReceivedCallback={this.registerCallback}
+        subscribe={this.subscribe}
+        {...this.props}
+      />
     }
   }
 }

@@ -2,11 +2,6 @@ package com.coincoinche.engine.cards;
 
 /** Rank is an enum representing a card's rank. */
 public enum Rank {
-  TWO("2"),
-  THREE("3"),
-  FOUR("4"),
-  FIVE("5"),
-  SIX("6"),
   SEVEN("7"),
   EIGHT("8"),
   NINE("9"),

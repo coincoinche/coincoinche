@@ -2,13 +2,13 @@ package com.coincoinche.websockets.controllers;
 
 import com.coincoinche.MatchMaker;
 import com.coincoinche.engine.CoincheGame;
-import com.coincoinche.engine.CoincheGameRound;
-import com.coincoinche.engine.cards.Card;
 import com.coincoinche.engine.teams.Player;
 import com.coincoinche.engine.teams.Team;
-import com.coincoinche.websockets.messages.MessageType;
-import com.coincoinche.websockets.messages.SocketMessage;
-import java.util.List;
+import com.coincoinche.events.Event;
+import com.coincoinche.events.EventType;
+import com.coincoinche.events.GameStartedEvent;
+import com.coincoinche.events.PlayerJoinedLobbyEvent;
+import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +23,7 @@ public class LobbyController {
   private static final Logger logger = LoggerFactory.getLogger(LobbyController.class);
 
   @Autowired private SimpMessagingTemplate template;
+  @Autowired private GameController gameController;
 
   private MatchMaker matchMaker;
 
@@ -31,23 +32,25 @@ public class LobbyController {
   }
 
   /**
-   * Sample websocket endpoint.
+   * Endpoint called to register the player and find other players to start a new game.
    *
    * @param message - incoming message.
    * @return message acknowledging reception.
    */
   @MessageMapping("/lobby/join")
   @SendTo("/topic/lobby")
-  public SocketMessage joinLobby(@Payload SocketMessage message) {
-    logger.debug(String.format("Received message %s", message.getType()));
+  public Event joinLobby(@Payload PlayerJoinedLobbyEvent message) {
+    logger.debug(
+        String.format(
+            "Received message %s, username %s", message.getType(), message.getUsername()));
 
-    if (!message.getType().equals(MessageType.JOIN_LOBBY)) {
-      return new SocketMessage(MessageType.INVALID_MESSAGE);
+    if (!message.getType().equals(EventType.PLAYER_JOINED_LOBBY)) {
+      return new Event(EventType.INVALID_MESSAGE);
     }
 
-    this.matchMaker.register("testUsername");
+    this.matchMaker.register(message.getUsername());
 
-    return new SocketMessage(MessageType.SUCCESS);
+    return new Event(EventType.SUCCESS);
   }
 
   /**
@@ -69,32 +72,10 @@ public class LobbyController {
     Team blueTeam = new Team(player3, player4, Team.Color.BLUE);
 
     CoincheGame game = new CoincheGame(redTeam, blueTeam);
-    CoincheGameRound currentRound = game.getCurrentRound();
 
-    List<Card> cardsList1 = player1.getCards();
-    System.out.println("Player 1");
-    for (Card card : cardsList1) {
-      System.out.print(card + ", ");
-    }
+    String gameId = UUID.randomUUID().toString();
 
-    List<Card> cardsList2 = player2.getCards();
-    System.out.println("Player 2");
-    for (Card card : cardsList2) {
-      System.out.print(card + ", ");
-    }
-
-    List<Card> cardsList3 = player3.getCards();
-    System.out.println("Player 3");
-    for (Card card : cardsList3) {
-      System.out.print(card + ", ");
-    }
-
-    List<Card> cardsList4 = player4.getCards();
-    System.out.println("Player 4");
-    for (Card card : cardsList4) {
-      System.out.print(card + ", ");
-    }
-
-    this.template.convertAndSend("/topic/lobby", new SocketMessage(MessageType.GAME_START));
+    this.template.convertAndSend("/topic/lobby", new GameStartedEvent(gameId));
+    this.gameController.registerNewGame(gameId, game);
   }
 }
