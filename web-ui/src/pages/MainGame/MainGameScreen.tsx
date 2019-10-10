@@ -2,7 +2,21 @@ import React from 'react';
 import HandOfCards from "../../components/cards/HandOfCards";
 import {CardValue} from '../../assets/cards';
 import Container from "../../components/utils/Container";
-import {Contract, ContractValue, GamePhase, GameState, Position, SpecialBidding, Suit, Trick} from "./types";
+import {
+  AuthorisedBidding,
+  AuthorisedContractBidding,
+  AuthorisedSpecialBidding,
+  Contract,
+  ContractValue,
+  GamePhase,
+  GameState,
+  isAuthorisedContractBidding,
+  isAuthorisedSpecialBidding,
+  Position,
+  SpecialBidding,
+  Suit,
+  Trick
+} from "./types";
 import CardBoard from "../../components/cards/CardBoard";
 import BiddingBoard from "../../components/bidding/BiddingBoard";
 import {InjectedProps} from "../../websocket/withWebsocketConnection";
@@ -13,6 +27,9 @@ const CLEAN_TRICK_TIMOUT_MS = 2000;
 const makeOtherPlayer = () => ({
   authorisedPlays: new Array(8).fill(true),
   cardsInHand: new Array(8).fill(CardValue.blue_back),
+  authorisedContractValues: [],
+  authorisedSpecialBiddings: [],
+  authorisedContractSuits: [],
 });
 
 const players = {
@@ -20,8 +37,11 @@ const players = {
   [Position.right]: makeOtherPlayer(),
   [Position.left]: makeOtherPlayer(),
   [Position.bottom]: {
-    authorisedPlays: [true, true, true, false, false, true, true, false],
+    authorisedPlays: [],
     cardsInHand: [CardValue.jc, CardValue.jd, CardValue.jh, CardValue.js, CardValue.ac, CardValue.ad, CardValue.ah, CardValue.as],
+    authorisedContractValues: [],
+    authorisedSpecialBiddings: [],
+    authorisedContractSuits: [],
   }
 };
 
@@ -72,6 +92,34 @@ export default class MainGameScreen extends React.Component<Props, GameState> {
       MESSAGE_TYPE.ROUND_STARTED,
       ({ playerCards }) => this.updatePlayerCards(playerCards),
     );
+
+    this.props.registerOnMessageReceivedCallback(
+      getGameTopic(this.props.gameId, this.props.username),
+      MESSAGE_TYPE.TURN_STARTED,
+      ({ authorizedPlays }) => {
+        const parsedAuthorisedPlays = authorizedPlays.map((play: string) => JSON.parse(play));
+        const authorisedContractBiddings = parsedAuthorisedPlays
+          .filter((play: AuthorisedBidding) => isAuthorisedContractBidding(play));
+        const authorisedContractValues = authorisedContractBiddings.map((play: AuthorisedContractBidding) => play.value.toString());
+        const authorisedContractSuits = authorisedContractBiddings.map((play: AuthorisedContractBidding) => play.suit);
+        const authorisedSpecialBiddings = parsedAuthorisedPlays
+          .filter((play: AuthorisedBidding) => isAuthorisedSpecialBidding(play))
+          .map((play: AuthorisedSpecialBidding) => play.special);
+
+        this.setState(prevState => ({
+          players: {
+            ...prevState.players,
+            [Position.bottom]: {
+              ...prevState.players[Position.bottom],
+              authorisedContractValues,
+              authorisedSpecialBiddings,
+              authorisedContractSuits,
+            }
+          }
+        }))
+      },
+    );
+
     this.props.subscribe(getGameTopic(this.props.gameId, this.props.username));
     // TODO replace socket endpoint by Socket endpoint template
     this.props.sendMessage(`/app/game/${this.props.gameId}/player/${this.props.username}/ready`, { type: MESSAGE_TYPE.CLIENT_READY })
@@ -85,8 +133,7 @@ export default class MainGameScreen extends React.Component<Props, GameState> {
     }
 
     if (!prevProps.socketConnected && this.props.socketConnected) {
-      this.props.subscribe(getGameTopic(this.props.gameId, 'test'));
-      console.log("subscribe to topic: ", getGameTopic(this.props.gameId, 'test'))
+      this.props.subscribe(getGameTopic(this.props.gameId, this.props.username));
     }
   }
 
@@ -156,9 +203,9 @@ export default class MainGameScreen extends React.Component<Props, GameState> {
         />
         {
           this.state.currentPhase === GamePhase.bidding && <BiddingBoard
-            authorisedContractValues={Object.values(ContractValue).splice(3, Object.values(ContractValue).length - 1)}
-            authorisedSpecialBiddings={Object.values(SpecialBidding)}
-            authorisedContractSuits={Object.values(Suit)}
+            authorisedContractValues={players[Position.bottom].authorisedContractValues}
+            authorisedSpecialBiddings={players[Position.bottom].authorisedSpecialBiddings}
+            authorisedContractSuits={players[Position.bottom].authorisedContractSuits}
             onContractPicked={this.onContractPicked}
             lastContract={{
               value: ContractValue.HUNDRED_TEN,

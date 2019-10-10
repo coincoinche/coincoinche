@@ -136,7 +136,7 @@ export default class BiddingBoard extends React.Component<Props, State> {
 
                 return (
                   <SuitSelector
-                    src={require(`../../assets/${suit}.png`)}
+                    src={require(`../../assets/suits/${suit}.png`)}
                     key={suit}
                     selectedByOpponent={(lastContract || {}).suit === suit}
                     onClick={onClick}

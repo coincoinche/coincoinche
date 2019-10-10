@@ -40,7 +40,7 @@ public class CoincheGameRound extends RedBlueRotatingPlayersGame<Player> {
   }
 
   @Override
-  protected Player getCurrentPlayer() {
+  public Player getCurrentPlayer() {
     return super.getCurrentPlayer();
   }
 

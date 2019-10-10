@@ -1,6 +1,7 @@
 package com.coincoinche.engine;
 
 import com.coincoinche.engine.teams.Player;
+import com.fasterxml.jackson.annotation.JsonValue;
 import java.util.List;
 
 /**
@@ -122,15 +123,15 @@ public class BiddingMove extends Move implements Comparable<BiddingMove> {
   }
 
   public boolean isPass() {
-    return specialMove.equals(Special.PASS);
+    return specialMove != null && specialMove.equals(Special.PASS);
   }
 
   public boolean isCoinche() {
-    return specialMove.equals(Special.COINCHE);
+    return specialMove != null && specialMove.equals(Special.COINCHE);
   }
 
   public boolean isSurcoinche() {
-    return specialMove.equals(Special.SURCOINCHE);
+    return specialMove != null && specialMove.equals(Special.SURCOINCHE);
   }
 
   /**
@@ -166,5 +167,22 @@ public class BiddingMove extends Move implements Comparable<BiddingMove> {
       return specialMove.toString();
     }
     return contract.toString();
+  }
+
+  @JsonValue
+  public String toJson() {
+    String specialMoveJsonTemplate = "{\"special\":\"%s\"}";
+
+    if (isCoinche()) {
+      return String.format(specialMoveJsonTemplate, Special.COINCHE);
+    }
+    if (isSurcoinche()) {
+      return String.format(specialMoveJsonTemplate, Special.SURCOINCHE);
+    }
+    if (isPass()) {
+      return String.format(specialMoveJsonTemplate, Special.PASS);
+    }
+
+    return getContract().toJson();
   }
 }
