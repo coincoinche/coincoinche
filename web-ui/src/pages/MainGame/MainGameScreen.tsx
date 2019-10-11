@@ -219,7 +219,6 @@ export default class MainGameScreen extends React.Component<Props, State> {
   };
 
   onContractPicked = (contract: AuthorisedBidding) => {
-    console.log({contract});
     const message = isAuthorisedSpecialBidding(contract) ? {
       type: MESSAGE_TYPE.PLAYER_BADE,
       special: contract.special,
@@ -277,7 +276,6 @@ export default class MainGameScreen extends React.Component<Props, State> {
             authorisedSpecialBiddings={players[Position.bottom].authorisedSpecialBiddings}
             authorisedContractSuits={players[Position.bottom].authorisedContractSuits}
             onContractPicked={this.onContractPicked}
-            // TODO add special contracts
             lastContract={lastContract}
           />
         }

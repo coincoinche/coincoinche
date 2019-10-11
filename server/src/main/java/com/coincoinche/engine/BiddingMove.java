@@ -194,6 +194,11 @@ public class BiddingMove extends Move implements Comparable<BiddingMove> {
     return contract.toString();
   }
 
+  /**
+   * Defines the json serialisation for BiddingMove instances.
+   *
+   * @return a json representation of the bidding move.
+   */
   @JsonValue
   public String toJson() {
     String specialMoveJsonTemplate = "{\"special\":\"%s\"}";
