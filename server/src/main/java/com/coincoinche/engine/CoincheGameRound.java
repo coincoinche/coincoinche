@@ -9,6 +9,7 @@ import java.util.List;
 /** Implementation of a coinche round. */
 public class CoincheGameRound extends RedBlueRotatingPlayersGame<Player> {
 
+  private CoincheGame globalGame;
   private GameState state;
 
   public CoincheGameRound(Team redTeam, Team blueTeam) {
@@ -20,11 +21,19 @@ public class CoincheGameRound extends RedBlueRotatingPlayersGame<Player> {
    * and change its state if necessary.
    */
   GameResult<Team> moveWasApplied() {
-    // TODO nockty: handle the case when all players pass
     // rotate players before checking if the state must change
     rotatePlayers();
     Player newPlayer = getCurrentPlayer();
     state.setCurrentPlayer(newPlayer);
+    // handle the case when all players pass the bidding phase: new round must start
+    if (state instanceof GameStateBidding) {
+      GameStateBidding biddingState = (GameStateBidding) state;
+      // current player of the global game is first player of the round
+      if (biddingState.getHighestBidding() == null
+          && biddingState.getCurrentPlayer().equals(globalGame.getCurrentPlayer())) {
+        return GameResult.drawResult();
+      }
+    }
     if (state.mustChange()) {
       if (state instanceof GameStateTerminal) {
         GameStateTerminal terminalState = (GameStateTerminal) state;
@@ -40,6 +49,10 @@ public class CoincheGameRound extends RedBlueRotatingPlayersGame<Player> {
   @Override
   protected Player getCurrentPlayer() {
     return super.getCurrentPlayer();
+  }
+
+  public void setGlobalGame(CoincheGame globalGame) {
+    this.globalGame = globalGame;
   }
 
   public void setState(GameState state) {
