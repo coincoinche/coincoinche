@@ -72,8 +72,7 @@ public class GameController {
         getTopicPath(gameId, username), new RoundStartedEvent(game.getPlayer(username).getCards()));
 
     this.template.convertAndSend(
-        getTopicPath(gameId, username),
-        new RoundPhaseStartedEvent(game.getCurrentPlayerIndex()));
+        getTopicPath(gameId, username), new RoundPhaseStartedEvent(game.getCurrentPlayerIndex()));
 
     this.notifyPlayerTurnStarted(gameId, username);
   }

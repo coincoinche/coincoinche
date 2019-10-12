@@ -77,6 +77,18 @@ export enum ContractValue {
   GENERALE = '500',
 }
 
+export const getDisplayedValue = (value: ContractValue) => {
+  if (value === ContractValue.CAPOT) {
+    return 'CAPOT';
+  }
+
+  if (value === ContractValue.GENERALE) {
+    return 'GENERALE';
+  }
+
+  return value;
+};
+
 export enum SpecialBidding {
   COINCHE = 'COINCHE',
   SURCOINCHE = 'SURCOINCHE',

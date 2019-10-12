@@ -3,7 +3,7 @@ import styled from "styled-components";
 import ValueSelector from "./ValueSelector";
 import {
   AuthorisedBidding,
-  ContractValue,
+  ContractValue, getDisplayedValue,
   isAuthorisedSpecialBidding,
   SpecialBidding,
   Suit
@@ -151,7 +151,7 @@ export default class BiddingBoard extends React.Component<Props, State> {
                       onClick={onClick}
                       selectedByPlayer={this.state.selectedValue === value}
                     >
-                      {value}
+                      {getDisplayedValue(value)}
                     </ValueSelector>
                   )
                 })
