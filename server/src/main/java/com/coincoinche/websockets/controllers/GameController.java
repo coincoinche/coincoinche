@@ -97,7 +97,15 @@ public class GameController {
       e.printStackTrace();
       this.template.convertAndSend(
           getTopicPath(gameId, username), new Event(EventType.INVALID_MESSAGE));
-      return;
+
+      try {
+        // make the player pass if the bidding move is invalid.
+        BiddingMove.passMove().applyOnGame(game);
+        this.template.convertAndSend(
+            getBroadcastTopicPath(gameId), new PlayerBadeEvent(BiddingMove.Special.PASS));
+      } catch (IllegalMoveException illegalPassMoveException) {
+        illegalPassMoveException.printStackTrace();
+      }
     }
 
     this.notifyPlayerTurnStarted(gameId, game.getCurrentRound().getCurrentPlayer().getUsername());
