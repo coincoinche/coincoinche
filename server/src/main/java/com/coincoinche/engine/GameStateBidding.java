@@ -46,23 +46,23 @@ public class GameStateBidding implements GameStateTerminal {
   private List<Move> getUnsortedLegalMoves() {
     List<Move> legalMoves = new ArrayList<>();
     // Can always pass
-    legalMoves.add(BiddingMove.passMove());
+    legalMoves.add(MoveBidding.passMove());
     // only surcoinche is legal if there is a coinche
     if (coinched) {
       if (currentPlayer.isTeamMate(highestBidding.getPlayer())) {
-        legalMoves.add(BiddingMove.surcoincheMove());
+        legalMoves.add(MoveBidding.surcoincheMove());
       }
       return legalMoves;
     }
     // contracts strictly better than current contract are legal
     for (Contract contract : Contract.generateAllContracts()) {
       if (contract.isHigherThan(highestBidding)) {
-        legalMoves.add(BiddingMove.contractMove(contract));
+        legalMoves.add(MoveBidding.contractMove(contract));
       }
     }
     // coinche is legal if an opponent has the highest bidding
     if (highestBidding != null && !currentPlayer.isTeamMate(highestBidding.getPlayer())) {
-      legalMoves.add(BiddingMove.coincheMove());
+      legalMoves.add(MoveBidding.coincheMove());
     }
     return legalMoves;
   }

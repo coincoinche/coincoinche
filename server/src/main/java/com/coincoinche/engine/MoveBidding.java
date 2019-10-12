@@ -4,7 +4,7 @@ import com.coincoinche.engine.teams.Player;
 import java.util.List;
 
 /**
- * BiddingMove represents a move during the bidding phase of the game. It can be:
+ * MoveBidding represents a move during the bidding phase of the game. It can be:
  *
  * <ul>
  *   <li>pass
@@ -13,7 +13,7 @@ import java.util.List;
  *   <li>a contract higher than the previous one
  * </ul>
  */
-public class BiddingMove extends Move implements Comparable<BiddingMove> {
+public class MoveBidding extends Move implements Comparable<MoveBidding> {
 
   public enum Special {
     PASS,
@@ -24,7 +24,7 @@ public class BiddingMove extends Move implements Comparable<BiddingMove> {
   private Contract contract;
   private Special specialMove;
 
-  private BiddingMove(Contract contract, Special specialMove) {
+  private MoveBidding(Contract contract, Special specialMove) {
     this.contract = contract;
     this.specialMove = specialMove;
   }
@@ -35,8 +35,8 @@ public class BiddingMove extends Move implements Comparable<BiddingMove> {
    * @param contract represents the contract claimed during the move.
    * @return the newly constructed bidding move.
    */
-  public static BiddingMove contractMove(Contract contract) {
-    return new BiddingMove(contract, null);
+  public static MoveBidding contractMove(Contract contract) {
+    return new MoveBidding(contract, null);
   }
 
   /**
@@ -44,8 +44,8 @@ public class BiddingMove extends Move implements Comparable<BiddingMove> {
    *
    * @return the newly constructed bidding move.
    */
-  public static BiddingMove passMove() {
-    return new BiddingMove(null, Special.PASS);
+  public static MoveBidding passMove() {
+    return new MoveBidding(null, Special.PASS);
   }
 
   /**
@@ -53,8 +53,8 @@ public class BiddingMove extends Move implements Comparable<BiddingMove> {
    *
    * @return the newly constructed bidding move.
    */
-  public static BiddingMove coincheMove() {
-    return new BiddingMove(null, Special.COINCHE);
+  public static MoveBidding coincheMove() {
+    return new MoveBidding(null, Special.COINCHE);
   }
 
   /**
@@ -62,12 +62,12 @@ public class BiddingMove extends Move implements Comparable<BiddingMove> {
    *
    * @return the newly constructed bidding move.
    */
-  public static BiddingMove surcoincheMove() {
-    return new BiddingMove(null, Special.SURCOINCHE);
+  public static MoveBidding surcoincheMove() {
+    return new MoveBidding(null, Special.SURCOINCHE);
   }
 
   @Override
-  protected void applyOnRoundState(GameState state) throws IllegalMoveException {
+  protected void applyOnRoundState(GameState state, Player player) throws IllegalMoveException {
     if (!(state instanceof GameStateBidding)) {
       throw new IllegalMoveException(this + " must be applied to a bidding state");
     }
@@ -82,9 +82,11 @@ public class BiddingMove extends Move implements Comparable<BiddingMove> {
           break;
         case COINCHE:
           biddingGameState.setCoinched(true);
+          biddingGameState.setLastPlayer(player);
           break;
         case SURCOINCHE:
           biddingGameState.setSurcoinched(true);
+          biddingGameState.setLastPlayer(player);
           break;
         default:
           break;
@@ -92,10 +94,11 @@ public class BiddingMove extends Move implements Comparable<BiddingMove> {
       return;
     }
     biddingGameState.setHighestBidding(contract.withPlayer(biddingGameState.getCurrentPlayer()));
+    biddingGameState.setLastPlayer(player);
   }
 
   @Override
-  public int compareTo(BiddingMove o) {
+  public int compareTo(MoveBidding o) {
     // Special moves: PASS < COINCHE < SURCOINCHE
     if (this.specialMove != null && o.specialMove != null) {
       return this.specialMove.compareTo(o.specialMove);
@@ -150,10 +153,10 @@ public class BiddingMove extends Move implements Comparable<BiddingMove> {
     if (obj == this) {
       return true;
     }
-    if (!(obj instanceof BiddingMove)) {
+    if (!(obj instanceof MoveBidding)) {
       return false;
     }
-    BiddingMove otherMove = (BiddingMove) obj;
+    MoveBidding otherMove = (MoveBidding) obj;
     if (this.specialMove != null || otherMove.specialMove != null) {
       return this.specialMove == otherMove.specialMove;
     }
