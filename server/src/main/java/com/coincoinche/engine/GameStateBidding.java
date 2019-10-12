@@ -9,20 +9,27 @@ import java.util.List;
 public class GameStateBidding implements GameStateTerminal {
 
   private Player currentPlayer;
+  // last player who made a non-pass move
+  private Player lastPlayer;
   private Contract highestBidding;
   private boolean coinched;
   private boolean surcoinched;
 
   GameStateBidding(
-      Player currentPlayer, Contract highestBidding, boolean coinched, boolean surcoinched) {
+      Player currentPlayer,
+      Player lastPlayer,
+      Contract highestBidding,
+      boolean coinched,
+      boolean surcoinched) {
     this.currentPlayer = currentPlayer;
+    this.lastPlayer = lastPlayer;
     this.highestBidding = highestBidding;
     this.coinched = coinched;
     this.surcoinched = surcoinched;
   }
 
   public static GameStateBidding initialGameStateBidding(Player firstPlayer) {
-    return new GameStateBidding(firstPlayer, null, false, false);
+    return new GameStateBidding(firstPlayer, null, null, false, false);
   }
 
   /**
@@ -67,7 +74,7 @@ public class GameStateBidding implements GameStateTerminal {
    */
   @Override
   public boolean mustChange() {
-    return surcoinched || currentPlayer.equals(highestBidding.getPlayer());
+    return surcoinched || currentPlayer.equals(lastPlayer);
   }
 
   @Override
@@ -90,6 +97,22 @@ public class GameStateBidding implements GameStateTerminal {
 
   public void setHighestBidding(Contract highestBidding) {
     this.highestBidding = highestBidding;
+  }
+
+  public Contract getHighestBidding() {
+    return highestBidding;
+  }
+
+  public boolean isCoinched() {
+    return coinched;
+  }
+
+  public boolean isSurcoinched() {
+    return surcoinched;
+  }
+
+  public void setLastPlayer(Player lastPlayer) {
+    this.lastPlayer = lastPlayer;
   }
 
   // TODO nockty see if we can use a default method here
