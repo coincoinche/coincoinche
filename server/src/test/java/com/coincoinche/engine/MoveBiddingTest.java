@@ -244,9 +244,9 @@ public class MoveBiddingTest extends GameEngineTestHelper {
     game = simpleCoincheGame();
     preMoveRound = game.getCurrentRound();
     try {
+      MoveBidding.contractMove(Contract.pointsContract(80, Suit.HEARTS)).applyOnGame(game);
       GameResult<Team> result =
-          MoveBidding.contractMove(Contract.pointsContract(80, Suit.HEARTS)).applyOnGame(game);
-      MoveBidding.contractMove(Contract.pointsContract(90, Suit.SPADES)).applyOnGame(game);
+          MoveBidding.contractMove(Contract.pointsContract(90, Suit.SPADES)).applyOnGame(game);
       assertThat(result.isFinished())
           .as(String.format("%s: check game hasn't finished", testCaseName))
           .isFalse();
