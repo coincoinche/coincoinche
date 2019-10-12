@@ -4,7 +4,6 @@ import com.coincoinche.engine.BiddingMove;
 import com.coincoinche.engine.CoincheGame;
 import com.coincoinche.engine.IllegalMoveException;
 import com.coincoinche.engine.Move;
-import com.coincoinche.engine.RoundPhase;
 import com.coincoinche.events.Event;
 import com.coincoinche.events.EventType;
 import com.coincoinche.events.PlayerBadeEvent;
@@ -74,7 +73,7 @@ public class GameController {
 
     this.template.convertAndSend(
         getTopicPath(gameId, username),
-        new RoundPhaseStartedEvent(RoundPhase.BIDDING, game.getCurrentPlayerIndex()));
+        new RoundPhaseStartedEvent(game.getCurrentPlayerIndex()));
 
     this.notifyPlayerTurnStarted(gameId, username);
   }
