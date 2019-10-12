@@ -2,7 +2,19 @@ import React from 'react';
 import HandOfCards from "../../components/cards/HandOfCards";
 import {CardValue} from '../../assets/cards';
 import Container from "../../components/utils/Container";
-import {Contract, ContractValue, GamePhase, GameState, Position, SpecialBidding, Suit, Trick} from "./types";
+import {
+  AuthorisedBidding,
+  AuthorisedContractBidding,
+  AuthorisedSpecialBidding,
+  ContractValue, fromLetter,
+  GamePhase,
+  GameState,
+  isAuthorisedContractBidding,
+  isAuthorisedSpecialBidding,
+  Position,
+  Suit,
+  Trick
+} from "./types";
 import CardBoard from "../../components/cards/CardBoard";
 import BiddingBoard from "../../components/bidding/BiddingBoard";
 import {InjectedProps} from "../../websocket/withWebsocketConnection";
@@ -11,8 +23,11 @@ import {MESSAGE_TYPE, TOPIC_TEMPLATE} from "../../websocket/types";
 const CLEAN_TRICK_TIMOUT_MS = 2000;
 
 const makeOtherPlayer = () => ({
-  authorisedPlays: new Array(8).fill(true),
+  legalMoves: new Array(8).fill(true),
   cardsInHand: new Array(8).fill(CardValue.blue_back),
+  authorisedContractValues: [],
+  authorisedSpecialBiddings: [],
+  authorisedContractSuits: [],
 });
 
 const players = {
@@ -20,8 +35,11 @@ const players = {
   [Position.right]: makeOtherPlayer(),
   [Position.left]: makeOtherPlayer(),
   [Position.bottom]: {
-    authorisedPlays: [true, true, true, false, false, true, true, false],
+    legalMoves: [],
     cardsInHand: [CardValue.jc, CardValue.jd, CardValue.jh, CardValue.js, CardValue.ac, CardValue.ad, CardValue.ah, CardValue.as],
+    authorisedContractValues: [],
+    authorisedSpecialBiddings: [],
+    authorisedContractSuits: [],
   }
 };
 
@@ -53,12 +71,19 @@ type Props = InjectedProps & {
   username: string;
 }
 
+type State = GameState & {
+  lastBiddingContract?: AuthorisedBidding
+}
+
 const getGameTopic = (gameId: string, username: string) => TOPIC_TEMPLATE.GAME
   .replace('{gameId}', gameId)
   .replace('{username}', username);
 
-export default class MainGameScreen extends React.Component<Props, GameState> {
-  state = {
+const getBroadcastGameTopic = (gameId: string) => TOPIC_TEMPLATE.GAME_BROADCAST
+  .replace('{gameId}', gameId);
+
+export default class MainGameScreen extends React.Component<Props, State> {
+  state: State = {
     players,
     currentPlayer: Position.bottom,
     currentTrick: {...emptyTrick},
@@ -72,7 +97,60 @@ export default class MainGameScreen extends React.Component<Props, GameState> {
       MESSAGE_TYPE.ROUND_STARTED,
       ({ playerCards }) => this.updatePlayerCards(playerCards),
     );
+
+    this.props.registerOnMessageReceivedCallback(
+      getGameTopic(this.props.gameId, this.props.username),
+      MESSAGE_TYPE.TURN_STARTED,
+      ({ legalMoves }) => {
+        const parsedlegalMoves = legalMoves.map((play: string) => JSON.parse(play));
+        const authorisedContractBiddings = parsedlegalMoves
+          .filter((play: AuthorisedBidding) => isAuthorisedContractBidding(play));
+        const authorisedContractValues = authorisedContractBiddings.map((play: AuthorisedContractBidding) => play.value.toString());
+        const authorisedContractSuits = authorisedContractBiddings.map((play: AuthorisedContractBidding) => fromLetter(play.suit));
+        const authorisedSpecialBiddings = parsedlegalMoves
+          .filter((play: AuthorisedBidding) => isAuthorisedSpecialBidding(play))
+          .map((play: AuthorisedSpecialBidding) => play.special);
+
+        this.setState(prevState => ({
+          players: {
+            ...prevState.players,
+            [Position.bottom]: {
+              ...prevState.players[Position.bottom],
+              authorisedContractValues,
+              authorisedSpecialBiddings,
+              authorisedContractSuits,
+            }
+          }
+        }))
+      },
+    );
+
+    this.props.registerOnMessageReceivedCallback(
+      getBroadcastGameTopic(this.props.gameId),
+      MESSAGE_TYPE.PLAYER_BADE,
+      (contract: AuthorisedBidding) => {
+        if (isAuthorisedSpecialBidding(contract)) {
+          this.setState(({
+            lastBiddingContract: {
+              special: contract.special,
+            }
+          }));
+        } else {
+          this.setState(({
+            lastBiddingContract: {
+              value: contract.value.toString() as ContractValue,
+              suit: contract.suit.toLowerCase() as Suit,
+            }
+          }));
+        }
+
+
+        this.rotateCurrentPlayer();
+      },
+    );
+
     this.props.subscribe(getGameTopic(this.props.gameId, this.props.username));
+    this.props.subscribe(getBroadcastGameTopic(this.props.gameId));
     // TODO replace socket endpoint by Socket endpoint template
     this.props.sendMessage(`/app/game/${this.props.gameId}/player/${this.props.username}/ready`, { type: MESSAGE_TYPE.CLIENT_READY })
   }
@@ -85,8 +163,8 @@ export default class MainGameScreen extends React.Component<Props, GameState> {
     }
 
     if (!prevProps.socketConnected && this.props.socketConnected) {
-      this.props.subscribe(getGameTopic(this.props.gameId, 'test'));
-      console.log("subscribe to topic: ", getGameTopic(this.props.gameId, 'test'))
+      this.props.subscribe(getGameTopic(this.props.gameId, this.props.username));
+      this.props.subscribe(getBroadcastGameTopic(this.props.gameId));
     }
   }
 
@@ -102,6 +180,10 @@ export default class MainGameScreen extends React.Component<Props, GameState> {
     }))
   };
 
+  rotateCurrentPlayer = () => this.setState(prevState => ({
+    currentPlayer: getNextPlayer(prevState.currentPlayer),
+  }));
+
   playCard = (player: Position, card: CardValue) => {
     const playerCards = this.state.players[player].cardsInHand;
     playerCards.splice(playerCards.indexOf(card), 1);
@@ -111,13 +193,14 @@ export default class MainGameScreen extends React.Component<Props, GameState> {
       const player = prevState.currentPlayer;
 
       return ({
-        currentPlayer: getNextPlayer(player),
         currentTrick: {
-          ...this.state.currentTrick,
+          ...prevState.currentTrick,
           [player]: card,
         },
       })
-    })
+    });
+
+    this.rotateCurrentPlayer();
   };
 
   onCardPlayed = (player: Position, card: CardValue) => {
@@ -125,7 +208,7 @@ export default class MainGameScreen extends React.Component<Props, GameState> {
 
     if (
         cardIndexInHand === -1 ||
-        !this.state.players[player].authorisedPlays[cardIndexInHand] ||
+        !this.state.players[player].legalMoves[cardIndexInHand] ||
         player !== this.state.currentPlayer
     ) {
       return;
@@ -134,12 +217,44 @@ export default class MainGameScreen extends React.Component<Props, GameState> {
     this.playCard(player, card);
   };
 
-  onContractPicked = (contract: Contract) => {
-    setTimeout(() => this.setState({ contract, currentPhase: GamePhase.main }), 3000);
+  onContractPicked = (contract: AuthorisedBidding) => {
+    const message = isAuthorisedSpecialBidding(contract) ? {
+      type: MESSAGE_TYPE.PLAYER_BADE,
+      special: contract.special,
+    } : {
+      type: MESSAGE_TYPE.PLAYER_BADE,
+      value: parseInt(contract.value),
+      suit: contract.suit.toUpperCase(),
+    };
+    this.props.sendMessage(`/app/game/${this.props.gameId}/player/${this.props.username}/bid`, message);
+    this.setState(prevState => ({
+      players: {
+        ...prevState.players,
+        [Position.bottom]: {
+          ...prevState.players[Position.bottom],
+          authorisedContractValues: [],
+          authorisedSpecialBiddings: [],
+          authorisedContractSuits: [],
+        }
+      }
+    }))
   };
 
   render() {
-    const { players, currentTrick } = this.state;
+    const { players, currentTrick, lastBiddingContract } = this.state;
+    let lastContract;
+    if (lastBiddingContract) {
+      if (isAuthorisedSpecialBidding(lastBiddingContract)) {
+        lastContract = {
+          special: lastBiddingContract!.special,
+        }
+      } else {
+        lastContract = {
+          value: lastBiddingContract!.value,
+          suit: lastBiddingContract!.suit,
+        };
+      }
+    }
     return <Container direction="column">
       <HandOfCards
           cards={players[Position.top].cardsInHand}
@@ -156,14 +271,11 @@ export default class MainGameScreen extends React.Component<Props, GameState> {
         />
         {
           this.state.currentPhase === GamePhase.bidding && <BiddingBoard
-            authorisedContractValues={Object.values(ContractValue).splice(3, Object.values(ContractValue).length - 1)}
-            authorisedSpecialBiddings={Object.values(SpecialBidding)}
-            authorisedContractSuits={Object.values(Suit)}
+            authorisedContractValues={players[Position.bottom].authorisedContractValues}
+            authorisedSpecialBiddings={players[Position.bottom].authorisedSpecialBiddings}
+            authorisedContractSuits={players[Position.bottom].authorisedContractSuits}
             onContractPicked={this.onContractPicked}
-            lastContract={{
-              value: ContractValue.HUNDRED_TEN,
-              suit: Suit.CLUB,
-            }}
+            lastContract={lastContract}
           />
         }
         {
@@ -185,7 +297,7 @@ export default class MainGameScreen extends React.Component<Props, GameState> {
         cards={players[Position.bottom].cardsInHand}
         rotationDegrees={0}
         onCardPlayed={(card: CardValue) => this.onCardPlayed(Position.bottom, card)}
-        cardsBorderHighlight={players[Position.bottom].authorisedPlays}
+        cardsBorderHighlight={players[Position.bottom].legalMoves}
       />
     </Container>;
   }

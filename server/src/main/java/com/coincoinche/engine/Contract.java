@@ -2,6 +2,7 @@ package com.coincoinche.engine;
 
 import com.coincoinche.engine.cards.Suit;
 import com.coincoinche.engine.teams.Player;
+import com.fasterxml.jackson.annotation.JsonValue;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,10 +30,6 @@ public class Contract {
 
     public static Value valueOfByPoints(int points) throws IllegalArgumentException {
       for (Value value : Value.values()) {
-        // can't get CAPOT or GENERALE value from points
-        if (value == CAPOT || value == GENERALE) {
-          continue;
-        }
         if (value.getPoints() == points) {
           return value;
         }
@@ -180,5 +177,10 @@ public class Contract {
     prettyString.append(value.toString());
     prettyString.append(suit.toString());
     return prettyString.toString();
+  }
+
+  @JsonValue
+  public String toJson() {
+    return String.format("{\"value\":%s,\"suit\":\"%s\"}", getPoints(), getSuit());
   }
 }
