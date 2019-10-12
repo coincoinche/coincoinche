@@ -1,6 +1,7 @@
 package com.coincoinche.engine.teams;
 
 import com.coincoinche.engine.cards.Card;
+import java.util.LinkedList;
 import java.util.List;
 
 /** Player represents a coinche player. */
@@ -12,6 +13,7 @@ public class Player {
 
   public Player(String username) {
     this.username = username;
+    this.cards = new LinkedList<>();
   }
 
   /**

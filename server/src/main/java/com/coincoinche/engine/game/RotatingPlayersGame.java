@@ -17,7 +17,7 @@ public class RotatingPlayersGame<P> {
    *
    * @return currrent player.
    */
-  protected P getCurrentPlayer() {
+  public P getCurrentPlayer() {
     return players.get(currentPlayerIndex);
   }
 

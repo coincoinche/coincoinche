@@ -1,9 +1,33 @@
 import { CardValue } from "../../assets/cards";
 
 export type Player = {
-  authorisedPlays: boolean[];
+  legalMoves: boolean[];
+  authorisedContractValues: ContractValue[];
+  authorisedSpecialBiddings: SpecialBidding[];
+  authorisedContractSuits: Suit[];
   cardsInHand: CardValue[];
 };
+
+/**
+ * START Authorised bidding formats returned by game engine
+ */
+export type AuthorisedSpecialBidding = {
+  special: SpecialBidding
+};
+export type AuthorisedContractBidding = {
+  value: ContractValue,
+  suit: Suit
+};
+export type AuthorisedBidding = AuthorisedSpecialBidding | AuthorisedContractBidding;
+export const isAuthorisedSpecialBidding =
+  (authorisedBidding: AuthorisedBidding): authorisedBidding is AuthorisedSpecialBidding =>
+    !!(authorisedBidding as AuthorisedSpecialBidding).special;
+export const isAuthorisedContractBidding =
+  (authorisedBidding: AuthorisedBidding): authorisedBidding is AuthorisedContractBidding =>
+    !isAuthorisedSpecialBidding(authorisedBidding);
+/**
+ * END Authorised bidding formats returned by game engine
+ */
 
 export enum Position {
   top = 'top',
@@ -49,9 +73,21 @@ export enum ContractValue {
   HUNDRED_FOURTY = '140',
   HUNDRED_FIFTY = '150',
   HUNDRED_SIXTY = '160',
-  CAPOT = 'CAPOT',
-  GENERALE = 'GENERALE',
+  CAPOT = '250',
+  GENERALE = '500',
 }
+
+export const getDisplayedValue = (value: ContractValue) => {
+  if (value === ContractValue.CAPOT) {
+    return 'CAPOT';
+  }
+
+  if (value === ContractValue.GENERALE) {
+    return 'GENERALE';
+  }
+
+  return value;
+};
 
 export enum SpecialBidding {
   COINCHE = 'COINCHE',
@@ -60,11 +96,30 @@ export enum SpecialBidding {
 }
 
 export enum Suit {
-  SPADE = 'spade',
-  HEART = 'heart',
-  CLUB = 'club',
-  DIAMOND = 'diamond',
+  SPADES = 'spades',
+  HEARTS = 'hearts',
+  CLUBS = 'clubs',
+  DIAMONDS = 'diamonds',
 }
+
+export const fromLetter = (letter: string): Suit => {
+  if (letter === 's') {
+    return Suit.SPADES;
+  }
+
+  if (letter === 'h') {
+    return Suit.HEARTS;
+  }
+
+  if (letter === 'c') {
+    return Suit.CLUBS;
+  }
+
+  if (letter === 'd') {
+    return Suit.DIAMONDS;
+  }
+  throw new Error('Invalid suit letter');
+};
 
 export type Contract = {
   value: ContractValue;

@@ -19,11 +19,13 @@ public class MatchMaker {
 
   private void startGameIfPossible() {
     if (playerQueue.size() > 3) {
-      this.playerQueue.removeFirst();
-      this.playerQueue.removeFirst();
-      this.playerQueue.removeFirst();
-      this.playerQueue.removeFirst();
-      this.controller.gameStart();
+      String[] usernames = {
+        this.playerQueue.removeFirst(),
+        this.playerQueue.removeFirst(),
+        this.playerQueue.removeFirst(),
+        this.playerQueue.removeFirst()
+      };
+      this.controller.gameStart(usernames);
     }
   }
 }

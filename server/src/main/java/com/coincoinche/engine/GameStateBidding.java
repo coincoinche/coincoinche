@@ -74,7 +74,7 @@ public class GameStateBidding implements GameStateTerminal {
    */
   @Override
   public boolean mustChange() {
-    return surcoinched || currentPlayer.equals(lastPlayer);
+    return highestBidding != null && (surcoinched || currentPlayer.equals(lastPlayer));
   }
 
   @Override

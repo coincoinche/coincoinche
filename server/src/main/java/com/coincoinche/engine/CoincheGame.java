@@ -75,4 +75,26 @@ public class CoincheGame extends RedBlueRotatingPlayersGame<Player> {
   void setCurrentRound(CoincheGameRound currentRound) {
     this.currentRound = currentRound;
   }
+
+  /**
+   * Get a player by his username.
+   *
+   * @param username - username of the player to retrieve.
+   * @return the retrieved player.
+   */
+  public Player getPlayer(String username) {
+    for (Player player : this.getBlueTeam().getPlayers()) {
+      if (player.getUsername().equals(username)) {
+        return player;
+      }
+    }
+
+    for (Player player : this.getRedTeam().getPlayers()) {
+      if (player.getUsername().equals(username)) {
+        return player;
+      }
+    }
+
+    throw new IllegalArgumentException("Player not found with this username");
+  }
 }
