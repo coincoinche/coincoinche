@@ -1,14 +1,14 @@
 package com.coincoinche.events;
 
 public class TurnStartedEvent extends Event {
-  private String[] authorizedPlays;
+  private String[] legalMoves;
 
-  public TurnStartedEvent(String[] authorizedPlays) {
+  public TurnStartedEvent(String[] legalMoves) {
     super(EventType.TURN_STARTED);
-    this.authorizedPlays = authorizedPlays;
+    this.legalMoves = legalMoves;
   }
 
-  public String[] getAuthorizedPlays() {
-    return authorizedPlays;
+  public String[] getLegalMoves() {
+    return legalMoves;
   }
 }

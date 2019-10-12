@@ -1,7 +1,7 @@
 import { CardValue } from "../../assets/cards";
 
 export type Player = {
-  authorisedPlays: boolean[];
+  legalMoves: boolean[];
   authorisedContractValues: ContractValue[];
   authorisedSpecialBiddings: SpecialBidding[];
   authorisedContractSuits: Suit[];

@@ -6,7 +6,6 @@ import {
   AuthorisedBidding,
   AuthorisedContractBidding,
   AuthorisedSpecialBidding,
-  Contract,
   ContractValue, fromLetter,
   GamePhase,
   GameState,
@@ -24,7 +23,7 @@ import {MESSAGE_TYPE, TOPIC_TEMPLATE} from "../../websocket/types";
 const CLEAN_TRICK_TIMOUT_MS = 2000;
 
 const makeOtherPlayer = () => ({
-  authorisedPlays: new Array(8).fill(true),
+  legalMoves: new Array(8).fill(true),
   cardsInHand: new Array(8).fill(CardValue.blue_back),
   authorisedContractValues: [],
   authorisedSpecialBiddings: [],
@@ -36,7 +35,7 @@ const players = {
   [Position.right]: makeOtherPlayer(),
   [Position.left]: makeOtherPlayer(),
   [Position.bottom]: {
-    authorisedPlays: [],
+    legalMoves: [],
     cardsInHand: [CardValue.jc, CardValue.jd, CardValue.jh, CardValue.js, CardValue.ac, CardValue.ad, CardValue.ah, CardValue.as],
     authorisedContractValues: [],
     authorisedSpecialBiddings: [],
@@ -102,13 +101,13 @@ export default class MainGameScreen extends React.Component<Props, State> {
     this.props.registerOnMessageReceivedCallback(
       getGameTopic(this.props.gameId, this.props.username),
       MESSAGE_TYPE.TURN_STARTED,
-      ({ authorizedPlays }) => {
-        const parsedAuthorisedPlays = authorizedPlays.map((play: string) => JSON.parse(play));
-        const authorisedContractBiddings = parsedAuthorisedPlays
+      ({ legalMoves }) => {
+        const parsedlegalMoves = legalMoves.map((play: string) => JSON.parse(play));
+        const authorisedContractBiddings = parsedlegalMoves
           .filter((play: AuthorisedBidding) => isAuthorisedContractBidding(play));
         const authorisedContractValues = authorisedContractBiddings.map((play: AuthorisedContractBidding) => play.value.toString());
         const authorisedContractSuits = authorisedContractBiddings.map((play: AuthorisedContractBidding) => fromLetter(play.suit));
-        const authorisedSpecialBiddings = parsedAuthorisedPlays
+        const authorisedSpecialBiddings = parsedlegalMoves
           .filter((play: AuthorisedBidding) => isAuthorisedSpecialBidding(play))
           .map((play: AuthorisedSpecialBidding) => play.special);
 
@@ -209,7 +208,7 @@ export default class MainGameScreen extends React.Component<Props, State> {
 
     if (
         cardIndexInHand === -1 ||
-        !this.state.players[player].authorisedPlays[cardIndexInHand] ||
+        !this.state.players[player].legalMoves[cardIndexInHand] ||
         player !== this.state.currentPlayer
     ) {
       return;
@@ -298,7 +297,7 @@ export default class MainGameScreen extends React.Component<Props, State> {
         cards={players[Position.bottom].cardsInHand}
         rotationDegrees={0}
         onCardPlayed={(card: CardValue) => this.onCardPlayed(Position.bottom, card)}
-        cardsBorderHighlight={players[Position.bottom].authorisedPlays}
+        cardsBorderHighlight={players[Position.bottom].legalMoves}
       />
     </Container>;
   }

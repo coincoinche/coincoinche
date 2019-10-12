@@ -45,10 +45,10 @@ public class GameController {
     CoincheGame game = this.store.getGame(gameId);
 
     if (username.equals(game.getCurrentRound().getCurrentPlayer().getUsername())) {
-      List<Move> authorisedPlays = game.getCurrentRound().getLegalMoves();
-      String[] authorisedPlaysJson = new String[authorisedPlays.size()];
-      for (int i = 0; i < authorisedPlays.size(); i++) {
-        authorisedPlaysJson[i] = ((BiddingMove) authorisedPlays.get(i)).toJson();
+      List<Move> legalMoves = game.getCurrentRound().getLegalMoves();
+      String[] authorisedPlaysJson = new String[legalMoves.size()];
+      for (int i = 0; i < legalMoves.size(); i++) {
+        authorisedPlaysJson[i] = ((BiddingMove) legalMoves.get(i)).toJson();
       }
 
       this.template.convertAndSend(
