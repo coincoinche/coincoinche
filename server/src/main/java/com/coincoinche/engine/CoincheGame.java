@@ -63,11 +63,6 @@ public class CoincheGame extends RedBlueRotatingPlayersGame<Player> {
     currentRound.setState(state);
   }
 
-  @Override
-  protected Player getCurrentPlayer() {
-    return super.getCurrentPlayer();
-  }
-
   public CoincheGameRound getCurrentRound() {
     return currentRound;
   }

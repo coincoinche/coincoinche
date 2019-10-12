@@ -74,7 +74,7 @@ public class MoveBidding extends Move implements Comparable<MoveBidding> {
    * @param event - player bade event from the client.
    * @return the newly constructed bidding move.
    */
-  public static BiddingMove fromEvent(PlayerBadeEvent event) {
+  public static MoveBidding fromEvent(PlayerBadeEvent event) {
     Special special = event.getSpecial();
     if (special == null) {
       return contractMove(Contract.pointsContract(event.getValue(), event.getSuit()));
@@ -198,7 +198,7 @@ public class MoveBidding extends Move implements Comparable<MoveBidding> {
   }
 
   /**
-   * Defines the json serialisation for BiddingMove instances.
+   * Defines the json serialisation for MoveBidding instances.
    *
    * @return a json representation of the bidding move.
    */

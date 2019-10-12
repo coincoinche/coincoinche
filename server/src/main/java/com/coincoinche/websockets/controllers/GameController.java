@@ -1,9 +1,9 @@
 package com.coincoinche.websockets.controllers;
 
-import com.coincoinche.engine.BiddingMove;
 import com.coincoinche.engine.CoincheGame;
 import com.coincoinche.engine.IllegalMoveException;
 import com.coincoinche.engine.Move;
+import com.coincoinche.engine.MoveBidding;
 import com.coincoinche.events.Event;
 import com.coincoinche.events.EventType;
 import com.coincoinche.events.PlayerBadeEvent;
@@ -48,7 +48,7 @@ public class GameController {
       List<Move> legalMoves = game.getCurrentRound().getLegalMoves();
       String[] authorisedPlaysJson = new String[legalMoves.size()];
       for (int i = 0; i < legalMoves.size(); i++) {
-        authorisedPlaysJson[i] = ((BiddingMove) legalMoves.get(i)).toJson();
+        authorisedPlaysJson[i] = ((MoveBidding) legalMoves.get(i)).toJson();
       }
 
       this.template.convertAndSend(
@@ -89,7 +89,7 @@ public class GameController {
       @DestinationVariable String username,
       @Payload PlayerBadeEvent event) {
     CoincheGame game = this.store.getGame(gameId);
-    BiddingMove move = BiddingMove.fromEvent(event);
+    MoveBidding move = MoveBidding.fromEvent(event);
     try {
       move.applyOnGame(game);
       this.template.convertAndSend(getBroadcastTopicPath(gameId), event);
@@ -100,9 +100,9 @@ public class GameController {
 
       try {
         // make the player pass if the bidding move is invalid.
-        BiddingMove.passMove().applyOnGame(game);
+        MoveBidding.passMove().applyOnGame(game);
         this.template.convertAndSend(
-            getBroadcastTopicPath(gameId), new PlayerBadeEvent(BiddingMove.Special.PASS));
+            getBroadcastTopicPath(gameId), new PlayerBadeEvent(MoveBidding.Special.PASS));
       } catch (IllegalMoveException illegalPassMoveException) {
         illegalPassMoveException.printStackTrace();
       }
