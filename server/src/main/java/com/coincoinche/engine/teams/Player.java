@@ -50,4 +50,24 @@ public class Player {
   public String getUsername() {
     return username;
   }
+
+  @Override
+  public String toString() {
+    return username;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (obj == null) {
+      return false;
+    }
+    if (obj == this) {
+      return true;
+    }
+    if (!(obj instanceof Player)) {
+      return false;
+    }
+    Player otherPlayer = (Player) obj;
+    return this.username == otherPlayer.username;
+  }
 }
