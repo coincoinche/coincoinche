@@ -13,6 +13,480 @@ import org.junit.Test;
 /** Unit tests for the bidding moves. */
 public class MoveBiddingTest extends GameEngineTestHelper {
 
+  private CoincheGame simpleCoincheGame() {
+    createTeams();
+    createCoincheGame();
+    return coincheGame;
+  }
+
+  @Test
+  public void applyOnGame() {
+    /*
+     * NEW TEST CASE
+     */
+    String testCaseName = "New game - coinche is illegal";
+    assertThatExceptionOfType(IllegalMoveException.class)
+        .as(testCaseName)
+        .isThrownBy(() -> MoveBidding.coincheMove().applyOnGame(simpleCoincheGame()))
+        .withNoCause();
+
+    /*
+     * NEW TEST CASE
+     */
+    testCaseName = "New game - surcoinche is illegal";
+    assertThatExceptionOfType(IllegalMoveException.class)
+        .as(testCaseName)
+        .isThrownBy(() -> MoveBidding.surcoincheMove().applyOnGame(simpleCoincheGame()))
+        .withNoCause();
+
+    /*
+     * NEW TEST CASE
+     */
+    testCaseName = "New game - 100 HEARTS";
+    CoincheGame game = simpleCoincheGame();
+    CoincheGameRound preMoveRound = game.getCurrentRound();
+    try {
+      GameResult<Team> result =
+          MoveBidding.contractMove(Contract.pointsContract(100, Suit.HEARTS)).applyOnGame(game);
+      assertThat(result.isFinished())
+          .as(String.format("%s: check game hasn't finished", testCaseName))
+          .isFalse();
+    } catch (IllegalMoveException e) {
+      throw new RuntimeException(String.format("%s: Illegal move wasn't expected", testCaseName));
+    }
+    CoincheGameRound round = game.getCurrentRound();
+    assertThat(round)
+        .as(String.format("%s: check round hasn't changed", testCaseName))
+        .isEqualTo(preMoveRound);
+    assertThat(round.getCurrentPlayer())
+        .as(String.format("%s: check current player index is 2", testCaseName))
+        .isEqualTo(p2);
+    GameState state = round.getState();
+    assertThat(state)
+        .as(String.format("%s: check state is bidding state", testCaseName))
+        .isInstanceOf(GameStateBidding.class);
+    GameStateBidding biddingState = (GameStateBidding) state;
+    assertThat(biddingState.isCoinched())
+        .as(String.format("%s: check is not coinched", testCaseName))
+        .isFalse();
+    assertThat(biddingState.isSurcoinched())
+        .as(String.format("%s: check is not surcoinched", testCaseName))
+        .isFalse();
+    Contract highestBidding = biddingState.getHighestBidding();
+    assertThat(highestBidding)
+        .as(String.format("%s: check highest bidding is 100 HEARTS", testCaseName))
+        .isEqualTo(Contract.pointsContract(100, Suit.HEARTS));
+    assertThat(highestBidding.getPlayer())
+        .as(String.format("%s: check highest bidding belongs to player 1", testCaseName))
+        .isEqualTo(p1);
+
+    /*
+     * NEW TEST CASE
+     */
+    testCaseName = "100 HEARTS - coinche";
+    preMoveRound = game.getCurrentRound();
+    try {
+      GameResult<Team> result = MoveBidding.coincheMove().applyOnGame(game);
+      assertThat(result.isFinished())
+          .as(String.format("%s: check game hasn't finished", testCaseName))
+          .isFalse();
+    } catch (IllegalMoveException e) {
+      throw new RuntimeException(String.format("%s: Illegal move wasn't expected", testCaseName));
+    }
+    round = game.getCurrentRound();
+    assertThat(round)
+        .as(String.format("%s: check round hasn't changed", testCaseName))
+        .isEqualTo(preMoveRound);
+    assertThat(round.getCurrentPlayer())
+        .as(String.format("%s: check current player index is 3", testCaseName))
+        .isEqualTo(p3);
+    state = round.getState();
+    assertThat(state)
+        .as(String.format("%s: check state is bidding state", testCaseName))
+        .isInstanceOf(GameStateBidding.class);
+    biddingState = (GameStateBidding) state;
+    assertThat(biddingState.isCoinched())
+        .as(String.format("%s: check is coinched", testCaseName))
+        .isTrue();
+    assertThat(biddingState.isSurcoinched())
+        .as(String.format("%s: check is not surcoinched", testCaseName))
+        .isFalse();
+    highestBidding = biddingState.getHighestBidding();
+    assertThat(highestBidding)
+        .as(String.format("%s: check highest bidding is 100 HEARTS", testCaseName))
+        .isEqualTo(Contract.pointsContract(100, Suit.HEARTS));
+    assertThat(highestBidding.getPlayer())
+        .as(String.format("%s: check highest bidding belongs to player 1", testCaseName))
+        .isEqualTo(p1);
+
+    /*
+     * NEW TEST CASE
+     */
+    testCaseName = "100 HEARTS, coinche - pass";
+    preMoveRound = game.getCurrentRound();
+    try {
+      GameResult<Team> result = MoveBidding.passMove().applyOnGame(game);
+      assertThat(result.isFinished())
+          .as(String.format("%s: check game hasn't finished", testCaseName))
+          .isFalse();
+    } catch (IllegalMoveException e) {
+      throw new RuntimeException(String.format("%s: Illegal move wasn't expected", testCaseName));
+    }
+    round = game.getCurrentRound();
+    assertThat(round)
+        .as(String.format("%s: check round hasn't changed", testCaseName))
+        .isEqualTo(preMoveRound);
+    assertThat(round.getCurrentPlayer())
+        .as(String.format("%s: check current player index is 4", testCaseName))
+        .isEqualTo(p4);
+    state = round.getState();
+    assertThat(state)
+        .as(String.format("%s: check state is bidding state", testCaseName))
+        .isInstanceOf(GameStateBidding.class);
+    biddingState = (GameStateBidding) state;
+    assertThat(biddingState.isCoinched())
+        .as(String.format("%s: check is coinched", testCaseName))
+        .isTrue();
+    assertThat(biddingState.isSurcoinched())
+        .as(String.format("%s: check is not surcoinched", testCaseName))
+        .isFalse();
+    highestBidding = biddingState.getHighestBidding();
+    assertThat(highestBidding)
+        .as(String.format("%s: check highest bidding is 100 HEARTS", testCaseName))
+        .isEqualTo(Contract.pointsContract(100, Suit.HEARTS));
+    assertThat(highestBidding.getPlayer())
+        .as(String.format("%s: check highest bidding belongs to player 1", testCaseName))
+        .isEqualTo(p1);
+
+    /*
+     * NEW TEST CASE
+     */
+    testCaseName = "100 HEARTS, coinche, pass - pass";
+    preMoveRound = game.getCurrentRound();
+    try {
+      GameResult<Team> result = MoveBidding.passMove().applyOnGame(game);
+      assertThat(result.isFinished())
+          .as(String.format("%s: check game hasn't finished", testCaseName))
+          .isFalse();
+    } catch (IllegalMoveException e) {
+      throw new RuntimeException(String.format("%s: Illegal move wasn't expected", testCaseName));
+    }
+    round = game.getCurrentRound();
+    assertThat(round)
+        .as(String.format("%s: check round hasn't changed", testCaseName))
+        .isEqualTo(preMoveRound);
+    assertThat(round.getCurrentPlayer())
+        .as(String.format("%s: check current player index is 1", testCaseName))
+        .isEqualTo(p1);
+    state = round.getState();
+    assertThat(state)
+        .as(String.format("%s: check state is bidding state", testCaseName))
+        .isInstanceOf(GameStateBidding.class);
+    biddingState = (GameStateBidding) state;
+    assertThat(biddingState.isCoinched())
+        .as(String.format("%s: check is coinched", testCaseName))
+        .isTrue();
+    assertThat(biddingState.isSurcoinched())
+        .as(String.format("%s: check is not surcoinched", testCaseName))
+        .isFalse();
+    highestBidding = biddingState.getHighestBidding();
+    assertThat(highestBidding)
+        .as(String.format("%s: check highest bidding is 100 HEARTS", testCaseName))
+        .isEqualTo(Contract.pointsContract(100, Suit.HEARTS));
+    assertThat(highestBidding.getPlayer())
+        .as(String.format("%s: check highest bidding belongs to player 1", testCaseName))
+        .isEqualTo(p1);
+
+    /*
+     * NEW TEST CASE
+     */
+    testCaseName = "100 HEARTS, coinche, pass, pass - surcoinche";
+    preMoveRound = game.getCurrentRound();
+    try {
+      GameResult<Team> result = MoveBidding.surcoincheMove().applyOnGame(game);
+      assertThat(result.isFinished())
+          .as(String.format("%s: check game hasn't finished", testCaseName))
+          .isFalse();
+    } catch (IllegalMoveException e) {
+      throw new RuntimeException(String.format("%s: Illegal move wasn't expected", testCaseName));
+    }
+    // TODO nockty: this test will need to change when we add a new phase to the game
+    round = game.getCurrentRound();
+    assertThat(round)
+        .as(String.format("%s: check round has changed", testCaseName))
+        .isNotEqualTo(preMoveRound);
+    assertThat(game.getRedTeam().getPoints())
+        .as(String.format("%s: check red team's points have been updated", testCaseName))
+        .isEqualTo(100);
+    assertThat(round.getCurrentPlayer())
+        .as(String.format("%s: check current player index is 2", testCaseName))
+        .isEqualTo(p2);
+    state = round.getState();
+    assertThat(state)
+        .as(String.format("%s: check state is bidding state", testCaseName))
+        .isInstanceOf(GameStateBidding.class);
+    biddingState = (GameStateBidding) state;
+    assertThat(biddingState.isCoinched())
+        .as(String.format("%s: check is not coinched", testCaseName))
+        .isFalse();
+    assertThat(biddingState.isSurcoinched())
+        .as(String.format("%s: check is not surcoinched", testCaseName))
+        .isFalse();
+    highestBidding = biddingState.getHighestBidding();
+    assertThat(highestBidding)
+        .as(String.format("%s: check highest bidding is null", testCaseName))
+        .isNull();
+
+    /*
+     * NEW TEST CASE
+     */
+    testCaseName = "80 HEARTS - 90 SPADES";
+    game = simpleCoincheGame();
+    preMoveRound = game.getCurrentRound();
+    try {
+      GameResult<Team> result =
+          MoveBidding.contractMove(Contract.pointsContract(80, Suit.HEARTS)).applyOnGame(game);
+      MoveBidding.contractMove(Contract.pointsContract(90, Suit.SPADES)).applyOnGame(game);
+      assertThat(result.isFinished())
+          .as(String.format("%s: check game hasn't finished", testCaseName))
+          .isFalse();
+    } catch (IllegalMoveException e) {
+      throw new RuntimeException(String.format("%s: Illegal move wasn't expected", testCaseName));
+    }
+    round = game.getCurrentRound();
+    assertThat(round)
+        .as(String.format("%s: check round hasn't changed", testCaseName))
+        .isEqualTo(preMoveRound);
+    assertThat(round.getCurrentPlayer())
+        .as(String.format("%s: check current player index is 3", testCaseName))
+        .isEqualTo(p3);
+    state = round.getState();
+    assertThat(state)
+        .as(String.format("%s: check state is bidding state", testCaseName))
+        .isInstanceOf(GameStateBidding.class);
+    biddingState = (GameStateBidding) state;
+    assertThat(biddingState.isCoinched())
+        .as(String.format("%s: check is not coinched", testCaseName))
+        .isFalse();
+    assertThat(biddingState.isSurcoinched())
+        .as(String.format("%s: check is not surcoinched", testCaseName))
+        .isFalse();
+    highestBidding = biddingState.getHighestBidding();
+    assertThat(highestBidding)
+        .as(String.format("%s: check highest bidding is 90 SPADES", testCaseName))
+        .isEqualTo(Contract.pointsContract(90, Suit.SPADES));
+    assertThat(highestBidding.getPlayer())
+        .as(String.format("%s: check highest bidding belongs to player 2", testCaseName))
+        .isEqualTo(p2);
+
+    /*
+     * NEW TEST CASE
+     */
+    testCaseName = "80H, 90S - 100 HEARTS";
+    preMoveRound = game.getCurrentRound();
+    try {
+      GameResult<Team> result =
+          MoveBidding.contractMove(Contract.pointsContract(100, Suit.HEARTS)).applyOnGame(game);
+      assertThat(result.isFinished())
+          .as(String.format("%s: check game hasn't finished", testCaseName))
+          .isFalse();
+    } catch (IllegalMoveException e) {
+      throw new RuntimeException(String.format("%s: Illegal move wasn't expected", testCaseName));
+    }
+    round = game.getCurrentRound();
+    assertThat(round)
+        .as(String.format("%s: check round hasn't changed", testCaseName))
+        .isEqualTo(preMoveRound);
+    assertThat(round.getCurrentPlayer())
+        .as(String.format("%s: check current player index is 4", testCaseName))
+        .isEqualTo(p4);
+    state = round.getState();
+    assertThat(state)
+        .as(String.format("%s: check state is bidding state", testCaseName))
+        .isInstanceOf(GameStateBidding.class);
+    biddingState = (GameStateBidding) state;
+    assertThat(biddingState.isCoinched())
+        .as(String.format("%s: check is not coinched", testCaseName))
+        .isFalse();
+    assertThat(biddingState.isSurcoinched())
+        .as(String.format("%s: check is not surcoinched", testCaseName))
+        .isFalse();
+    highestBidding = biddingState.getHighestBidding();
+    assertThat(highestBidding)
+        .as(String.format("%s: check highest bidding is 100 HEARTS", testCaseName))
+        .isEqualTo(Contract.pointsContract(100, Suit.HEARTS));
+    assertThat(highestBidding.getPlayer())
+        .as(String.format("%s: check highest bidding belongs to player 3", testCaseName))
+        .isEqualTo(p3);
+
+    /*
+     * NEW TEST CASE
+     */
+    testCaseName = "80H, 90S, 100H - CAPOT CLUBS";
+    preMoveRound = game.getCurrentRound();
+    try {
+      GameResult<Team> result =
+          MoveBidding.contractMove(Contract.capotContract(Suit.CLUBS)).applyOnGame(game);
+      assertThat(result.isFinished())
+          .as(String.format("%s: check game hasn't finished", testCaseName))
+          .isFalse();
+    } catch (IllegalMoveException e) {
+      throw new RuntimeException(String.format("%s: Illegal move wasn't expected", testCaseName));
+    }
+    round = game.getCurrentRound();
+    assertThat(round)
+        .as(String.format("%s: check round hasn't changed", testCaseName))
+        .isEqualTo(preMoveRound);
+    assertThat(round.getCurrentPlayer())
+        .as(String.format("%s: check current player index is 1", testCaseName))
+        .isEqualTo(p1);
+    state = round.getState();
+    assertThat(state)
+        .as(String.format("%s: check state is bidding state", testCaseName))
+        .isInstanceOf(GameStateBidding.class);
+    biddingState = (GameStateBidding) state;
+    assertThat(biddingState.isCoinched())
+        .as(String.format("%s: check is not coinched", testCaseName))
+        .isFalse();
+    assertThat(biddingState.isSurcoinched())
+        .as(String.format("%s: check is not surcoinched", testCaseName))
+        .isFalse();
+    highestBidding = biddingState.getHighestBidding();
+    assertThat(highestBidding)
+        .as(String.format("%s: check highest bidding is CAPOT CLUBS", testCaseName))
+        .isEqualTo(Contract.capotContract(Suit.CLUBS));
+    assertThat(highestBidding.getPlayer())
+        .as(String.format("%s: check highest bidding belongs to player 4", testCaseName))
+        .isEqualTo(p4);
+
+    /*
+     * NEW TEST CASE
+     */
+    testCaseName = "80H, 90S, 100H, CAPC - COINCHE";
+    preMoveRound = game.getCurrentRound();
+    try {
+      GameResult<Team> result = MoveBidding.coincheMove().applyOnGame(game);
+      assertThat(result.isFinished())
+          .as(String.format("%s: check game hasn't finished", testCaseName))
+          .isFalse();
+    } catch (IllegalMoveException e) {
+      throw new RuntimeException(String.format("%s: Illegal move wasn't expected", testCaseName));
+    }
+    round = game.getCurrentRound();
+    assertThat(round)
+        .as(String.format("%s: check round hasn't changed", testCaseName))
+        .isEqualTo(preMoveRound);
+    assertThat(round.getCurrentPlayer())
+        .as(String.format("%s: check current player index is 2", testCaseName))
+        .isEqualTo(p2);
+    state = round.getState();
+    assertThat(state)
+        .as(String.format("%s: check state is bidding state", testCaseName))
+        .isInstanceOf(GameStateBidding.class);
+    biddingState = (GameStateBidding) state;
+    assertThat(biddingState.isCoinched())
+        .as(String.format("%s: check is coinched", testCaseName))
+        .isTrue();
+    assertThat(biddingState.isSurcoinched())
+        .as(String.format("%s: check is not surcoinched", testCaseName))
+        .isFalse();
+    highestBidding = biddingState.getHighestBidding();
+    assertThat(highestBidding)
+        .as(String.format("%s: check highest bidding is CAPOT CLUBS", testCaseName))
+        .isEqualTo(Contract.capotContract(Suit.CLUBS));
+    assertThat(highestBidding.getPlayer())
+        .as(String.format("%s: check highest bidding belongs to player 4", testCaseName))
+        .isEqualTo(p4);
+
+    /*
+     * NEW TEST CASE
+     */
+    testCaseName = "80H, 90S, 100H, CAPC, COINCHE - 3x PASS";
+    preMoveRound = game.getCurrentRound();
+    try {
+      MoveBidding.passMove().applyOnGame(game);
+      MoveBidding.passMove().applyOnGame(game);
+      GameResult<Team> result = MoveBidding.passMove().applyOnGame(game);
+      assertThat(result.isFinished())
+          .as(String.format("%s: check game hasn't finished", testCaseName))
+          .isFalse();
+    } catch (IllegalMoveException e) {
+      throw new RuntimeException(String.format("%s: Illegal move wasn't expected", testCaseName));
+    }
+    // TODO nockty: this test will need to change when we add a new phase to the game
+    round = game.getCurrentRound();
+    assertThat(round)
+        .as(String.format("%s: check round has changed", testCaseName))
+        .isNotEqualTo(preMoveRound);
+    assertThat(game.getBlueTeam().getPoints())
+        .as(String.format("%s: check blue team's points have been updated", testCaseName))
+        .isEqualTo(250);
+    assertThat(round.getCurrentPlayer())
+        .as(String.format("%s: check current player index is 2", testCaseName))
+        .isEqualTo(p2);
+    state = round.getState();
+    assertThat(state)
+        .as(String.format("%s: check state is bidding state", testCaseName))
+        .isInstanceOf(GameStateBidding.class);
+    biddingState = (GameStateBidding) state;
+    assertThat(biddingState.isCoinched())
+        .as(String.format("%s: check is not coinched", testCaseName))
+        .isFalse();
+    assertThat(biddingState.isSurcoinched())
+        .as(String.format("%s: check is not surcoinched", testCaseName))
+        .isFalse();
+    highestBidding = biddingState.getHighestBidding();
+    assertThat(highestBidding)
+        .as(String.format("%s: check highest bidding is null", testCaseName))
+        .isNull();
+
+    /*
+     * NEW TEST CASE
+     */
+    testCaseName = "NEW GAME - 4x PASS";
+    game = simpleCoincheGame();
+    preMoveRound = game.getCurrentRound();
+    try {
+      MoveBidding.passMove().applyOnGame(game);
+      MoveBidding.passMove().applyOnGame(game);
+      MoveBidding.passMove().applyOnGame(game);
+      GameResult<Team> result = MoveBidding.passMove().applyOnGame(game);
+      assertThat(result.isFinished())
+          .as(String.format("%s: check game hasn't finished", testCaseName))
+          .isFalse();
+    } catch (IllegalMoveException e) {
+      throw new RuntimeException(String.format("%s: Illegal move wasn't expected", testCaseName));
+    }
+    round = game.getCurrentRound();
+    assertThat(round)
+        .as(String.format("%s: check round has changed", testCaseName))
+        .isNotEqualTo(preMoveRound);
+    assertThat(game.getRedTeam().getPoints())
+        .as(String.format("%s: check red team's points haven't changed", testCaseName))
+        .isEqualTo(0);
+    assertThat(game.getBlueTeam().getPoints())
+        .as(String.format("%s: check blue team's points haven't changed", testCaseName))
+        .isEqualTo(0);
+    assertThat(round.getCurrentPlayer())
+        .as(String.format("%s: check current player index is 2", testCaseName))
+        .isEqualTo(p2);
+    state = round.getState();
+    assertThat(state)
+        .as(String.format("%s: check state is bidding state", testCaseName))
+        .isInstanceOf(GameStateBidding.class);
+    biddingState = (GameStateBidding) state;
+    assertThat(biddingState.isCoinched())
+        .as(String.format("%s: check is not coinched", testCaseName))
+        .isFalse();
+    assertThat(biddingState.isSurcoinched())
+        .as(String.format("%s: check is not surcoinched", testCaseName))
+        .isFalse();
+    highestBidding = biddingState.getHighestBidding();
+    assertThat(highestBidding)
+        .as(String.format("%s: check highest bidding is null", testCaseName))
+        .isNull();
+  }
+
   @Test
   public void compareTo() {
 
