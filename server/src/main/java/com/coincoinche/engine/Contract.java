@@ -30,10 +30,6 @@ public class Contract {
 
     public static Value valueOfByPoints(int points) throws IllegalArgumentException {
       for (Value value : Value.values()) {
-        // can't get CAPOT or GENERALE value from points
-        if (value == CAPOT || value == GENERALE) {
-          continue;
-        }
         if (value.getPoints() == points) {
           return value;
         }
