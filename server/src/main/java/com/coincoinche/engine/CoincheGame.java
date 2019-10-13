@@ -22,6 +22,10 @@ public class CoincheGame extends RedBlueRotatingPlayersGame<Player> {
     if (!result.isFinished()) {
       return GameResult.unfinishedResult();
     }
+    if (result.isDraw()) {
+      startNextRound();
+      return GameResult.unfinishedResult();
+    }
     result.getWinnerTeam().addPoints(result.getWinnerPoints());
     Team winnerTeam = getWinnerTeam();
     if (winnerTeam != null) {
@@ -52,6 +56,7 @@ public class CoincheGame extends RedBlueRotatingPlayersGame<Player> {
     int index = getCurrentPlayerIndex();
     currentRound = new CoincheGameRound((Team) redTeam, (Team) blueTeam);
     currentRound.setCurrentPlayerIndex(index);
+    currentRound.setGlobalGame(this);
     // initialize first state of the game (bidding phase)
     GameStateBidding state =
         GameStateBidding.initialGameStateBidding(currentRound.getCurrentPlayer());

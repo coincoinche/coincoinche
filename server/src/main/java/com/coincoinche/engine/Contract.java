@@ -149,6 +149,13 @@ public class Contract {
     this.player = player;
   }
 
+  /**
+   * Check that two contracts are equal. <strong>Contracts don't need to belong to the same player
+   * to be considered equal.</strong>
+   *
+   * @param obj another contract.
+   * @return a boolean indicating if the contracts are equal.
+   */
   @Override
   public boolean equals(Object obj) {
     if (obj == null) {

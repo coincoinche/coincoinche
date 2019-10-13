@@ -1,5 +1,9 @@
 package com.coincoinche.engine;
 
+import com.coincoinche.engine.game.GameResult;
+import com.coincoinche.engine.teams.Player;
+import com.coincoinche.engine.teams.Team;
+
 /** Move represents a move which can be applied on a game. */
 public abstract class Move {
 
@@ -8,13 +12,15 @@ public abstract class Move {
    * supposed to do.
    *
    * @param game is the game where to move should be applied.
+   * @return the result of the game (finished or unfinished).
    * @throws IllegalMoveException if the move can't be applied to the game.
    */
-  public void applyOnGame(CoincheGame game) throws IllegalMoveException {
+  public GameResult<Team> applyOnGame(CoincheGame game) throws IllegalMoveException {
     CoincheGameRound round = game.getCurrentRound();
+    Player player = round.getCurrentPlayer();
     GameState state = round.getState();
-    applyOnRoundState(state);
-    game.moveWasApplied();
+    applyOnRoundState(state, player);
+    return game.moveWasApplied();
   }
 
   /**
@@ -22,7 +28,9 @@ public abstract class Move {
    * game's current round. It changes the state according to what the move is supposed to do.
    *
    * @param state is the state of the round where the move will be applied.
+   * @param player is the player making the move.
    * @throws IllegalMoveException if the move can't be applied to the state.
    */
-  protected abstract void applyOnRoundState(GameState state) throws IllegalMoveException;
+  protected abstract void applyOnRoundState(GameState state, Player player)
+      throws IllegalMoveException;
 }

@@ -24,12 +24,15 @@ public class CoincheGameTest extends GameEngineTestHelper {
     assertThat(coincheGame.getCurrentPlayerIndex())
         .as("Check first player index is 0")
         .isEqualTo(0);
-    assertThat(coincheGame.getCurrentRound().getState())
-        .as("Check first state isn't null")
-        .isNotNull();
-    assertThat(coincheGame.getCurrentRound().getState().getCurrentPlayer())
-        .as("Check first player is p1")
-        .isEqualTo(p1);
+    CoincheGameRound round = coincheGame.getCurrentRound();
+    GameState state = round.getState();
+    assertThat(state).as("Check first state isn't null").isNotNull();
+    assertThat(state.getCurrentPlayer()).as("Check first player is p1").isEqualTo(p1);
+    assertThat(state)
+        .as("Check first state is a bidding state")
+        .isInstanceOf(GameStateBidding.class);
+    GameStateBidding biddingState = (GameStateBidding) state;
+    assertThat(biddingState.getHighestBidding()).as("Check first highest bidding is null").isNull();
   }
 
   @Test
