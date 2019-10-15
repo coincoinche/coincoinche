@@ -47,19 +47,19 @@ export default class MainGameScreen extends React.Component<Props, State> {
     this.props.registerOnMessageReceivedCallback(
       getGameTopic(this.props.gameId, this.props.username),
       EventType.ROUND_STARTED,
-      (jsonEvent: string) => this.updateState(EventType.ROUND_STARTED, jsonEvent),
+      (jsonEvent: string) => this.applyEventToState(EventType.ROUND_STARTED, jsonEvent),
     );
 
     this.props.registerOnMessageReceivedCallback(
       getGameTopic(this.props.gameId, this.props.username),
       EventType.TURN_STARTED,
-      (jsonEvent: string) => this.updateState(EventType.TURN_STARTED, jsonEvent),
+      (jsonEvent: string) => this.applyEventToState(EventType.TURN_STARTED, jsonEvent),
     );
 
     this.props.registerOnMessageReceivedCallback(
       getBroadcastGameTopic(this.props.gameId),
       EventType.PLAYER_BADE,
-      (jsonEvent: string) => this.updateState(EventType.PLAYER_BADE, jsonEvent),
+      (jsonEvent: string) => this.applyEventToState(EventType.PLAYER_BADE, jsonEvent),
     );
 
     this.props.subscribe(getGameTopic(this.props.gameId, this.props.username));
@@ -71,7 +71,7 @@ export default class MainGameScreen extends React.Component<Props, State> {
   componentDidUpdate(prevProps: Readonly<InjectedProps>): void {
     if (this.state.currentPhase === GamePhase.main && isFull(this.state.currentTrick)) {
       setTimeout(() => {
-        this.setState(prevState => new GameStateModifier(prevState).setCurrentTrick({}).retrieveNewState())
+        this.setState(prevState => new GameStateModifier(prevState).resetCurrentTrick().retrieveNewState())
       }, CLEAN_TRICK_TIMOUT_MS)
     }
 
@@ -81,53 +81,28 @@ export default class MainGameScreen extends React.Component<Props, State> {
     }
   }
 
-  updateState = (eventType: EventType, jsonEvent: string) => {
+  applyEventToState = (eventType: EventType, jsonEvent: string) => {
     const event = inboundGameEventParser[eventType]!(jsonEvent);
     this.setState(prevState => applyEvent(event, prevState))
   };
 
-  // TODO update player cards using created event CardPlayed, then applyEvent;
-  updatePlayerCards = (newCards: CardValue[]) => {
-    // this.setState(prevState => ({
-    //   players: {
-    //     ...prevState.players,
-    //     [Position.bottom]: {
-    //       ...prevState.players[Position.bottom],
-    //       cardsInHand: newCards,
-    //     }
-    //   }
-    // }))
-  };
-  playCard = (player: Position, card: CardValue) => {
-    // const playerCards = this.state.players[player].cardsInHand;
-    // playerCards.splice(playerCards.indexOf(card), 1);
-    // this.updatePlayerCards(playerCards);
-    //
-    // this.setState(prevState => {
-    //   const player = prevState.currentPlayer;
-    //
-    //   return ({
-    //     currentTrick: {
-    //       ...prevState.currentTrick,
-    //       [player]: card,
-    //     },
-    //   })
-    // });
-    //
-    // this.rotateCurrentPlayer();
-  };
   onCardPlayed = (player: Position, card: CardValue) => {
-    // const cardIndexInHand = this.state.players[player].cardsInHand.indexOf(card);
-    //
-    // if (
-    //     cardIndexInHand === -1 ||
-    //     !this.state.players[player].legalMoves[cardIndexInHand] ||
-    //     player !== this.state.currentPlayer
-    // ) {
-    //   return;
-    // }
-    //
-    // this.playCard(player, card);
+    if (
+        this.state.currentPhase !== GamePhase.main ||
+        !this.state.cardsInHand.includes(card) ||
+        !this.state.legalMoves.includes(card) ||
+        player !== this.state.currentPlayer
+    ) {
+      return;
+    }
+
+    this.setState(prevState =>
+      new GameStateModifier(prevState)
+        .playCardFromHand(card)
+        .addCardToCurrentTrick(player, card)
+        .rotateCurrentPlayer()
+        .retrieveNewState()
+    );
   };
 
   onContractPicked = (biddingMove: LegalBiddingMove) => {
@@ -167,7 +142,9 @@ export default class MainGameScreen extends React.Component<Props, State> {
     let legalCardsToPlay: boolean[] = [];
     let currentTrick: Trick;
     if (this.state.currentPhase === GamePhase.main) {
-      legalCardsToPlay = this.state.legalMoves;
+      legalCardsToPlay = this.state.cardsInHand.map(
+        (cardsInHand: CardValue) => (this.state.legalMoves as CardValue[]).includes(cardsInHand)
+      );
       currentTrick = this.state.currentTrick;
     }
 

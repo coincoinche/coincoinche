@@ -72,5 +72,5 @@ export type GameState = {
 } | {
   currentPhase: GamePhase.main;
   currentTrick: Trick;
-  legalMoves: boolean[];
+  legalMoves: CardValue[];
 });

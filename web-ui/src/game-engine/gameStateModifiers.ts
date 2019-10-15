@@ -68,11 +68,27 @@ export class GameStateModifier {
     return this;
   };
 
-  setCurrentTrick = (trick: Trick) => {
+  playCardFromHand = (cardPlayed: CardValue) => {
+    this.gameState.cardsInHand = this.gameState.cardsInHand.filter(cardInHand => cardInHand !== cardPlayed);
+    return this;
+  };
+
+  resetCurrentTrick = () => {
     if (this.gameState.currentPhase !== GamePhase.main) {
       throw new IllegalStateModificationError('Can only update the current trick during the main game phase');
     }
-    this.gameState.currentTrick = trick;
+    this.gameState.currentTrick = {};
+    return this;
+  };
+
+  addCardToCurrentTrick = (position: Position, card: CardValue) => {
+    if (this.gameState.currentPhase !== GamePhase.main) {
+      throw new IllegalStateModificationError('Can only update the current trick during the main game phase');
+    }
+    this.gameState.currentTrick = {
+      ...this.gameState.currentTrick,
+      [position]: card,
+    }
     return this;
   };
 
