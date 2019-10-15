@@ -1,3 +1,6 @@
+# Local database data
+.psql
+
 # Compiled class file
 *.class
 

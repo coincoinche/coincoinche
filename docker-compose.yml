@@ -4,6 +4,18 @@ version: '3.7'
 
 # Define services
 services:
+  # Database
+  database:
+    image: postgres:12.0
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: 'main'
+      POSTGRES_USER: 'server'
+      PGDATA: '/var/lib/postgresql/data/pgdata'
+    volumes:
+      - ".psql/data/pgdata:/var/lib/postgresql/data/pgdata"
+
   # App backend service
   server:
     # Configuration for building the docker image for the backend service

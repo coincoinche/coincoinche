@@ -1,6 +1,7 @@
 # Coincoinche -- backend
 
 The server is coded in Java 11.
+Database is Postgres 12.0.
 
 ## Build and run the application
 
@@ -45,3 +46,23 @@ Run unit tests with `./mvnw test`.
 ### Integration tests
 
 Run integration tests with `./mvnw failsafe:integration-test`.
+
+### Local database setup
+
+#### Using Docker
+If you used docker-compose, you can connect to the database from the terminal:
+`docker-compose exec database /bin/bash`
+Then, inside the container
+`psql -U server main`
+
+#### Local setup without docker
+`docker run \
+         --name postgres \
+         -e POSTGRES_DB=main \
+         -e POSTGRES_USER=server \
+         -e PGDATA=/var/lib/postgresql/data/pgdata \
+         -d -p 0.0.0.0:5432:5432 \
+         -v .psql/data/pgdata:/var/lib/postgresql/data/pgdata \
+         postgres:12.0
+`
+Then run `docker exec -it postgres /bin/bash` to connect to the container and `psql -U server main` to connect to the database.
