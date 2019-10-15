@@ -186,8 +186,15 @@ public class Contract {
     return prettyString.toString();
   }
 
+  /**
+   * Defines the json serialisation for Contract instances.
+   *
+   * @return a json representation of the contract object.
+   */
   @JsonValue
   public String toJson() {
-    return String.format("{\"value\":%s,\"suit\":\"%s\"}", getPoints(), getSuit());
+    return String.format(
+        "{\"moveType\":\"%s\", \"value\":%s,\"suit\":\"%s\"}",
+        MoveType.CONTRACT_BIDDING, getPoints(), getSuit());
   }
 }

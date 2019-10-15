@@ -1,8 +1,8 @@
 import React from 'react';
 import Card from "./Card";
 import Container from "../utils/Container";
-import {Trick} from "../../pages/MainGame/types";
 import cards, {CardValue} from "../../assets/cards";
+import {Trick} from "../../game-engine/gameStateTypes";
 
 type Props = Trick;
 

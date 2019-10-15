@@ -1,12 +1,12 @@
 import * as React from "react";
-import { MESSAGE_TYPE, SocketMessage } from "./types";
+import { EventType, SocketMessage } from "./events/types";
 
 const Stomp = require('stompjs');
 const SockJS = require('sockjs-client');
 
 export type InjectedProps = {
   sendMessage: (socketEndpoint: string, message: SocketMessage) => void;
-  registerOnMessageReceivedCallback: (topic: string, messageType: MESSAGE_TYPE, callback: MessageCallback) => void;
+  registerOnMessageReceivedCallback: (topic: string, messageType: EventType, callback: MessageCallback) => void;
   socketConnected: boolean;
   subscribe: (topic: string) => void;
 }
@@ -20,7 +20,7 @@ type MessageCallback = (message: SocketMessage & any) => void;
 type State = {
   callbacks: {
     [topic: string]: {
-      [k in MESSAGE_TYPE]?: MessageCallback;
+      [k in EventType]?: MessageCallback;
     };
   }
   socketConnected: boolean;
@@ -50,7 +50,7 @@ function withWebsocketConnection<BaseProps>(WrappedComponent: React.ComponentTyp
 
     registerCallback = (
       topic: string,
-      messageType: MESSAGE_TYPE,
+      messageType: EventType,
       callback: MessageCallback,
     ) => {
       this.setState(prevState => ({

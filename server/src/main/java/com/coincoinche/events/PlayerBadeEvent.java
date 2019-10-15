@@ -1,12 +1,14 @@
 package com.coincoinche.events;
 
 import com.coincoinche.engine.MoveBidding;
+import com.coincoinche.engine.MoveType;
 import com.coincoinche.engine.cards.Suit;
 
 public class PlayerBadeEvent extends Event {
   private MoveBidding.Special special;
   private int value;
   private Suit suit;
+  private MoveType moveType;
 
   /**
    * Event sent by the client when the player did a special bidding during the bidding phase of the
@@ -17,6 +19,7 @@ public class PlayerBadeEvent extends Event {
   public PlayerBadeEvent(MoveBidding.Special special) {
     super(EventType.PLAYER_BADE);
     this.special = special;
+    this.moveType = MoveType.SPECIAL_BIDDING;
   }
 
   /**
@@ -30,6 +33,7 @@ public class PlayerBadeEvent extends Event {
     super(EventType.PLAYER_BADE);
     this.value = value;
     this.suit = suit;
+    this.moveType = MoveType.CONTRACT_BIDDING;
   }
 
   public MoveBidding.Special getSpecial() {
@@ -42,5 +46,9 @@ public class PlayerBadeEvent extends Event {
 
   public Suit getSuit() {
     return suit;
+  }
+
+  public MoveType getMoveType() {
+    return moveType;
   }
 }

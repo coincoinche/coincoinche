@@ -1,15 +1,22 @@
 import React from 'react';
 import styled from "styled-components";
 import ValueSelector from "./ValueSelector";
-import {
-  AuthorisedBidding,
-  ContractValue, getDisplayedValue,
-  isAuthorisedSpecialBidding,
-  SpecialBidding,
-  Suit
-} from "../../pages/MainGame/types";
 import Container from "../utils/Container";
 import SuitSelector from "./SuitSelector";
+import {ContractValue, LegalBiddingMove, SpecialBidding, Suit} from "../../game-engine/gameStateTypes";
+import {MoveType} from "../../websocket/events/types";
+
+const getDisplayedValue = (value: ContractValue) => {
+  if (value === ContractValue.CAPOT) {
+    return 'CAPOT';
+  }
+
+  if (value === ContractValue.GENERALE) {
+    return 'GENERALE';
+  }
+
+  return value;
+};
 
 const ValuesGroup = styled.div`
   display: flex;
@@ -34,8 +41,8 @@ type Props = {
   authorisedContractValues: ContractValue[];
   authorisedSpecialBiddings: SpecialBidding[];
   authorisedContractSuits: Suit[];
-  lastContract?: AuthorisedBidding;
-  onContractPicked: (contract: AuthorisedBidding) => void;
+  lastContract: Partial<LegalBiddingMove>;
+  onContractPicked: (contract: LegalBiddingMove) => void;
 };
 
 type State = {
@@ -84,7 +91,8 @@ export default class BiddingBoard extends React.Component<Props, State> {
 
     if (prevSelectedSpecialBidding === null && selectedSpecialBidding !== null) {
       this.props.onContractPicked({
-        special: selectedSpecialBidding!,
+        moveType: MoveType.SPECIAL_BIDDING,
+        bidding: selectedSpecialBidding!,
       });
       this.setState({
         selectedValue: null,
@@ -95,6 +103,7 @@ export default class BiddingBoard extends React.Component<Props, State> {
 
     if ((prevSelectedSuit === null || prevSelectedValue === null) && (selectedSuit !== null && selectedValue !== null)) {
       this.props.onContractPicked({
+        moveType: MoveType.CONTRACT_BIDDING,
         value: selectedValue!,
         suit: selectedSuit!,
       });
@@ -111,13 +120,14 @@ export default class BiddingBoard extends React.Component<Props, State> {
     const contractValues = Object.values(ContractValue);
     const contractSuits = Object.values(Suit);
     const specialBiddings = Object.values(SpecialBidding);
-    let lastContractValue: string;
-    let lastContractSuit: string;
-    let lastContractSpecial: string;
+    let lastContractValue: string | undefined;
+    let lastContractSuit: string | undefined;
+    let lastContractSpecial: string | undefined;
     if (lastContract) {
-      if (isAuthorisedSpecialBidding(lastContract)) {
-        lastContractSpecial = lastContract.special;
-      } else {
+      if (lastContract.moveType === MoveType.SPECIAL_BIDDING) {
+        lastContractSpecial = lastContract.bidding;
+      }
+      if (lastContract.moveType === MoveType.CONTRACT_BIDDING) {
         lastContractValue = lastContract.value;
         lastContractSuit = lastContract.suit
       }
@@ -138,8 +148,8 @@ export default class BiddingBoard extends React.Component<Props, State> {
             {
               contractValues
                 .map(value => {
-                  const disabled = !authorisedContractValues.includes(value) && value !== lastContractValue;
-                  const onClick = disabled || value === lastContractValue ? () => {} : () => this.onValueClicked(value);
+                  const disabled = !authorisedContractValues.includes(value);
+                  const onClick = disabled ? () => {} : () => this.onValueClicked(value);
                   const minWidth = [ContractValue.CAPOT, ContractValue.GENERALE].includes(value) ? '85px' : undefined;
 
                   return (
@@ -160,7 +170,7 @@ export default class BiddingBoard extends React.Component<Props, State> {
           <SuitGroup>
             {
               contractSuits.map(suit => {
-                const disabled = !authorisedContractSuits.includes(suit) && suit !== lastContractSuit;
+                const disabled = !authorisedContractSuits.includes(suit);
                 const onClick = disabled ? () => {} : () => this.onSuitClicked(suit);
 
                 return (
@@ -182,14 +192,15 @@ export default class BiddingBoard extends React.Component<Props, State> {
           {
             specialBiddings
               .map(bidding => {
-                const disabled = !authorisedSpecialBiddings.includes(bidding) && bidding !== lastContractSpecial;
-                const onClick = disabled || bidding === lastContractSpecial ? () => {} : () => this.onSpecialBiddingClicked(bidding);
+                const selectedByOpponent = bidding === lastContractSpecial;
+                const disabled = !authorisedSpecialBiddings.includes(bidding);
+                const onClick = disabled ? () => {} : () => this.onSpecialBiddingClicked(bidding);
 
                 return (
                   <ValueSelector
                     minWidth="90px"
                     key={bidding}
-                    selectedByOpponent={lastContractSpecial === bidding}
+                    selectedByOpponent={selectedByOpponent}
                     disabled={disabled}
                     onClick={onClick}
                     selectedByPlayer={this.state.selectedSpecialBidding === bidding}
