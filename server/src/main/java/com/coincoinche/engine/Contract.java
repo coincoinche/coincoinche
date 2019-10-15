@@ -187,6 +187,11 @@ public class Contract {
     return prettyString.toString();
   }
 
+  /**
+   * Defines the json serialisation for Contract instances.
+   *
+   * @return a json representation of the contract object.
+   */
   @JsonValue
   public String toJson() {
     return String.format(
