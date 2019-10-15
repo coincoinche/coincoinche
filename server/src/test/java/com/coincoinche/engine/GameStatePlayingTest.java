@@ -313,10 +313,7 @@ public class GameStatePlayingTest extends GameEngineTestHelper {
                         List.of(
                             MovePlaying.cardMove(stringToCard("7s")),
                             MovePlaying.cardMove(stringToCard("8s")),
-                            MovePlaying.cardMove(stringToCard("Js"))
-
-
-                            )))));
+                            MovePlaying.cardMove(stringToCard("Js")))))));
 
     testCases.forEach(TestCase::run);
   }
