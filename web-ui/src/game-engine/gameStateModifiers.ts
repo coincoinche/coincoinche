@@ -88,7 +88,7 @@ export class GameStateModifier {
     this.gameState.currentTrick = {
       ...this.gameState.currentTrick,
       [position]: card,
-    }
+    };
     return this;
   };
 

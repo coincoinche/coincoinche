@@ -148,8 +148,8 @@ export default class BiddingBoard extends React.Component<Props, State> {
             {
               contractValues
                 .map(value => {
-                  const disabled = !authorisedContractValues.includes(value) && value !== lastContractValue;
-                  const onClick = disabled || value === lastContractValue ? () => {} : () => this.onValueClicked(value);
+                  const disabled = !authorisedContractValues.includes(value);
+                  const onClick = disabled ? () => {} : () => this.onValueClicked(value);
                   const minWidth = [ContractValue.CAPOT, ContractValue.GENERALE].includes(value) ? '85px' : undefined;
 
                   return (
@@ -170,7 +170,7 @@ export default class BiddingBoard extends React.Component<Props, State> {
           <SuitGroup>
             {
               contractSuits.map(suit => {
-                const disabled = !authorisedContractSuits.includes(suit) && suit !== lastContractSuit;
+                const disabled = !authorisedContractSuits.includes(suit);
                 const onClick = disabled ? () => {} : () => this.onSuitClicked(suit);
 
                 return (
@@ -192,14 +192,15 @@ export default class BiddingBoard extends React.Component<Props, State> {
           {
             specialBiddings
               .map(bidding => {
-                const disabled = !authorisedSpecialBiddings.includes(bidding) && bidding !== lastContractSpecial;
-                const onClick = disabled || bidding === lastContractSpecial ? () => {} : () => this.onSpecialBiddingClicked(bidding);
+                const selectedByOpponent = bidding === lastContractSpecial;
+                const disabled = !authorisedSpecialBiddings.includes(bidding);
+                const onClick = disabled ? () => {} : () => this.onSpecialBiddingClicked(bidding);
 
                 return (
                   <ValueSelector
                     minWidth="90px"
                     key={bidding}
-                    selectedByOpponent={lastContractSpecial === bidding}
+                    selectedByOpponent={selectedByOpponent}
                     disabled={disabled}
                     onClick={onClick}
                     selectedByPlayer={this.state.selectedSpecialBidding === bidding}
