@@ -25,7 +25,7 @@ public class GameEngineTestHelper {
   public abstract static class TestCase {
     private String name;
 
-    TestCase(String name) {
+    protected TestCase(String name) {
       this.name = name;
     }
 
@@ -45,7 +45,7 @@ public class GameEngineTestHelper {
     protected T o2;
     protected boolean expected;
 
-    ComparisonTestCase(String name, T o1, T o2, boolean expected) {
+    protected ComparisonTestCase(String name, T o1, T o2, boolean expected) {
       super(name);
       this.o1 = o1;
       this.o2 = o2;
@@ -72,6 +72,40 @@ public class GameEngineTestHelper {
   }
 
   /**
+   * Create a trick where the current player must make a move.
+   *
+   * <p><strong>Cards should be assigned to players before calling this method.</strong> Zero or one
+   * card should be assigned to each player, except for the current player, who can have up to 8
+   * cards. Cards assigned to each player, except for the current player, represent cards that these
+   * players played during the trick. Cards assigned to the current player represent cards in the
+   * hand of the current player.
+   *
+   * <p>A runtime exception is thrown if assigned cards are invalid.
+   *
+   * @param currentPlayer is the player who musts play a card in the trick.
+   * @param trumpSuit is the trump suit for this trick.
+   * @return the newly created trick
+   */
+  protected Trick createTrick(Player currentPlayer, Suit trumpSuit) {
+    Trick trick = Trick.emptyTrick(trumpSuit);
+    // navigate among players to create the trick
+    int currentPlayerIndex = getPlayertoIntMap().get(currentPlayer);
+    Map<Integer, Player> players = getIntToPlayerMap();
+    for (int i = 0; i < 3; i++) {
+      int index = (((currentPlayerIndex - 3 + i) % 4) + 4) % 4;
+      Player player = players.get(index > 0 ? index : 4);
+      if (player.getCards().isEmpty()) {
+        if (!trick.isEmpty()) {
+          throw new RuntimeException("Invalid cards");
+        }
+        continue;
+      }
+      trick.add(player, player.getCards().get(0));
+    }
+    return trick;
+  }
+
+  /**
    * Assign cards to players according to a map. <strong>Teams should be created before this method
    * is called.</strong>
    *
@@ -85,17 +119,32 @@ public class GameEngineTestHelper {
    *     </ul>
    */
   protected void assignCards(Map<Integer, List<String>> cards) {
+    Map<Integer, Player> players = getIntToPlayerMap();
+    // assign cards to players
+    for (int playerKey : cards.keySet()) {
+      players.get(playerKey).clearCards();
+      for (String cardString : cards.get(playerKey)) {
+        players.get(playerKey).addCard(stringToCard(cardString));
+      }
+    }
+  }
+
+  protected Map<Integer, Player> getIntToPlayerMap() {
     Map<Integer, Player> players = new HashMap<>();
     players.put(1, p1);
     players.put(2, p2);
     players.put(3, p3);
     players.put(4, p4);
-    // assign cards to players
-    for (int playerKey : cards.keySet()) {
-      for (String cardString : cards.get(playerKey)) {
-        players.get(playerKey).addCard(stringToCard(cardString));
-      }
-    }
+    return players;
+  }
+
+  protected Map<Player, Integer> getPlayertoIntMap() {
+    Map<Player, Integer> players = new HashMap<>();
+    players.put(p1, 1);
+    players.put(p2, 2);
+    players.put(p3, 3);
+    players.put(p4, 4);
+    return players;
   }
 
   /*
@@ -105,7 +154,7 @@ public class GameEngineTestHelper {
    *      Td -> ten of diamonds
    *      Qs -> queen of spades
    */
-  private static Card stringToCard(String shortName) {
+  protected static Card stringToCard(String shortName) {
     char rankChar = shortName.charAt(0);
     char suitChar = shortName.charAt(1);
     Rank rank = Rank.valueOfByShortName(String.valueOf(rankChar));
