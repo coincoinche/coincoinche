@@ -1,11 +1,22 @@
 import React from 'react';
 import styled from "styled-components";
 import ValueSelector from "./ValueSelector";
-import {AuthorisedBidding, ContractValue, getDisplayedValue} from "../../pages/MainGame/types";
 import Container from "../utils/Container";
 import SuitSelector from "./SuitSelector";
-import {LegalBiddingMove, SpecialBidding, Suit} from "../../game-engine/gameStateTypes";
+import {ContractValue, LegalBiddingMove, SpecialBidding, Suit} from "../../game-engine/gameStateTypes";
 import {MoveType} from "../../websocket/events/types";
+
+const getDisplayedValue = (value: ContractValue) => {
+  if (value === ContractValue.CAPOT) {
+    return 'CAPOT';
+  }
+
+  if (value === ContractValue.GENERALE) {
+    return 'GENERALE';
+  }
+
+  return value;
+};
 
 const ValuesGroup = styled.div`
   display: flex;
@@ -31,7 +42,7 @@ type Props = {
   authorisedSpecialBiddings: SpecialBidding[];
   authorisedContractSuits: Suit[];
   lastContract: Partial<LegalBiddingMove>;
-  onContractPicked: (contract: AuthorisedBidding) => void;
+  onContractPicked: (contract: LegalBiddingMove) => void;
 };
 
 type State = {
@@ -80,7 +91,8 @@ export default class BiddingBoard extends React.Component<Props, State> {
 
     if (prevSelectedSpecialBidding === null && selectedSpecialBidding !== null) {
       this.props.onContractPicked({
-        special: selectedSpecialBidding!,
+        moveType: MoveType.SPECIAL_BIDDING,
+        bidding: selectedSpecialBidding!,
       });
       this.setState({
         selectedValue: null,
@@ -91,6 +103,7 @@ export default class BiddingBoard extends React.Component<Props, State> {
 
     if ((prevSelectedSuit === null || prevSelectedValue === null) && (selectedSuit !== null && selectedValue !== null)) {
       this.props.onContractPicked({
+        moveType: MoveType.CONTRACT_BIDDING,
         value: selectedValue!,
         suit: selectedSuit!,
       });

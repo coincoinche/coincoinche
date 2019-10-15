@@ -2,25 +2,21 @@ import React from 'react';
 import HandOfCards from "../../components/cards/HandOfCards";
 import {CardValue} from '../../assets/cards';
 import Container from "../../components/utils/Container";
-import {
-  AuthorisedBidding,
-  ContractValue,
-  isAuthorisedSpecialBidding} from "./types";
 import CardBoard from "../../components/cards/CardBoard";
 import BiddingBoard from "../../components/bidding/BiddingBoard";
 import {InjectedProps} from "../../websocket/withWebsocketConnection";
-import {
-  EventType,
-  MoveType,
-  PlayerBadeEvent,
-  TopicTemplate,
-} from "../../websocket/events/types";
+import {EventType, MoveType, PlayerBadeEvent, TopicTemplate,} from "../../websocket/events/types";
 import {
   ContractBiddingMove,
+  ContractValue,
   GamePhase,
   GameState,
-  LegalBiddingMove, Position, SpecialBidding,
-  SpecialBiddingMove, Suit, Trick
+  LegalBiddingMove,
+  Position,
+  SpecialBidding,
+  SpecialBiddingMove,
+  Suit,
+  Trick
 } from "../../game-engine/gameStateTypes";
 import {gameStateInit} from "../../game-engine/gameStateInit";
 import {applyEvent, GameStateModifier} from "../../game-engine/gameStateModifiers";
@@ -134,17 +130,10 @@ export default class MainGameScreen extends React.Component<Props, State> {
     // this.playCard(player, card);
   };
 
-  // TODO use moveType here instead of AuthorisedBidding.
-  onContractPicked = (contract: AuthorisedBidding) => {
-    const event: PlayerBadeEvent = isAuthorisedSpecialBidding(contract) ? {
+  onContractPicked = (biddingMove: LegalBiddingMove) => {
+    const event: PlayerBadeEvent = {
       type: EventType.PLAYER_BADE,
-      moveType: MoveType.SPECIAL_BIDDING,
-      bidding: contract.special,
-    } : {
-      type: EventType.PLAYER_BADE,
-      moveType: MoveType.CONTRACT_BIDDING,
-      value: contract.value,
-      suit: contract.suit,
+      ...biddingMove
     };
 
     this.props.sendMessage(

@@ -1,4 +1,3 @@
-import {ContractValue} from "../pages/MainGame/types";
 import {CardValue} from "../assets/cards";
 import {MoveType} from "../websocket/events/types";
 
@@ -37,6 +36,20 @@ export enum Suit {
 export type SpecialBiddingMove = {
   moveType: MoveType.SPECIAL_BIDDING,
   bidding: SpecialBidding,
+}
+
+export enum ContractValue {
+  EIGHTY = '80',
+  NINETY = '90',
+  HUNDRED = '100',
+  HUNDRED_TEN = '110',
+  HUNDRED_TWENTY = '120',
+  HUNDRED_THIRTY = '130',
+  HUNDRED_FOURTY = '140',
+  HUNDRED_FIFTY = '150',
+  HUNDRED_SIXTY = '160',
+  CAPOT = '250',
+  GENERALE = '500',
 }
 
 export type ContractBiddingMove = {
