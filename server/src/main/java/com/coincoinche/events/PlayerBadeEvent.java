@@ -4,9 +4,25 @@ import com.coincoinche.engine.BiddingMove;
 import com.coincoinche.engine.cards.Suit;
 
 public class PlayerBadeEvent extends Event {
+  public enum MoveType {
+    SPECIAL_BIDDING("SPECIAL_BIDDING"),
+    CONTRACT_BIDDING("CONTRACT_BIDDING");
+
+    private String type;
+
+    MoveType(String type) {
+      this.type = type;
+    }
+
+    public String getType() {
+      return type;
+    }
+  }
+
   private BiddingMove.Special special;
   private int value;
   private Suit suit;
+  private MoveType moveType;
 
   /**
    * Event sent by the client when the player did a special bidding during the bidding phase of the
@@ -17,6 +33,7 @@ public class PlayerBadeEvent extends Event {
   public PlayerBadeEvent(BiddingMove.Special special) {
     super(EventType.PLAYER_BADE);
     this.special = special;
+    this.moveType = MoveType.SPECIAL_BIDDING;
   }
 
   /**
@@ -30,6 +47,7 @@ public class PlayerBadeEvent extends Event {
     super(EventType.PLAYER_BADE);
     this.value = value;
     this.suit = suit;
+    this.moveType = MoveType.CONTRACT_BIDDING;
   }
 
   public BiddingMove.Special getSpecial() {
@@ -42,5 +60,9 @@ public class PlayerBadeEvent extends Event {
 
   public Suit getSuit() {
     return suit;
+  }
+
+  public MoveType getMoveType() {
+    return moveType;
   }
 }

@@ -201,16 +201,19 @@ public class BiddingMove extends Move implements Comparable<BiddingMove> {
    */
   @JsonValue
   public String toJson() {
-    String specialMoveJsonTemplate = "{\"special\":\"%s\"}";
+    String specialMoveJsonTemplate = "{\"moveType\":\"%s\", \"special\":\"%s\"}";
 
     if (isCoinche()) {
-      return String.format(specialMoveJsonTemplate, Special.COINCHE);
+      return String.format(
+          specialMoveJsonTemplate, PlayerBadeEvent.MoveType.SPECIAL_BIDDING, Special.COINCHE);
     }
     if (isSurcoinche()) {
-      return String.format(specialMoveJsonTemplate, Special.SURCOINCHE);
+      return String.format(
+          specialMoveJsonTemplate, PlayerBadeEvent.MoveType.SPECIAL_BIDDING, Special.SURCOINCHE);
     }
     if (isPass()) {
-      return String.format(specialMoveJsonTemplate, Special.PASS);
+      return String.format(
+          specialMoveJsonTemplate, PlayerBadeEvent.MoveType.SPECIAL_BIDDING, Special.PASS);
     }
 
     return getContract().toJson();

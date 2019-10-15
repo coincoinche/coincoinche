@@ -1,15 +1,11 @@
 import React from 'react';
 import styled from "styled-components";
 import ValueSelector from "./ValueSelector";
-import {
-  AuthorisedBidding,
-  ContractValue, getDisplayedValue,
-  isAuthorisedSpecialBidding,
-  SpecialBidding,
-  Suit
-} from "../../pages/MainGame/types";
+import {AuthorisedBidding, ContractValue, getDisplayedValue} from "../../pages/MainGame/types";
 import Container from "../utils/Container";
 import SuitSelector from "./SuitSelector";
+import {LegalBiddingMove, SpecialBidding, Suit} from "../../game-engine/gameStateTypes";
+import {MoveType} from "../../websocket/events/types";
 
 const ValuesGroup = styled.div`
   display: flex;
@@ -34,7 +30,7 @@ type Props = {
   authorisedContractValues: ContractValue[];
   authorisedSpecialBiddings: SpecialBidding[];
   authorisedContractSuits: Suit[];
-  lastContract?: AuthorisedBidding;
+  lastContract: Partial<LegalBiddingMove>;
   onContractPicked: (contract: AuthorisedBidding) => void;
 };
 
@@ -111,13 +107,14 @@ export default class BiddingBoard extends React.Component<Props, State> {
     const contractValues = Object.values(ContractValue);
     const contractSuits = Object.values(Suit);
     const specialBiddings = Object.values(SpecialBidding);
-    let lastContractValue: string;
-    let lastContractSuit: string;
-    let lastContractSpecial: string;
+    let lastContractValue: string | undefined;
+    let lastContractSuit: string | undefined;
+    let lastContractSpecial: string | undefined;
     if (lastContract) {
-      if (isAuthorisedSpecialBidding(lastContract)) {
-        lastContractSpecial = lastContract.special;
-      } else {
+      if (lastContract.moveType === MoveType.SPECIAL_BIDDING) {
+        lastContractSpecial = lastContract.bidding;
+      }
+      if (lastContract.moveType === MoveType.CONTRACT_BIDDING) {
         lastContractValue = lastContract.value;
         lastContractSuit = lastContract.suit
       }
