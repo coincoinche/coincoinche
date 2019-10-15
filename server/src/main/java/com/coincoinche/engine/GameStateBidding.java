@@ -9,20 +9,27 @@ import java.util.List;
 public class GameStateBidding implements GameStateTerminal {
 
   private Player currentPlayer;
+  // last player who made a non-pass move
+  private Player lastPlayer;
   private Contract highestBidding;
   private boolean coinched;
   private boolean surcoinched;
 
   GameStateBidding(
-      Player currentPlayer, Contract highestBidding, boolean coinched, boolean surcoinched) {
+      Player currentPlayer,
+      Player lastPlayer,
+      Contract highestBidding,
+      boolean coinched,
+      boolean surcoinched) {
     this.currentPlayer = currentPlayer;
+    this.lastPlayer = lastPlayer;
     this.highestBidding = highestBidding;
     this.coinched = coinched;
     this.surcoinched = surcoinched;
   }
 
   public static GameStateBidding initialGameStateBidding(Player firstPlayer) {
-    return new GameStateBidding(firstPlayer, null, false, false);
+    return new GameStateBidding(firstPlayer, null, null, false, false);
   }
 
   /**
@@ -39,23 +46,23 @@ public class GameStateBidding implements GameStateTerminal {
   private List<Move> getUnsortedLegalMoves() {
     List<Move> legalMoves = new ArrayList<>();
     // Can always pass
-    legalMoves.add(BiddingMove.passMove());
+    legalMoves.add(MoveBidding.passMove());
     // only surcoinche is legal if there is a coinche
     if (coinched) {
       if (currentPlayer.isTeamMate(highestBidding.getPlayer())) {
-        legalMoves.add(BiddingMove.surcoincheMove());
+        legalMoves.add(MoveBidding.surcoincheMove());
       }
       return legalMoves;
     }
     // contracts strictly better than current contract are legal
     for (Contract contract : Contract.generateAllContracts()) {
       if (contract.isHigherThan(highestBidding)) {
-        legalMoves.add(BiddingMove.contractMove(contract));
+        legalMoves.add(MoveBidding.contractMove(contract));
       }
     }
     // coinche is legal if an opponent has the highest bidding
     if (highestBidding != null && !currentPlayer.isTeamMate(highestBidding.getPlayer())) {
-      legalMoves.add(BiddingMove.coincheMove());
+      legalMoves.add(MoveBidding.coincheMove());
     }
     return legalMoves;
   }
@@ -67,8 +74,7 @@ public class GameStateBidding implements GameStateTerminal {
    */
   @Override
   public boolean mustChange() {
-    return highestBidding != null
-        && (surcoinched || currentPlayer.equals(highestBidding.getPlayer()));
+    return highestBidding != null && (surcoinched || currentPlayer.equals(lastPlayer));
   }
 
   @Override
@@ -91,6 +97,22 @@ public class GameStateBidding implements GameStateTerminal {
 
   public void setHighestBidding(Contract highestBidding) {
     this.highestBidding = highestBidding;
+  }
+
+  public Contract getHighestBidding() {
+    return highestBidding;
+  }
+
+  public boolean isCoinched() {
+    return coinched;
+  }
+
+  public boolean isSurcoinched() {
+    return surcoinched;
+  }
+
+  public void setLastPlayer(Player lastPlayer) {
+    this.lastPlayer = lastPlayer;
   }
 
   // TODO nockty see if we can use a default method here

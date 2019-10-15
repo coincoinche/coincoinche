@@ -1,6 +1,6 @@
 package com.coincoinche.events;
 
-import com.coincoinche.engine.BiddingMove;
+import com.coincoinche.engine.MoveBidding;
 import com.coincoinche.engine.cards.Suit;
 
 public class PlayerBadeEvent extends Event {
@@ -19,7 +19,7 @@ public class PlayerBadeEvent extends Event {
     }
   }
 
-  private BiddingMove.Special special;
+  private MoveBidding.Special special;
   private int value;
   private Suit suit;
   private MoveType moveType;
@@ -30,7 +30,7 @@ public class PlayerBadeEvent extends Event {
    *
    * @param special - the value of the special bidding.
    */
-  public PlayerBadeEvent(BiddingMove.Special special) {
+  public PlayerBadeEvent(MoveBidding.Special special) {
     super(EventType.PLAYER_BADE);
     this.special = special;
     this.moveType = MoveType.SPECIAL_BIDDING;
@@ -50,7 +50,7 @@ public class PlayerBadeEvent extends Event {
     this.moveType = MoveType.CONTRACT_BIDDING;
   }
 
-  public BiddingMove.Special getSpecial() {
+  public MoveBidding.Special getSpecial() {
     return special;
   }
 
