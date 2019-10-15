@@ -54,7 +54,6 @@ public class Contract {
   }
 
   private Value value;
-  // TODO nockty: figure out how to change this when we handle all trumps & no trumps
   private Suit suit;
   private Player player;
 
