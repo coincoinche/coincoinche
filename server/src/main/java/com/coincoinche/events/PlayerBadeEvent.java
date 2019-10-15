@@ -1,24 +1,10 @@
 package com.coincoinche.events;
 
 import com.coincoinche.engine.MoveBidding;
+import com.coincoinche.engine.MoveType;
 import com.coincoinche.engine.cards.Suit;
 
 public class PlayerBadeEvent extends Event {
-  public enum MoveType {
-    SPECIAL_BIDDING("SPECIAL_BIDDING"),
-    CONTRACT_BIDDING("CONTRACT_BIDDING");
-
-    private String type;
-
-    MoveType(String type) {
-      this.type = type;
-    }
-
-    public String getType() {
-      return type;
-    }
-  }
-
   private MoveBidding.Special special;
   private int value;
   private Suit suit;

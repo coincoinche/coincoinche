@@ -2,7 +2,6 @@ package com.coincoinche.engine;
 
 import com.coincoinche.engine.cards.Suit;
 import com.coincoinche.engine.teams.Player;
-import com.coincoinche.events.PlayerBadeEvent;
 import com.fasterxml.jackson.annotation.JsonValue;
 import java.util.ArrayList;
 import java.util.List;
@@ -196,6 +195,6 @@ public class Contract {
   public String toJson() {
     return String.format(
         "{\"moveType\":\"%s\", \"value\":%s,\"suit\":\"%s\"}",
-        PlayerBadeEvent.MoveType.CONTRACT_BIDDING, getPoints(), getSuit());
+        MoveType.CONTRACT_BIDDING, getPoints(), getSuit());
   }
 }
