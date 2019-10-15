@@ -42,6 +42,10 @@ public class ValuedCard extends Card {
     return new ValuedCard(card.getSuit(), card.getRank(), card.getSuit().equals(trumpSuit));
   }
 
+  /**
+   * Get the value from a card. The value depends on the trump nature of the card.
+   * @return the value of the card (points earned by winning the card).
+   */
   public int getValue() {
     if (trump) {
       return trumpValues.get(getRank());
