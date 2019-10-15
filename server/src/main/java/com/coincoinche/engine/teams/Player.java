@@ -3,6 +3,7 @@ package com.coincoinche.engine.teams;
 import com.coincoinche.engine.cards.Card;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 
 /** Player represents a coinche player. */
 public class Player {
@@ -27,6 +28,11 @@ public class Player {
 
   public List<Card> getCards() {
     return cards;
+  }
+
+  /** Remove all cards in the player's hand. */
+  public void clearCards() {
+    cards.clear();
   }
 
   /**
@@ -71,5 +77,10 @@ public class Player {
     }
     Player otherPlayer = (Player) obj;
     return this.username == otherPlayer.username;
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(username);
   }
 }
