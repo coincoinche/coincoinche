@@ -8,12 +8,10 @@ import com.coincoinche.events.Event;
 import com.coincoinche.events.EventType;
 import com.coincoinche.events.GameStartedEvent;
 import com.coincoinche.events.PlayerJoinedLobbyEvent;
-
-import java.util.List;
-import java.util.UUID;
-
 import com.coincoinche.model.User;
 import com.coincoinche.repositories.UserRepository;
+import java.util.List;
+import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

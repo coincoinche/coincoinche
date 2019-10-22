@@ -1,7 +1,7 @@
 package com.coincoinche.model;
 
-import javax.persistence.*;
 import java.util.UUID;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "user", schema = "public")
