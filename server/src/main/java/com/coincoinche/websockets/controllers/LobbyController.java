@@ -8,7 +8,12 @@ import com.coincoinche.events.Event;
 import com.coincoinche.events.EventType;
 import com.coincoinche.events.GameStartedEvent;
 import com.coincoinche.events.PlayerJoinedLobbyEvent;
+
+import java.util.List;
 import java.util.UUID;
+
+import com.coincoinche.model.User;
+import com.coincoinche.repositories.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +29,7 @@ public class LobbyController {
 
   @Autowired private SimpMessagingTemplate template;
   @Autowired private GameController gameController;
+  @Autowired private UserRepository userRepository;
 
   private MatchMaker matchMaker;
 
@@ -46,6 +52,12 @@ public class LobbyController {
 
     if (!message.getType().equals(EventType.PLAYER_JOINED_LOBBY)) {
       return new Event(EventType.INVALID_MESSAGE);
+    }
+
+    // Create user if not exists.
+    List<User> users = this.userRepository.findByUsername(message.getUsername());
+    if (users.size() == 0) {
+      this.userRepository.save(new User(message.getUsername()));
     }
 
     this.matchMaker.register(message.getUsername());
