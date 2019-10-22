@@ -1,0 +1,36 @@
+.title {
+  padding: 20px 0px;
+  font-size: 50px;
+  color: chartreuse;
+}
+
+.columnName {
+  font-size: 20px;
+  color: darkorange;
+}
+
+.columnItem {
+  color: white;
+}
+
+.container {
+  display: flex;
+}
+
+.table {
+  width: 75%;
+  padding: 20px 50px;
+}
+
+.research {
+  width: 25%;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 50px;
+}
+
+.researchInput {
+  width: 50%;
+}
