@@ -16,7 +16,7 @@ public class GeneraleContract extends Contract {
 
   @Override
   public boolean isSuccessful(GameStatePlaying state) {
-    return state.getPointsForPlayer(player) == MAX_TRICKS_POINTS;
+    return state.getTrickPointsForPlayer(player) == MAX_TRICKS_POINTS;
   }
 
   @Override

@@ -1,14 +1,19 @@
 package com.coincoinche.engine;
 
+import static com.coincoinche.engine.CoincheGame.MAX_TRICKS_POINTS;
+
 import com.coincoinche.engine.cards.Card;
 import com.coincoinche.engine.cards.Suit;
 import com.coincoinche.engine.cards.ValuedCard;
 import com.coincoinche.engine.cards.ValuedCardComparator;
+import com.coincoinche.engine.contracts.Contract;
 import com.coincoinche.engine.teams.Player;
 import com.coincoinche.engine.teams.Team;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Spliterator;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -22,15 +27,16 @@ public class GameStatePlaying implements GameStateTerminal {
   private int currentTrickNumber;
   private Trick currentTrick;
   private Player lastTrickMaster;
-
+  private Contract contract;
   private Player currentPlayer;
-  private Suit trumpSuit;
   private Map<Player, Integer> playerPoints;
+  private List<Team> teams;
+  private int multiplier = 1;
 
   GameStatePlaying(
-      Player currentPlayer, Suit trumpSuit, Trick currentTrick, int currentTrickNumber) {
+      Player currentPlayer, Contract contract, Trick currentTrick, int currentTrickNumber) {
     this.currentPlayer = currentPlayer;
-    this.trumpSuit = trumpSuit;
+    this.contract = contract;
     this.currentTrick = currentTrick;
     this.currentTrickNumber = currentTrickNumber;
   }
@@ -39,13 +45,13 @@ public class GameStatePlaying implements GameStateTerminal {
    * Create a new initial game state for the playing phase.
    *
    * @param firstPlayer is the first player of the playing phase.
-   * @param trumpSuit is the trump suit for the playing phase.
+   * @param contract is the contract that must be fulfilled.
    * @return the newly created state.
    */
-  public static GameStatePlaying initialGameStatePlaying(Player firstPlayer, Suit trumpSuit) {
-    Trick currentTrick = Trick.emptyTrick(trumpSuit);
+  public static GameStatePlaying initialGameStatePlaying(Player firstPlayer, Contract contract) {
+    Trick currentTrick = Trick.emptyTrick(contract.getSuit());
     // start state with trick #1
-    return new GameStatePlaying(firstPlayer, trumpSuit, currentTrick, 1);
+    return new GameStatePlaying(firstPlayer, contract, currentTrick, 1);
   }
 
   @Override
@@ -78,7 +84,7 @@ public class GameStatePlaying implements GameStateTerminal {
                           if (currentTrick.getMaster().isTeamMate(currentPlayer)) {
                             return true;
                           }
-                          return card.getSuit().equals(trumpSuit);
+                          return card.getSuit().equals(getTrumpSuit());
                         }));
     // generate legal trumps from filtered cards
     Supplier<Stream<Card>> legalTrumpsSupplier =
@@ -87,7 +93,7 @@ public class GameStatePlaying implements GameStateTerminal {
                 // trump must be higher than current highest trump if possible
                 filteredCardsSupplier
                     .get()
-                    .filter(card -> card.getSuit().equals(trumpSuit))
+                    .filter(card -> card.getSuit().equals(getTrumpSuit()))
                     .filter(
                         card -> {
                           ValuedCard highestTrump = currentTrick.getHighestTrump();
@@ -95,20 +101,20 @@ public class GameStatePlaying implements GameStateTerminal {
                             return true;
                           }
                           ValuedCardComparator trumpComparator =
-                              new ValuedCardComparator(trumpSuit);
+                              new ValuedCardComparator(getTrumpSuit());
                           return trumpComparator.compare(
                                   ValuedCard.fromCard(card, true), highestTrump)
                               >= 0;
                         }),
                 // if no trump is higher, fall back to all the trumps
-                filteredCardsSupplier.get().filter(card -> card.getSuit().equals(trumpSuit)));
+                filteredCardsSupplier.get().filter(card -> card.getSuit().equals(getTrumpSuit())));
     return defaultIfEmpty(
         // filter cards again by removing illegal trumps
         filteredCardsSupplier
             .get()
             .filter(
                 card ->
-                    !card.getSuit().equals(trumpSuit)
+                    !card.getSuit().equals(getTrumpSuit())
                         || legalTrumpsSupplier.get().anyMatch(t -> card.equals(t))),
         // if there is no such card, fall back to any card
         allCardsSupplier.get());
@@ -182,7 +188,7 @@ public class GameStatePlaying implements GameStateTerminal {
     // update last master
     lastTrickMaster = master;
     // clear trick
-    currentTrick = Trick.emptyTrick(trumpSuit);
+    currentTrick = Trick.emptyTrick(getTrumpSuit());
     currentTrickNumber++;
   }
 
@@ -191,10 +197,22 @@ public class GameStatePlaying implements GameStateTerminal {
     return currentTrickNumber > MAX_TRICK_NUMBER;
   }
 
+  public void setTeams(List<Team> teams) {
+    this.teams = teams;
+  }
+
+  public void setMultiplier(int multiplier) {
+    this.multiplier = multiplier;
+  }
+
   // TODO nockty see if we can use a default method here
   @Override
   public Player getCurrentPlayer() {
     return currentPlayer;
+  }
+
+  public Suit getTrumpSuit() {
+    return contract.getSuit();
   }
 
   public Trick getCurrentTrick() {
@@ -207,20 +225,45 @@ public class GameStatePlaying implements GameStateTerminal {
    * @param player is a player playing the game.
    * @return the points earned by that player during this state's tricks.
    */
-  public int getPointsForPlayer(Player player) {
+  public int getTrickPointsForPlayer(Player player) {
     return playerPoints.getOrDefault(player, 0);
   }
 
-  @Override
-  public Team getWinnerTeam() {
-    // TODO Auto-generated method stub
-    return null;
+  private int getTrickPointsForTeam(Team team) {
+    int points = 0;
+    for (Entry<Player, Integer> entry : playerPoints.entrySet()) {
+      if (!entry.getKey().getTeam().equals(team)) {
+        continue;
+      }
+      points += entry.getValue();
+    }
+    return points;
+  }
+
+  private Team getAttackTeam() {
+    return contract.getPlayer().getTeam();
+  }
+
+  private Team getDefenseTeam() {
+    int attackIndex = teams.indexOf(getAttackTeam());
+    return teams.get((attackIndex + 1) % 2);
   }
 
   @Override
-  public int getWinnerPoints() {
-    // TODO Auto-generated method stub
-    return 0;
+  public Map<Team, Integer> getTeamsPoints() {
+    Map<Team, Integer> teamsPoints = new HashMap<>();
+    Team attackTeam = getAttackTeam();
+    Team defenseTeam = getDefenseTeam();
+    if (contract.isSuccessful(this)) {
+      teamsPoints.put(
+          attackTeam,
+          (getTrickPointsForTeam(attackTeam) + contract.getEarnedPoints()) * multiplier);
+      teamsPoints.put(defenseTeam, getTrickPointsForTeam(defenseTeam));
+      return teamsPoints;
+    }
+    teamsPoints.put(attackTeam, 0);
+    teamsPoints.put(defenseTeam, (MAX_TRICKS_POINTS + contract.getEarnedPoints()) * multiplier);
+    return teamsPoints;
   }
 
   @Override

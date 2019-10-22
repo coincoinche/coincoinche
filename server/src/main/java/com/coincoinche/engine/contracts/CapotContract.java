@@ -16,7 +16,7 @@ public class CapotContract extends Contract {
 
   @Override
   public boolean isSuccessful(GameStatePlaying state) {
-    return player.getTeam().getPlayers().stream().mapToInt(state::getPointsForPlayer).sum()
+    return player.getTeam().getPlayers().stream().mapToInt(state::getTrickPointsForPlayer).sum()
         == MAX_TRICKS_POINTS;
   }
 

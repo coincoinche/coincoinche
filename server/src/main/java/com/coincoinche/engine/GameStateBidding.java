@@ -1,9 +1,9 @@
 package com.coincoinche.engine;
 
-import com.coincoinche.engine.cards.Suit;
 import com.coincoinche.engine.contracts.Contract;
 import com.coincoinche.engine.contracts.ContractFactory;
 import com.coincoinche.engine.teams.Player;
+import com.coincoinche.engine.teams.Team;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,6 +16,7 @@ public class GameStateBidding implements GameStateTransition {
   private Contract highestBidding;
   private boolean coinched;
   private boolean surcoinched;
+  private List<Team> teams;
 
   GameStateBidding(
       Player currentPlayer,
@@ -91,6 +92,10 @@ public class GameStateBidding implements GameStateTransition {
     this.highestBidding = highestBidding;
   }
 
+  public void setTeams(List<Team> teams) {
+    this.teams = teams;
+  }
+
   public Contract getHighestBidding() {
     return highestBidding;
   }
@@ -122,8 +127,16 @@ public class GameStateBidding implements GameStateTransition {
 
   @Override
   public GameState createNextGameState() {
+    // TODO nockty: fix this as the first player is not him
     Player firstPlayer = highestBidding.getPlayer();
-    Suit trumpSuit = highestBidding.getSuit();
-    return GameStatePlaying.initialGameStatePlaying(firstPlayer, trumpSuit);
+    GameStatePlaying nextState =
+        GameStatePlaying.initialGameStatePlaying(firstPlayer, highestBidding);
+    nextState.setTeams(teams);
+    if (surcoinched) {
+      nextState.setMultiplier(4);
+    } else if (coinched) {
+      nextState.setMultiplier(2);
+    }
+    return nextState;
   }
 }

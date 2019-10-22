@@ -4,6 +4,10 @@ import com.coincoinche.engine.game.GameResult;
 import com.coincoinche.engine.game.RedBlueRotatingPlayersGame;
 import com.coincoinche.engine.teams.Player;
 import com.coincoinche.engine.teams.Team;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 /** Implementation of a coinche game. */
 public class CoincheGame extends RedBlueRotatingPlayersGame<Player> {
@@ -27,25 +31,28 @@ public class CoincheGame extends RedBlueRotatingPlayersGame<Player> {
       startNextRound();
       return GameResult.unfinishedResult();
     }
-    result.getWinnerTeam().addPoints(result.getWinnerPoints());
-    Team winnerTeam = getWinnerTeam();
-    if (winnerTeam != null) {
-      return GameResult.finishedResult(winnerTeam, winnerTeam.getPoints());
+    // update teams' points
+    for (Entry<Team, Integer> entry : result.getTeamsPoints().entrySet()) {
+      entry.getKey().addPoints(entry.getValue());
+    }
+    if (isFinished()) {
+      return GameResult.finishedResult(
+          Map.of((Team) redTeam, redTeam.getPoints(), (Team) blueTeam, blueTeam.getPoints()));
     }
     startNextRound();
     return GameResult.unfinishedResult();
   }
 
-  private Team getWinnerTeam() {
+  private boolean isFinished() {
     int redPoints = redTeam.getPoints();
     int bluePoints = blueTeam.getPoints();
     if (redPoints >= WINNING_POINTS && redPoints > bluePoints) {
-      return (Team) redTeam;
+      return true;
     }
     if (bluePoints >= WINNING_POINTS && bluePoints > redPoints) {
-      return (Team) blueTeam;
+      return true;
     }
-    return null;
+    return false;
   }
 
   private void startNextRound() {
@@ -61,6 +68,8 @@ public class CoincheGame extends RedBlueRotatingPlayersGame<Player> {
     // initialize first state of the game (bidding phase)
     GameStateBidding state =
         GameStateBidding.initialGameStateBidding(currentRound.getCurrentPlayer());
+    List<Team> teams = new ArrayList<Team>(List.of((Team) redTeam, (Team) blueTeam));
+    state.setTeams(teams);
     currentRound.setState(state);
   }
 

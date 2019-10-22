@@ -6,6 +6,7 @@ import com.coincoinche.engine.game.RedBlueRotatingPlayersGame;
 import com.coincoinche.engine.teams.Player;
 import com.coincoinche.engine.teams.Team;
 import java.util.List;
+import java.util.Map;
 
 /** Implementation of a coinche round. */
 public class CoincheGameRound extends RedBlueRotatingPlayersGame<Player> {
@@ -37,9 +38,8 @@ public class CoincheGameRound extends RedBlueRotatingPlayersGame<Player> {
     if (state.mustChange()) {
       if (state instanceof GameStateTerminal) {
         GameStateTerminal terminalState = (GameStateTerminal) state;
-        Team winnerTeam = terminalState.getWinnerTeam();
-        int winnerPoints = terminalState.getWinnerPoints();
-        return GameResult.finishedResult(winnerTeam, winnerPoints);
+        Map<Team, Integer> teamsPoints = terminalState.getTeamsPoints();
+        return GameResult.finishedResult(teamsPoints);
       }
       // update round's state type
       if (state instanceof GameStateTransition) {

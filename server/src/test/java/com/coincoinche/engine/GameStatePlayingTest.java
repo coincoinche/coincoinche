@@ -3,6 +3,7 @@ package com.coincoinche.engine;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.coincoinche.engine.cards.Suit;
+import com.coincoinche.engine.contracts.ContractFactory;
 import com.coincoinche.engine.teams.Player;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,7 +37,9 @@ public class GameStatePlayingTest extends GameEngineTestHelper {
     protected void runAssertions() {
       assignCards(cards);
       Trick currentTrick = createTrick(currentPlayer, trumpSuit);
-      GameStatePlaying state = new GameStatePlaying(currentPlayer, trumpSuit, currentTrick, 1);
+      GameStatePlaying state =
+          new GameStatePlaying(
+              currentPlayer, ContractFactory.createContract(80, trumpSuit), currentTrick, 1);
       List<Move> actual = state.getLegalMoves();
       int expectedSize = expected.size();
       int actualSize = actual.size();

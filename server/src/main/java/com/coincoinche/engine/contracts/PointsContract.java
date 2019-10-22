@@ -26,7 +26,7 @@ public class PointsContract extends Contract {
 
   @Override
   public boolean isSuccessful(GameStatePlaying state) {
-    return player.getTeam().getPlayers().stream().mapToInt(state::getPointsForPlayer).sum()
+    return player.getTeam().getPlayers().stream().mapToInt(state::getTrickPointsForPlayer).sum()
         >= max(value, MAX_TRICKS_POINTS / 2 + 1);
   }
 
