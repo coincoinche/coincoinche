@@ -8,6 +8,7 @@ import com.coincoinche.engine.teams.Player;
 import com.coincoinche.engine.teams.Team;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Spliterator;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -17,6 +18,7 @@ import java.util.stream.StreamSupport;
 
 /** TODO nockty add detailed documentation here. */
 public class GameStatePlaying implements GameStateTerminal {
+  private Player lastTrickMaster;
   private Player currentPlayer;
   private Suit trumpSuit;
   private Trick currentTrick;
@@ -27,9 +29,16 @@ public class GameStatePlaying implements GameStateTerminal {
     this.currentTrick = currentTrick;
   }
 
+  /**
+   * Create a new initial game state for the playing phase.
+   * @param firstPlayer is the first player of the playing phase.
+   * @param trumpSuit is the trump suit for the playing phase.
+   * @return the newly created state.
+   */
   public static GameStatePlaying initialGameStatePlaying(Player firstPlayer, Suit trumpSuit) {
     Trick currentTrick = Trick.emptyTrick(trumpSuit);
-    return new GameStatePlaying(firstPlayer, trumpSuit, currentTrick);
+    // start state with trick #1
+    return new GameStatePlaying(firstPlayer, trumpSuit, currentTrick, 1);
   }
 
   @Override
@@ -171,5 +180,13 @@ public class GameStatePlaying implements GameStateTerminal {
   public int getWinnerPoints() {
     // TODO Auto-generated method stub
     return 0;
+  }
+
+  @Override
+  public void rotatePlayers(CoincheGameRound round) {
+    if (lastTrickMaster != null) {
+      currentPlayer = lastTrickMaster;
+    }
+    round.setCurrentPlayer(currentPlayer);
   }
 }

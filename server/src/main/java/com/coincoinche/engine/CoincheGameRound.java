@@ -24,9 +24,7 @@ public class CoincheGameRound extends RedBlueRotatingPlayersGame<Player> {
    */
   GameResult<Team> moveWasApplied() {
     // rotate players before checking if the state must change
-    rotatePlayers();
-    Player newPlayer = getCurrentPlayer();
-    state.setCurrentPlayer(newPlayer);
+    state.rotatePlayers(this);
     // handle the case when all players pass the bidding phase: new round must start
     if (state instanceof GameStateBidding) {
       GameStateBidding biddingState = (GameStateBidding) state;
@@ -42,7 +40,15 @@ public class CoincheGameRound extends RedBlueRotatingPlayersGame<Player> {
         Team winnerTeam = terminalState.getWinnerTeam();
         int winnerPoints = terminalState.getWinnerPoints();
         return GameResult.finishedResult(winnerTeam, winnerPoints);
-        // TODO nockty: must change the round's state here if non-terminal
+      }
+      // update round's state type
+      if (state instanceof GameStateTransition) {
+        GameStateTransition transitionState = (GameStateTransition) state;
+        GameState newState = transitionState.createNextGameState();
+        this.state = newState;
+        // ensure consistency of current player
+        setCurrentPlayer(newState.getCurrentPlayer());
+        return GameResult.unfinishedResult();
       }
     }
     return GameResult.unfinishedResult();
