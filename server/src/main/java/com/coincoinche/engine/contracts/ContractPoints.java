@@ -9,14 +9,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 /** Contract representing a number of points. */
-public class PointsContract extends Contract {
+public class ContractPoints extends Contract {
 
   private static final List<Integer> legalValues =
       new ArrayList<>(List.of(80, 90, 100, 110, 120, 130, 140, 150, 160));
 
   private int value;
 
-  PointsContract(int value, Suit suit) throws IllegalArgumentException {
+  ContractPoints(int value, Suit suit) throws IllegalArgumentException {
     if (!legalValues.contains(value)) {
       throw new IllegalArgumentException(value + " is not legal for a points contract");
     }

@@ -6,11 +6,11 @@ import com.coincoinche.engine.GameStatePlaying;
 import com.coincoinche.engine.cards.Suit;
 
 /** Contract representing a generale. */
-public class GeneraleContract extends Contract {
+public class ContractGenerale extends Contract {
 
   private static final int GENERALE_VALUE = 500;
 
-  GeneraleContract(Suit suit) {
+  ContractGenerale(Suit suit) {
     this.suit = suit;
   }
 

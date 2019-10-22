@@ -8,15 +8,15 @@ import java.util.List;
 public class ContractFactory {
 
   static Contract createPointsContract(int value, Suit suit) throws IllegalArgumentException {
-    return new PointsContract(value, suit);
+    return new ContractPoints(value, suit);
   }
 
   static Contract createCapotContract(Suit suit) {
-    return new CapotContract(suit);
+    return new ContractCapot(suit);
   }
 
   static Contract createGeneraleContract(Suit suit) {
-    return new GeneraleContract(suit);
+    return new ContractGenerale(suit);
   }
 
   /**
@@ -27,7 +27,7 @@ public class ContractFactory {
   public static List<Contract> createAllContracts() {
     List<Contract> allContracts = new ArrayList<>();
     for (Suit suit : Suit.values()) {
-      for (int value : PointsContract.getLegalvalues()) {
+      for (int value : ContractPoints.getLegalvalues()) {
         allContracts.add(createPointsContract(value, suit));
       }
       allContracts.add(createCapotContract(suit));

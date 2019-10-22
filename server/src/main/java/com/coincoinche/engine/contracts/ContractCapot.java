@@ -6,11 +6,11 @@ import com.coincoinche.engine.GameStatePlaying;
 import com.coincoinche.engine.cards.Suit;
 
 /** Contract representing a capot. */
-public class CapotContract extends Contract {
+public class ContractCapot extends Contract {
 
   private static final int CAPOT_VALUE = 250;
 
-  CapotContract(Suit suit) {
+  ContractCapot(Suit suit) {
     this.suit = suit;
   }
 

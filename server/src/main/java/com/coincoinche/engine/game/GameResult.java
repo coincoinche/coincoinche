@@ -43,6 +43,7 @@ public class GameResult<T> {
 
   /**
    * Get the winner team of the game, i.e. the team with the most points.
+   *
    * @return the team that won the game.
    */
   public T getWinnerTeam() {
