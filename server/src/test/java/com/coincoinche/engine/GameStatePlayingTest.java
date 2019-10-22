@@ -37,7 +37,7 @@ public class GameStatePlayingTest extends GameEngineTestHelper {
       assignCards(cards);
       Trick currentTrick = createTrick(currentPlayer, trumpSuit);
       System.out.println(currentTrick.toString());
-      GameStatePlaying state = new GameStatePlaying(currentPlayer, trumpSuit, currentTrick);
+      GameStatePlaying state = new GameStatePlaying(currentPlayer, trumpSuit, currentTrick, 1);
       List<Move> actual = state.getLegalMoves();
       int expectedSize = expected.size();
       int actualSize = actual.size();
