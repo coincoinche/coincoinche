@@ -18,15 +18,21 @@ import java.util.stream.StreamSupport;
 
 /** TODO nockty add detailed documentation here. */
 public class GameStatePlaying implements GameStateTerminal {
+  private final int maxTrickNumber = 8;
+  private int currentTrickNumber;
+  private Trick currentTrick;
   private Player lastTrickMaster;
+
   private Player currentPlayer;
   private Suit trumpSuit;
-  private Trick currentTrick;
+  private Map<Player, Integer> playerPoints;
 
-  GameStatePlaying(Player currentPlayer, Suit trumpSuit, Trick currentTrick) {
+  GameStatePlaying(
+      Player currentPlayer, Suit trumpSuit, Trick currentTrick, int currentTrickNumber) {
     this.currentPlayer = currentPlayer;
     this.trumpSuit = trumpSuit;
     this.currentTrick = currentTrick;
+    this.currentTrickNumber = currentTrickNumber;
   }
 
   /**
@@ -152,22 +158,41 @@ public class GameStatePlaying implements GameStateTerminal {
         false);
   }
 
-  // TODO nockty see if we can use a default method here
-  @Override
-  public void setCurrentPlayer(Player currentPlayer) {
-    this.currentPlayer = currentPlayer;
+  /**
+   * Close the current trick of the state:
+   *
+   * <ul>
+   *   <li>Add trick's points to trick's master
+   *   <li>Update state so that master is the next first player
+   *   <li>Create a new empty trick for the state
+   * </ul>
+   *
+   * <strong>NB:</strong> <i>A priori</i>, this method only makes sense for a complete trick.
+   */
+  public void closeTrick() {
+    // add points to master
+    Player master = currentTrick.getMaster();
+    playerPoints.put(master, currentTrick.getValue());
+    // update last master
+    lastTrickMaster = master;
+    // clear trick
+    currentTrick = Trick.emptyTrick(trumpSuit);
+    currentTrickNumber++;
   }
 
   @Override
   public boolean mustChange() {
-    // TODO Auto-generated method stub
-    return false;
+    return currentTrickNumber > maxTrickNumber;
   }
 
   // TODO nockty see if we can use a default method here
   @Override
   public Player getCurrentPlayer() {
     return currentPlayer;
+  }
+
+  public Trick getCurrentTrick() {
+    return currentTrick;
   }
 
   @Override
