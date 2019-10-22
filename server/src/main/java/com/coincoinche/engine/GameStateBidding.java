@@ -1,12 +1,12 @@
 package com.coincoinche.engine;
 
+import com.coincoinche.engine.cards.Suit;
 import com.coincoinche.engine.teams.Player;
-import com.coincoinche.engine.teams.Team;
 import java.util.ArrayList;
 import java.util.List;
 
 /** TODO nockty add detailed documentation here. */
-public class GameStateBidding implements GameStateTerminal {
+public class GameStateBidding implements GameStateTransition {
 
   private Player currentPlayer;
   // last player who made a non-pass move
@@ -77,16 +77,6 @@ public class GameStateBidding implements GameStateTerminal {
     return highestBidding != null && (surcoinched || currentPlayer.equals(lastPlayer));
   }
 
-  @Override
-  public Team getWinnerTeam() {
-    return highestBidding.getPlayer().getTeam();
-  }
-
-  @Override
-  public int getWinnerPoints() {
-    return highestBidding.getPoints();
-  }
-
   public void setCoinched(boolean coinched) {
     this.coinched = coinched;
   }
@@ -117,13 +107,21 @@ public class GameStateBidding implements GameStateTerminal {
 
   // TODO nockty see if we can use a default method here
   @Override
-  public void setCurrentPlayer(Player currentPlayer) {
-    this.currentPlayer = currentPlayer;
-  }
-
-  // TODO nockty see if we can use a default method here
-  @Override
   public Player getCurrentPlayer() {
     return currentPlayer;
+  }
+
+  @Override
+  public void rotatePlayers(CoincheGameRound round) {
+    round.rotatePlayers();
+    Player newPlayer = round.getCurrentPlayer();
+    currentPlayer = newPlayer;
+  }
+
+  @Override
+  public GameState createNextGameState() {
+    Player firstPlayer = highestBidding.getPlayer();
+    Suit trumpSuit = highestBidding.getSuit();
+    return GameStatePlaying.initialGameStatePlaying(firstPlayer, trumpSuit);
   }
 }

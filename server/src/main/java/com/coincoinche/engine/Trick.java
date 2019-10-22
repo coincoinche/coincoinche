@@ -43,9 +43,11 @@ public class Trick {
    *
    * @param player is the player who played the card.
    * @param card is the card played by the player.
+   * @return true if the trick is complete after adding the card, else false.
    */
-  public void add(Player player, Card card) {
+  public boolean add(Player player, Card card) {
     playedCards.add(new PlayedCard(player, card));
+    return playedCards.size() >= 4;
   }
 
   /**
@@ -71,6 +73,17 @@ public class Trick {
       throw new RuntimeException("Trick is empty; it has no master");
     }
     return masterCard.player;
+  }
+
+  /**
+   * Get the total value of the trick, which is the sum of the cards' values.
+   *
+   * @return an integer representing the trick's value (points earned by the trick's master).
+   */
+  public int getValue() {
+    return playedCards.stream()
+        .mapToInt(pc -> ValuedCard.fromCard(pc.card, trumpSuit).getValue())
+        .sum();
   }
 
   /**

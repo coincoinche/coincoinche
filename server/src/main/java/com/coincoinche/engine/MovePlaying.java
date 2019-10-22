@@ -2,6 +2,7 @@ package com.coincoinche.engine;
 
 import com.coincoinche.engine.cards.Card;
 import com.coincoinche.engine.teams.Player;
+import java.util.List;
 
 /**
  * MovePlaying represents a move during the playing phase of the game. It is basically a card
@@ -37,8 +38,21 @@ public class MovePlaying extends Move implements Comparable<MovePlaying> {
 
   @Override
   protected void applyOnRoundState(GameState state, Player player) throws IllegalMoveException {
-    // TODO Auto-generated method stub
-
+    if (!(state instanceof GameStatePlaying)) {
+      throw new IllegalMoveException(this + " must be applied to a playing state");
+    }
+    GameStatePlaying playingGameState = (GameStatePlaying) state;
+    List<Move> legalMoves = playingGameState.getLegalMoves();
+    if (!legalMoves.contains(this)) {
+      throw new IllegalMoveException(this + " is not legal on state " + playingGameState);
+    }
+    Trick currentTrick = playingGameState.getCurrentTrick();
+    boolean completeTrick = currentTrick.add(player, card);
+    if (!completeTrick) {
+      return;
+    }
+    // the trick is complete: close it
+    playingGameState.closeTrick();
   }
 
   @Override

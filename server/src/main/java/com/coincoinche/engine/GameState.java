@@ -7,7 +7,13 @@ import java.util.List;
 public interface GameState {
   List<Move> getLegalMoves();
 
-  void setCurrentPlayer(Player currentPlayer);
+  /**
+   * Rotate players both for the state and the round. This method must ensure consistency of the
+   * current player between the state and the round, <i>i.e.</i> they must be the same player.
+   *
+   * @param round is the coinche game round.
+   */
+  void rotatePlayers(CoincheGameRound round);
 
   boolean mustChange();
 

@@ -100,7 +100,7 @@ public class MoveBidding extends Move implements Comparable<MoveBidding> {
     GameStateBidding biddingGameState = (GameStateBidding) state;
     List<Move> legalMoves = biddingGameState.getLegalMoves();
     if (!legalMoves.contains(this)) {
-      throw new IllegalMoveException(this + " is not legal on state " + state);
+      throw new IllegalMoveException(this + " is not legal on state " + biddingGameState);
     }
     if (specialMove != null) {
       switch (specialMove) {
