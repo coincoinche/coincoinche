@@ -1,6 +1,8 @@
 package com.coincoinche.engine;
 
 import com.coincoinche.engine.cards.Suit;
+import com.coincoinche.engine.contracts.Contract;
+import com.coincoinche.engine.contracts.ContractFactory;
 import com.coincoinche.engine.teams.Player;
 import java.util.ArrayList;
 import java.util.List;
@@ -55,7 +57,7 @@ public class GameStateBidding implements GameStateTransition {
       return legalMoves;
     }
     // contracts strictly better than current contract are legal
-    for (Contract contract : Contract.generateAllContracts()) {
+    for (Contract contract : ContractFactory.createAllContracts()) {
       if (contract.isHigherThan(highestBidding)) {
         legalMoves.add(MoveBidding.contractMove(contract));
       }

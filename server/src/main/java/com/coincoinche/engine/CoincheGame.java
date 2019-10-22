@@ -8,6 +8,7 @@ import com.coincoinche.engine.teams.Team;
 /** Implementation of a coinche game. */
 public class CoincheGame extends RedBlueRotatingPlayersGame<Player> {
 
+  public static final int MAX_TRICKS_POINTS = 162;
   private static final int WINNING_POINTS = 1000;
   // TODO nockty: consider DI for this
   private CoincheGameRound currentRound;

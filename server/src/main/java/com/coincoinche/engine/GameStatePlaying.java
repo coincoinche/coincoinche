@@ -18,7 +18,7 @@ import java.util.stream.StreamSupport;
 
 /** TODO nockty add detailed documentation here. */
 public class GameStatePlaying implements GameStateTerminal {
-  private final int maxTrickNumber = 8;
+  private static final int MAX_TRICK_NUMBER = 8;
   private int currentTrickNumber;
   private Trick currentTrick;
   private Player lastTrickMaster;
@@ -37,6 +37,7 @@ public class GameStatePlaying implements GameStateTerminal {
 
   /**
    * Create a new initial game state for the playing phase.
+   *
    * @param firstPlayer is the first player of the playing phase.
    * @param trumpSuit is the trump suit for the playing phase.
    * @return the newly created state.
@@ -172,7 +173,12 @@ public class GameStatePlaying implements GameStateTerminal {
   public void closeTrick() {
     // add points to master
     Player master = currentTrick.getMaster();
-    playerPoints.put(master, currentTrick.getValue());
+    int points = currentTrick.getValue();
+    if (currentTrickNumber == 8) {
+      // 10 de der
+      points += 10;
+    }
+    playerPoints.put(master, points);
     // update last master
     lastTrickMaster = master;
     // clear trick
@@ -182,7 +188,7 @@ public class GameStatePlaying implements GameStateTerminal {
 
   @Override
   public boolean mustChange() {
-    return currentTrickNumber > maxTrickNumber;
+    return currentTrickNumber > MAX_TRICK_NUMBER;
   }
 
   // TODO nockty see if we can use a default method here
@@ -193,6 +199,16 @@ public class GameStatePlaying implements GameStateTerminal {
 
   public Trick getCurrentTrick() {
     return currentTrick;
+  }
+
+  /**
+   * Get points earned by the player in the current state.
+   *
+   * @param player is a player playing the game.
+   * @return the points earned by that player during this state's tricks.
+   */
+  public int getPointsForPlayer(Player player) {
+    return playerPoints.getOrDefault(player, 0);
   }
 
   @Override

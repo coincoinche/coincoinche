@@ -3,13 +3,13 @@ package com.coincoinche.engine;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.coincoinche.engine.cards.Suit;
+import com.coincoinche.engine.contracts.Contract;
+import com.coincoinche.engine.contracts.ContractFactory;
 import com.coincoinche.engine.game.GameResult;
 import com.coincoinche.engine.teams.Team;
-
+import java.util.ArrayList;
+import java.util.List;
 import org.junit.Test;
 
 /** Unit tests for the bidding moves. */
@@ -49,7 +49,8 @@ public class MoveBiddingTest extends GameEngineTestHelper {
     CoincheGameRound preMoveRound = game.getCurrentRound();
     try {
       GameResult<Team> result =
-          MoveBidding.contractMove(Contract.pointsContract(100, Suit.HEARTS)).applyOnGame(game);
+          MoveBidding.contractMove(ContractFactory.createContract(100, Suit.HEARTS))
+              .applyOnGame(game);
       assertThat(result.isFinished())
           .as(String.format("%s: check game hasn't finished", testCaseName))
           .isFalse();
@@ -77,7 +78,7 @@ public class MoveBiddingTest extends GameEngineTestHelper {
     Contract highestBidding = biddingState.getHighestBidding();
     assertThat(highestBidding)
         .as(String.format("%s: check highest bidding is 100 HEARTS", testCaseName))
-        .isEqualTo(Contract.pointsContract(100, Suit.HEARTS));
+        .isEqualTo(ContractFactory.createContract(100, Suit.HEARTS));
     assertThat(highestBidding.getPlayer())
         .as(String.format("%s: check highest bidding belongs to player 1", testCaseName))
         .isEqualTo(p1);
@@ -116,7 +117,7 @@ public class MoveBiddingTest extends GameEngineTestHelper {
     highestBidding = biddingState.getHighestBidding();
     assertThat(highestBidding)
         .as(String.format("%s: check highest bidding is 100 HEARTS", testCaseName))
-        .isEqualTo(Contract.pointsContract(100, Suit.HEARTS));
+        .isEqualTo(ContractFactory.createContract(100, Suit.HEARTS));
     assertThat(highestBidding.getPlayer())
         .as(String.format("%s: check highest bidding belongs to player 1", testCaseName))
         .isEqualTo(p1);
@@ -155,7 +156,7 @@ public class MoveBiddingTest extends GameEngineTestHelper {
     highestBidding = biddingState.getHighestBidding();
     assertThat(highestBidding)
         .as(String.format("%s: check highest bidding is 100 HEARTS", testCaseName))
-        .isEqualTo(Contract.pointsContract(100, Suit.HEARTS));
+        .isEqualTo(ContractFactory.createContract(100, Suit.HEARTS));
     assertThat(highestBidding.getPlayer())
         .as(String.format("%s: check highest bidding belongs to player 1", testCaseName))
         .isEqualTo(p1);
@@ -194,7 +195,7 @@ public class MoveBiddingTest extends GameEngineTestHelper {
     highestBidding = biddingState.getHighestBidding();
     assertThat(highestBidding)
         .as(String.format("%s: check highest bidding is 100 HEARTS", testCaseName))
-        .isEqualTo(Contract.pointsContract(100, Suit.HEARTS));
+        .isEqualTo(ContractFactory.createContract(100, Suit.HEARTS));
     assertThat(highestBidding.getPlayer())
         .as(String.format("%s: check highest bidding belongs to player 1", testCaseName))
         .isEqualTo(p1);
@@ -247,9 +248,10 @@ public class MoveBiddingTest extends GameEngineTestHelper {
     game = simpleCoincheGame();
     preMoveRound = game.getCurrentRound();
     try {
-      MoveBidding.contractMove(Contract.pointsContract(80, Suit.HEARTS)).applyOnGame(game);
+      MoveBidding.contractMove(ContractFactory.createContract(80, Suit.HEARTS)).applyOnGame(game);
       GameResult<Team> result =
-          MoveBidding.contractMove(Contract.pointsContract(90, Suit.SPADES)).applyOnGame(game);
+          MoveBidding.contractMove(ContractFactory.createContract(90, Suit.SPADES))
+              .applyOnGame(game);
       assertThat(result.isFinished())
           .as(String.format("%s: check game hasn't finished", testCaseName))
           .isFalse();
@@ -277,7 +279,7 @@ public class MoveBiddingTest extends GameEngineTestHelper {
     highestBidding = biddingState.getHighestBidding();
     assertThat(highestBidding)
         .as(String.format("%s: check highest bidding is 90 SPADES", testCaseName))
-        .isEqualTo(Contract.pointsContract(90, Suit.SPADES));
+        .isEqualTo(ContractFactory.createContract(90, Suit.SPADES));
     assertThat(highestBidding.getPlayer())
         .as(String.format("%s: check highest bidding belongs to player 2", testCaseName))
         .isEqualTo(p2);
@@ -289,7 +291,8 @@ public class MoveBiddingTest extends GameEngineTestHelper {
     preMoveRound = game.getCurrentRound();
     try {
       GameResult<Team> result =
-          MoveBidding.contractMove(Contract.pointsContract(100, Suit.HEARTS)).applyOnGame(game);
+          MoveBidding.contractMove(ContractFactory.createContract(100, Suit.HEARTS))
+              .applyOnGame(game);
       assertThat(result.isFinished())
           .as(String.format("%s: check game hasn't finished", testCaseName))
           .isFalse();
@@ -317,7 +320,7 @@ public class MoveBiddingTest extends GameEngineTestHelper {
     highestBidding = biddingState.getHighestBidding();
     assertThat(highestBidding)
         .as(String.format("%s: check highest bidding is 100 HEARTS", testCaseName))
-        .isEqualTo(Contract.pointsContract(100, Suit.HEARTS));
+        .isEqualTo(ContractFactory.createContract(100, Suit.HEARTS));
     assertThat(highestBidding.getPlayer())
         .as(String.format("%s: check highest bidding belongs to player 3", testCaseName))
         .isEqualTo(p3);
@@ -329,7 +332,8 @@ public class MoveBiddingTest extends GameEngineTestHelper {
     preMoveRound = game.getCurrentRound();
     try {
       GameResult<Team> result =
-          MoveBidding.contractMove(Contract.capotContract(Suit.CLUBS)).applyOnGame(game);
+          MoveBidding.contractMove(ContractFactory.createContract(250, Suit.CLUBS))
+              .applyOnGame(game);
       assertThat(result.isFinished())
           .as(String.format("%s: check game hasn't finished", testCaseName))
           .isFalse();
@@ -357,7 +361,7 @@ public class MoveBiddingTest extends GameEngineTestHelper {
     highestBidding = biddingState.getHighestBidding();
     assertThat(highestBidding)
         .as(String.format("%s: check highest bidding is CAPOT CLUBS", testCaseName))
-        .isEqualTo(Contract.capotContract(Suit.CLUBS));
+        .isEqualTo(ContractFactory.createContract(250, Suit.CLUBS));
     assertThat(highestBidding.getPlayer())
         .as(String.format("%s: check highest bidding belongs to player 4", testCaseName))
         .isEqualTo(p4);
@@ -396,7 +400,7 @@ public class MoveBiddingTest extends GameEngineTestHelper {
     highestBidding = biddingState.getHighestBidding();
     assertThat(highestBidding)
         .as(String.format("%s: check highest bidding is CAPOT CLUBS", testCaseName))
-        .isEqualTo(Contract.capotContract(Suit.CLUBS));
+        .isEqualTo(ContractFactory.createContract(250, Suit.CLUBS));
     assertThat(highestBidding.getPlayer())
         .as(String.format("%s: check highest bidding belongs to player 4", testCaseName))
         .isEqualTo(p4);
@@ -540,82 +544,82 @@ public class MoveBiddingTest extends GameEngineTestHelper {
                 new TestCase(
                     "pass - capot heart",
                     MoveBidding.passMove(),
-                    MoveBidding.contractMove(Contract.capotContract(Suit.HEARTS)),
+                    MoveBidding.contractMove(ContractFactory.createContract(250, Suit.HEARTS)),
                     -1),
                 new TestCase(
                     "pass - 130 spades",
                     MoveBidding.passMove(),
-                    MoveBidding.contractMove(Contract.pointsContract(130, Suit.SPADES)),
+                    MoveBidding.contractMove(ContractFactory.createContract(130, Suit.SPADES)),
                     -1),
                 new TestCase(
                     "coinche - capot heart",
                     MoveBidding.passMove(),
-                    MoveBidding.contractMove(Contract.capotContract(Suit.HEARTS)),
+                    MoveBidding.contractMove(ContractFactory.createContract(250, Suit.HEARTS)),
                     -1),
                 new TestCase(
                     "130 spades - pass",
-                    MoveBidding.contractMove(Contract.pointsContract(130, Suit.SPADES)),
+                    MoveBidding.contractMove(ContractFactory.createContract(130, Suit.SPADES)),
                     MoveBidding.passMove(),
                     1),
                 new TestCase(
                     "130 spades - capot heart",
-                    MoveBidding.contractMove(Contract.pointsContract(130, Suit.SPADES)),
-                    MoveBidding.contractMove(Contract.capotContract(Suit.HEARTS)),
+                    MoveBidding.contractMove(ContractFactory.createContract(130, Suit.SPADES)),
+                    MoveBidding.contractMove(ContractFactory.createContract(250, Suit.HEARTS)),
                     -1),
                 new TestCase(
                     "130 heart - 130 spades",
-                    MoveBidding.contractMove(Contract.pointsContract(130, Suit.HEARTS)),
-                    MoveBidding.contractMove(Contract.pointsContract(130, Suit.SPADES)),
+                    MoveBidding.contractMove(ContractFactory.createContract(130, Suit.HEARTS)),
+                    MoveBidding.contractMove(ContractFactory.createContract(130, Suit.SPADES)),
                     1),
                 new TestCase(
                     "capot heart - capot heart",
-                    MoveBidding.contractMove(Contract.capotContract(Suit.HEARTS)),
-                    MoveBidding.contractMove(Contract.capotContract(Suit.HEARTS)),
+                    MoveBidding.contractMove(ContractFactory.createContract(250, Suit.HEARTS)),
+                    MoveBidding.contractMove(ContractFactory.createContract(250, Suit.HEARTS)),
                     0),
                 new TestCase(
                     "generale clubs - generale clubs",
-                    MoveBidding.contractMove(Contract.generaleContract(Suit.CLUBS)),
-                    MoveBidding.contractMove(Contract.generaleContract(Suit.CLUBS)),
+                    MoveBidding.contractMove(ContractFactory.createContract(500, Suit.CLUBS)),
+                    MoveBidding.contractMove(ContractFactory.createContract(500, Suit.CLUBS)),
                     0),
                 new TestCase(
                     "capot clubs - capot spades",
-                    MoveBidding.contractMove(Contract.capotContract(Suit.CLUBS)),
-                    MoveBidding.contractMove(Contract.capotContract(Suit.SPADES)),
+                    MoveBidding.contractMove(ContractFactory.createContract(250, Suit.CLUBS)),
+                    MoveBidding.contractMove(ContractFactory.createContract(250, Suit.SPADES)),
                     1),
                 new TestCase(
                     "capot heart - generale spades",
-                    MoveBidding.contractMove(Contract.capotContract(Suit.HEARTS)),
-                    MoveBidding.contractMove(Contract.generaleContract(Suit.SPADES)),
+                    MoveBidding.contractMove(ContractFactory.createContract(250, Suit.HEARTS)),
+                    MoveBidding.contractMove(ContractFactory.createContract(500, Suit.SPADES)),
                     -1),
                 new TestCase(
                     "generale heart - generale diamonds",
-                    MoveBidding.contractMove(Contract.generaleContract(Suit.HEARTS)),
-                    MoveBidding.contractMove(Contract.generaleContract(Suit.DIAMONDS)),
+                    MoveBidding.contractMove(ContractFactory.createContract(500, Suit.HEARTS)),
+                    MoveBidding.contractMove(ContractFactory.createContract(500, Suit.DIAMONDS)),
                     -1),
                 new TestCase(
                     "90 heart - 90 heart",
-                    MoveBidding.contractMove(Contract.pointsContract(90, Suit.HEARTS)),
-                    MoveBidding.contractMove(Contract.pointsContract(90, Suit.HEARTS)),
+                    MoveBidding.contractMove(ContractFactory.createContract(90, Suit.HEARTS)),
+                    MoveBidding.contractMove(ContractFactory.createContract(90, Suit.HEARTS)),
                     0),
                 new TestCase(
                     "90 heart - 130 heart",
-                    MoveBidding.contractMove(Contract.pointsContract(90, Suit.HEARTS)),
-                    MoveBidding.contractMove(Contract.pointsContract(130, Suit.HEARTS)),
+                    MoveBidding.contractMove(ContractFactory.createContract(90, Suit.HEARTS)),
+                    MoveBidding.contractMove(ContractFactory.createContract(130, Suit.HEARTS)),
                     -1),
                 new TestCase(
                     "110 diamonds - 110 spades",
-                    MoveBidding.contractMove(Contract.pointsContract(110, Suit.DIAMONDS)),
-                    MoveBidding.contractMove(Contract.pointsContract(110, Suit.SPADES)),
+                    MoveBidding.contractMove(ContractFactory.createContract(110, Suit.DIAMONDS)),
+                    MoveBidding.contractMove(ContractFactory.createContract(110, Suit.SPADES)),
                     1),
                 new TestCase(
                     "capot heart - 100 heart",
-                    MoveBidding.contractMove(Contract.capotContract(Suit.HEARTS)),
-                    MoveBidding.contractMove(Contract.pointsContract(100, Suit.HEARTS)),
+                    MoveBidding.contractMove(ContractFactory.createContract(250, Suit.HEARTS)),
+                    MoveBidding.contractMove(ContractFactory.createContract(100, Suit.HEARTS)),
                     1),
                 new TestCase(
                     "generale heart - 140 diamonds",
-                    MoveBidding.contractMove(Contract.generaleContract(Suit.HEARTS)),
-                    MoveBidding.contractMove(Contract.pointsContract(140, Suit.DIAMONDS)),
+                    MoveBidding.contractMove(ContractFactory.createContract(500, Suit.HEARTS)),
+                    MoveBidding.contractMove(ContractFactory.createContract(140, Suit.DIAMONDS)),
                     1)));
     testCases.forEach(TestCase::run);
   }
@@ -664,82 +668,82 @@ public class MoveBiddingTest extends GameEngineTestHelper {
                 new TestCase(
                     "pass - capot heart",
                     MoveBidding.passMove(),
-                    MoveBidding.contractMove(Contract.capotContract(Suit.HEARTS)),
+                    MoveBidding.contractMove(ContractFactory.createContract(250, Suit.HEARTS)),
                     false),
                 new TestCase(
                     "pass - 130 spades",
                     MoveBidding.passMove(),
-                    MoveBidding.contractMove(Contract.pointsContract(130, Suit.SPADES)),
+                    MoveBidding.contractMove(ContractFactory.createContract(130, Suit.SPADES)),
                     false),
                 new TestCase(
                     "coinche - capot heart",
                     MoveBidding.passMove(),
-                    MoveBidding.contractMove(Contract.capotContract(Suit.HEARTS)),
+                    MoveBidding.contractMove(ContractFactory.createContract(250, Suit.HEARTS)),
                     false),
                 new TestCase(
                     "coinche - 130 spades",
                     MoveBidding.passMove(),
-                    MoveBidding.contractMove(Contract.pointsContract(130, Suit.SPADES)),
+                    MoveBidding.contractMove(ContractFactory.createContract(130, Suit.SPADES)),
                     false),
                 new TestCase(
                     "surcoinche - capot heart",
                     MoveBidding.passMove(),
-                    MoveBidding.contractMove(Contract.capotContract(Suit.HEARTS)),
+                    MoveBidding.contractMove(ContractFactory.createContract(250, Suit.HEARTS)),
                     false),
                 new TestCase(
                     "surcoinche - 130 spades",
                     MoveBidding.passMove(),
-                    MoveBidding.contractMove(Contract.pointsContract(130, Suit.SPADES)),
+                    MoveBidding.contractMove(ContractFactory.createContract(130, Suit.SPADES)),
                     false),
                 new TestCase(
                     "capot heart - capot heart",
-                    MoveBidding.contractMove(Contract.capotContract(Suit.HEARTS)),
-                    MoveBidding.contractMove(Contract.capotContract(Suit.HEARTS)),
+                    MoveBidding.contractMove(ContractFactory.createContract(250, Suit.HEARTS)),
+                    MoveBidding.contractMove(ContractFactory.createContract(250, Suit.HEARTS)),
                     true),
                 new TestCase(
                     "generale clubs - generale clubs",
-                    MoveBidding.contractMove(Contract.generaleContract(Suit.CLUBS)),
-                    MoveBidding.contractMove(Contract.generaleContract(Suit.CLUBS)),
+                    MoveBidding.contractMove(ContractFactory.createContract(500, Suit.CLUBS)),
+                    MoveBidding.contractMove(ContractFactory.createContract(500, Suit.CLUBS)),
                     true),
                 new TestCase(
                     "capot heart - capot spades",
-                    MoveBidding.contractMove(Contract.capotContract(Suit.HEARTS)),
-                    MoveBidding.contractMove(Contract.capotContract(Suit.SPADES)),
+                    MoveBidding.contractMove(ContractFactory.createContract(250, Suit.HEARTS)),
+                    MoveBidding.contractMove(ContractFactory.createContract(250, Suit.SPADES)),
                     false),
                 new TestCase(
                     "capot heart - generale heart",
-                    MoveBidding.contractMove(Contract.capotContract(Suit.HEARTS)),
-                    MoveBidding.contractMove(Contract.generaleContract(Suit.HEARTS)),
+                    MoveBidding.contractMove(ContractFactory.createContract(250, Suit.HEARTS)),
+                    MoveBidding.contractMove(ContractFactory.createContract(500, Suit.HEARTS)),
                     false),
                 new TestCase(
                     "generale heart - generale diamonds",
-                    MoveBidding.contractMove(Contract.generaleContract(Suit.HEARTS)),
-                    MoveBidding.contractMove(Contract.generaleContract(Suit.DIAMONDS)),
+                    MoveBidding.contractMove(ContractFactory.createContract(500, Suit.HEARTS)),
+                    MoveBidding.contractMove(ContractFactory.createContract(500, Suit.DIAMONDS)),
                     false),
                 new TestCase(
                     "90 heart - 90 heart",
-                    MoveBidding.contractMove(Contract.pointsContract(90, Suit.HEARTS)),
-                    MoveBidding.contractMove(Contract.pointsContract(90, Suit.HEARTS)),
+                    MoveBidding.contractMove(ContractFactory.createContract(90, Suit.HEARTS)),
+                    MoveBidding.contractMove(ContractFactory.createContract(90, Suit.HEARTS)),
                     true),
                 new TestCase(
                     "90 heart - 130 heart",
-                    MoveBidding.contractMove(Contract.pointsContract(90, Suit.HEARTS)),
-                    MoveBidding.contractMove(Contract.pointsContract(130, Suit.HEARTS)),
+                    MoveBidding.contractMove(ContractFactory.createContract(90, Suit.HEARTS)),
+                    MoveBidding.contractMove(ContractFactory.createContract(130, Suit.HEARTS)),
                     false),
                 new TestCase(
                     "110 diamonds - 110 spades",
-                    MoveBidding.contractMove(Contract.pointsContract(110, Suit.DIAMONDS)),
-                    MoveBidding.contractMove(Contract.pointsContract(110, Suit.SPADES)),
+                    MoveBidding.contractMove(ContractFactory.createContract(110, Suit.DIAMONDS)),
+                    MoveBidding.contractMove(ContractFactory.createContract(110, Suit.SPADES)),
                     false),
                 new TestCase(
                     "capot heart - 100 heart",
-                    MoveBidding.contractMove(Contract.capotContract(Suit.HEARTS)),
-                    MoveBidding.contractMove(Contract.pointsContract(100, Suit.HEARTS)),
+                    MoveBidding.contractMove(ContractFactory.createContract(250, Suit.HEARTS)),
+                    MoveBidding.contractMove(ContractFactory.createContract(100, Suit.HEARTS)),
                     false),
                 new TestCase(
                     "generale heart - 140 heart",
-                    MoveBidding.contractMove(Contract.generaleContract(Suit.HEARTS)),
-                    MoveBidding.contractMove(Contract.pointsContract(140, Suit.HEARTS)),
+                    MoveBidding.contractMove(ContractFactory.createContract(500, Suit.HEARTS)),
+                    MoveBidding.contractMove(ContractFactory.createContract(140, Suit.HEARTS)),
                     false)));
     testCases.forEach(TestCase::run);
   }
