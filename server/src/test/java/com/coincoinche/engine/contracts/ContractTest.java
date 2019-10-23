@@ -1,7 +1,11 @@
-package com.coincoinche.engine;
+package com.coincoinche.engine.contracts;
 
+import static com.coincoinche.engine.contracts.ContractFactory.createCapotContract;
+import static com.coincoinche.engine.contracts.ContractFactory.createGeneraleContract;
+import static com.coincoinche.engine.contracts.ContractFactory.createPointsContract;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.coincoinche.engine.GameEngineTestHelper;
 import com.coincoinche.engine.cards.Suit;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,62 +31,61 @@ public class ContractTest {
     List<TestCase> testCases =
         new ArrayList<>(
             List.of(
-                new TestCase(
-                    "capot hearts - null", Contract.capotContract(Suit.HEARTS), null, true),
+                new TestCase("capot hearts - null", createCapotContract(Suit.HEARTS), null, true),
                 new TestCase(
                     "capot hearts - capot hearts",
-                    Contract.capotContract(Suit.HEARTS),
-                    Contract.capotContract(Suit.HEARTS),
+                    createCapotContract(Suit.HEARTS),
+                    createCapotContract(Suit.HEARTS),
                     false),
                 new TestCase(
                     "generale clubs - generale clubs",
-                    Contract.generaleContract(Suit.CLUBS),
-                    Contract.generaleContract(Suit.CLUBS),
+                    createGeneraleContract(Suit.CLUBS),
+                    createGeneraleContract(Suit.CLUBS),
                     false),
                 new TestCase(
                     "capot hearts - capot spades",
-                    Contract.capotContract(Suit.HEARTS),
-                    Contract.capotContract(Suit.SPADES),
+                    createCapotContract(Suit.HEARTS),
+                    createCapotContract(Suit.SPADES),
                     false),
                 new TestCase(
                     "capot hearts - generale hearts",
-                    Contract.capotContract(Suit.HEARTS),
-                    Contract.generaleContract(Suit.HEARTS),
+                    createCapotContract(Suit.HEARTS),
+                    createGeneraleContract(Suit.HEARTS),
                     false),
                 new TestCase(
                     "generale hearts - capot diamonds",
-                    Contract.generaleContract(Suit.HEARTS),
-                    Contract.capotContract(Suit.DIAMONDS),
+                    createGeneraleContract(Suit.HEARTS),
+                    createCapotContract(Suit.DIAMONDS),
                     true),
                 new TestCase(
                     "90 hearts - 90 hearts",
-                    Contract.pointsContract(90, Suit.HEARTS),
-                    Contract.pointsContract(90, Suit.HEARTS),
+                    createPointsContract(90, Suit.HEARTS),
+                    createPointsContract(90, Suit.HEARTS),
                     false),
                 new TestCase(
                     "130 hearts - 90 hearts",
-                    Contract.pointsContract(130, Suit.HEARTS),
-                    Contract.pointsContract(90, Suit.HEARTS),
+                    createPointsContract(130, Suit.HEARTS),
+                    createPointsContract(90, Suit.HEARTS),
                     true),
                 new TestCase(
                     "100 spades - 140 clubs",
-                    Contract.pointsContract(100, Suit.SPADES),
-                    Contract.pointsContract(140, Suit.CLUBS),
+                    createPointsContract(100, Suit.SPADES),
+                    createPointsContract(140, Suit.CLUBS),
                     false),
                 new TestCase(
                     "110 diamonds - 80 spades",
-                    Contract.pointsContract(110, Suit.DIAMONDS),
-                    Contract.pointsContract(80, Suit.SPADES),
+                    createPointsContract(110, Suit.DIAMONDS),
+                    createPointsContract(80, Suit.SPADES),
                     true),
                 new TestCase(
                     "capot hearts - 100 hearts",
-                    Contract.capotContract(Suit.HEARTS),
-                    Contract.pointsContract(100, Suit.HEARTS),
+                    createCapotContract(Suit.HEARTS),
+                    createPointsContract(100, Suit.HEARTS),
                     true),
                 new TestCase(
                     "generale hearts - 140 hearts",
-                    Contract.generaleContract(Suit.HEARTS),
-                    Contract.pointsContract(140, Suit.HEARTS),
+                    createGeneraleContract(Suit.HEARTS),
+                    createPointsContract(140, Suit.HEARTS),
                     true)));
     testCases.forEach(TestCase::run);
   }
@@ -106,53 +109,53 @@ public class ContractTest {
             List.of(
                 new TestCase(
                     "capot hearts - capot hearts",
-                    Contract.capotContract(Suit.HEARTS),
-                    Contract.capotContract(Suit.HEARTS),
+                    createCapotContract(Suit.HEARTS),
+                    createCapotContract(Suit.HEARTS),
                     true),
                 new TestCase(
                     "generale clubs - generale clubs",
-                    Contract.generaleContract(Suit.CLUBS),
-                    Contract.generaleContract(Suit.CLUBS),
+                    createGeneraleContract(Suit.CLUBS),
+                    createGeneraleContract(Suit.CLUBS),
                     true),
                 new TestCase(
                     "capot hearts - capot spades",
-                    Contract.capotContract(Suit.HEARTS),
-                    Contract.capotContract(Suit.SPADES),
+                    createCapotContract(Suit.HEARTS),
+                    createCapotContract(Suit.SPADES),
                     false),
                 new TestCase(
                     "capot hearts - generale hearts",
-                    Contract.capotContract(Suit.HEARTS),
-                    Contract.generaleContract(Suit.HEARTS),
+                    createCapotContract(Suit.HEARTS),
+                    createGeneraleContract(Suit.HEARTS),
                     false),
                 new TestCase(
                     "generale hearts - generale diamonds",
-                    Contract.generaleContract(Suit.HEARTS),
-                    Contract.generaleContract(Suit.DIAMONDS),
+                    createGeneraleContract(Suit.HEARTS),
+                    createGeneraleContract(Suit.DIAMONDS),
                     false),
                 new TestCase(
                     "90 hearts - 90 hearts",
-                    Contract.pointsContract(90, Suit.HEARTS),
-                    Contract.pointsContract(90, Suit.HEARTS),
+                    createPointsContract(90, Suit.HEARTS),
+                    createPointsContract(90, Suit.HEARTS),
                     true),
                 new TestCase(
                     "90 hearts - 130 hearts",
-                    Contract.pointsContract(90, Suit.HEARTS),
-                    Contract.pointsContract(130, Suit.HEARTS),
+                    createPointsContract(90, Suit.HEARTS),
+                    createPointsContract(130, Suit.HEARTS),
                     false),
                 new TestCase(
                     "110 diamonds - 110 spades",
-                    Contract.pointsContract(110, Suit.DIAMONDS),
-                    Contract.pointsContract(110, Suit.SPADES),
+                    createPointsContract(110, Suit.DIAMONDS),
+                    createPointsContract(110, Suit.SPADES),
                     false),
                 new TestCase(
                     "capot hearts - 100 hearts",
-                    Contract.capotContract(Suit.HEARTS),
-                    Contract.pointsContract(100, Suit.HEARTS),
+                    createCapotContract(Suit.HEARTS),
+                    createPointsContract(100, Suit.HEARTS),
                     false),
                 new TestCase(
                     "generale hearts - 140 hearts",
-                    Contract.generaleContract(Suit.HEARTS),
-                    Contract.pointsContract(140, Suit.HEARTS),
+                    createGeneraleContract(Suit.HEARTS),
+                    createPointsContract(140, Suit.HEARTS),
                     false)));
     testCases.forEach(TestCase::run);
   }

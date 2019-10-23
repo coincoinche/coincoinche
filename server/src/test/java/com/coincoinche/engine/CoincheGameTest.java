@@ -6,6 +6,7 @@ import static org.mockito.Mockito.spy;
 
 import com.coincoinche.engine.game.GameResult;
 import com.coincoinche.engine.teams.Team;
+import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -55,7 +56,7 @@ public class CoincheGameTest extends GameEngineTestHelper {
         .as("UNFINISHED ROUND - Check round is still the same")
         .isEqualTo(spyRound);
     // mock a finished result but not a finished game
-    roundResult = GameResult.finishedResult(t1, 0);
+    roundResult = GameResult.finishedResult(Map.of(t1, 0, t2, 0));
     doReturn(roundResult).when(spyRound).moveWasApplied();
     gameResult = coincheGame.moveWasApplied();
     assertThat(gameResult.isFinished())
@@ -81,7 +82,7 @@ public class CoincheGameTest extends GameEngineTestHelper {
     currentRound = coincheGame.getCurrentRound();
     spyRound = spy(currentRound);
     coincheGame.setCurrentRound(spyRound);
-    roundResult = GameResult.finishedResult(t1, 42000);
+    roundResult = GameResult.finishedResult(Map.of(t1, 42000, t2, 0));
     doReturn(roundResult).when(spyRound).moveWasApplied();
     gameResult = coincheGame.moveWasApplied();
     assertThat(gameResult.isFinished())
