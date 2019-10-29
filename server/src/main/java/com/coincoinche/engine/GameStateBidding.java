@@ -121,8 +121,7 @@ public class GameStateBidding implements GameStateTransition {
   @Override
   public void rotatePlayers(CoincheGameRound round) {
     round.rotatePlayers();
-    Player newPlayer = round.getCurrentPlayer();
-    currentPlayer = newPlayer;
+    currentPlayer = round.getCurrentPlayer();
   }
 
   @Override

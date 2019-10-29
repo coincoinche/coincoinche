@@ -30,6 +30,15 @@ public class Player {
     return cards;
   }
 
+  /**
+   * Remove a card from the player's hand.
+   *
+   * @param card is the card to remove.
+   */
+  public void removeCard(Card card) {
+    cards.remove(card);
+  }
+
   /** Remove all cards in the player's hand. */
   public void clearCards() {
     cards.clear();

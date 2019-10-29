@@ -29,7 +29,7 @@ public class GameStatePlaying implements GameStateTerminal {
   private Player lastTrickMaster;
   private Contract contract;
   private Player currentPlayer;
-  private Map<Player, Integer> playerPoints;
+  private Map<Player, Integer> playerPoints = new HashMap<>();
   private List<Team> teams;
   private int multiplier = 1;
 
@@ -184,7 +184,7 @@ public class GameStatePlaying implements GameStateTerminal {
       // 10 de der
       points += 10;
     }
-    playerPoints.put(master, points);
+    playerPoints.put(master, points + playerPoints.getOrDefault(master, 0));
     // update last master
     lastTrickMaster = master;
     // clear trick
@@ -213,6 +213,10 @@ public class GameStatePlaying implements GameStateTerminal {
 
   public Suit getTrumpSuit() {
     return contract.getSuit();
+  }
+
+  public int getCurrentTrickNumber() {
+    return currentTrickNumber;
   }
 
   public Trick getCurrentTrick() {
@@ -268,6 +272,12 @@ public class GameStatePlaying implements GameStateTerminal {
 
   @Override
   public void rotatePlayers(CoincheGameRound round) {
+    // if current trick is empty, it means the previous one was complete
+    if (!currentTrick.isEmpty()) {
+      round.rotatePlayers();
+      currentPlayer = round.getCurrentPlayer();
+      return;
+    }
     if (lastTrickMaster != null) {
       currentPlayer = lastTrickMaster;
     }
