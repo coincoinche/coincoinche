@@ -147,6 +147,10 @@ public class GameEngineTestHelper {
     return players;
   }
 
+  protected Player intToPlayer(int playerIndex) {
+    return getIntToPlayerMap().get(playerIndex);
+  }
+
   /*
    * Private helper to convert a String to a Card.
    * e.g. Ah -> ace of hearts
