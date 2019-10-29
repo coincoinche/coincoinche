@@ -213,33 +213,37 @@ public class MoveBiddingTest extends GameEngineTestHelper {
     } catch (IllegalMoveException e) {
       throw new RuntimeException(String.format("%s: Illegal move wasn't expected", testCaseName));
     }
-    // TODO nockty: write similar test for playing move
-    // TODO nockty: also, test that the state has changed as expected
-    // round = game.getCurrentRound();
-    // assertThat(round)
-    //     .as(String.format("%s: check round has changed", testCaseName))
-    //     .isNotEqualTo(preMoveRound);
-    // assertThat(game.getRedTeam().getPoints())
-    //     .as(String.format("%s: check red team's points have been updated", testCaseName))
-    //     .isEqualTo(100);
-    // assertThat(round.getCurrentPlayer())
-    //     .as(String.format("%s: check current player index is 2", testCaseName))
-    //     .isEqualTo(p2);
-    // state = round.getState();
-    // assertThat(state)
-    //     .as(String.format("%s: check state is bidding state", testCaseName))
-    //     .isInstanceOf(GameStateBidding.class);
-    // biddingState = (GameStateBidding) state;
-    // assertThat(biddingState.isCoinched())
-    //     .as(String.format("%s: check is not coinched", testCaseName))
-    //     .isFalse();
-    // assertThat(biddingState.isSurcoinched())
-    //     .as(String.format("%s: check is not surcoinched", testCaseName))
-    //     .isFalse();
-    // highestBidding = biddingState.getHighestBidding();
-    // assertThat(highestBidding)
-    //     .as(String.format("%s: check highest bidding is null", testCaseName))
-    //     .isNull();
+    round = game.getCurrentRound();
+    assertThat(round)
+        .as(String.format("%s: check round hasn't changed", testCaseName))
+        .isEqualTo(preMoveRound);
+    assertThat(round.getCurrentPlayer())
+        .as(String.format("%s: check current player index is 1", testCaseName))
+        .isEqualTo(p1);
+    state = round.getState();
+    assertThat(state)
+        .as(String.format("%s: check state is playing state", testCaseName))
+        .isInstanceOf(GameStatePlaying.class);
+    GameStatePlaying playingState = (GameStatePlaying) state;
+    assertThat(playingState.getTrickPointsForPlayer(p1))
+        .as(String.format("%s: check p1 has 0 pts (trick)", testCaseName))
+        .isEqualTo(0);
+    assertThat(playingState.getTrickPointsForPlayer(p2))
+        .as(String.format("%s: check p2 has 0 pts (trick)", testCaseName))
+        .isEqualTo(0);
+    assertThat(playingState.getTrickPointsForPlayer(p3))
+        .as(String.format("%s: check p3 has 0 pts (trick)", testCaseName))
+        .isEqualTo(0);
+    assertThat(playingState.getTrickPointsForPlayer(p4))
+        .as(String.format("%s: check p4 has 0 pts (trick)", testCaseName))
+        .isEqualTo(0);
+    assertThat(playingState.getCurrentTrickNumber())
+        .as(String.format("%s: check current trick # is 1", testCaseName))
+        .isEqualTo(1);
+    Trick currentTrick = playingState.getCurrentTrick();
+    assertThat(currentTrick.isEmpty())
+        .as(String.format("%s: check current trick is empty", testCaseName))
+        .isTrue();
 
     /*
      * NEW TEST CASE
@@ -420,33 +424,37 @@ public class MoveBiddingTest extends GameEngineTestHelper {
     } catch (IllegalMoveException e) {
       throw new RuntimeException(String.format("%s: Illegal move wasn't expected", testCaseName));
     }
-    // TODO nockty: write similar test for playing move
-    // TODO nockty: also, test that the state has changed as expected
-    // round = game.getCurrentRound();
-    // assertThat(round)
-    //     .as(String.format("%s: check round has changed", testCaseName))
-    //     .isNotEqualTo(preMoveRound);
-    // assertThat(game.getBlueTeam().getPoints())
-    //     .as(String.format("%s: check blue team's points have been updated", testCaseName))
-    //     .isEqualTo(250);
-    // assertThat(round.getCurrentPlayer())
-    //     .as(String.format("%s: check current player index is 2", testCaseName))
-    //     .isEqualTo(p2);
-    // state = round.getState();
-    // assertThat(state)
-    //     .as(String.format("%s: check state is bidding state", testCaseName))
-    //     .isInstanceOf(GameStateBidding.class);
-    // biddingState = (GameStateBidding) state;
-    // assertThat(biddingState.isCoinched())
-    //     .as(String.format("%s: check is not coinched", testCaseName))
-    //     .isFalse();
-    // assertThat(biddingState.isSurcoinched())
-    //     .as(String.format("%s: check is not surcoinched", testCaseName))
-    //     .isFalse();
-    // highestBidding = biddingState.getHighestBidding();
-    // assertThat(highestBidding)
-    //     .as(String.format("%s: check highest bidding is null", testCaseName))
-    //     .isNull();
+    round = game.getCurrentRound();
+    assertThat(round)
+        .as(String.format("%s: check round hasn't changed", testCaseName))
+        .isEqualTo(preMoveRound);
+    assertThat(round.getCurrentPlayer())
+        .as(String.format("%s: check current player index is 4", testCaseName))
+        .isEqualTo(p4);
+    state = round.getState();
+    assertThat(state)
+        .as(String.format("%s: check state is playing state", testCaseName))
+        .isInstanceOf(GameStatePlaying.class);
+    playingState = (GameStatePlaying) state;
+    assertThat(playingState.getTrickPointsForPlayer(p1))
+        .as(String.format("%s: check p1 has 0 pts (trick)", testCaseName))
+        .isEqualTo(0);
+    assertThat(playingState.getTrickPointsForPlayer(p2))
+        .as(String.format("%s: check p2 has 0 pts (trick)", testCaseName))
+        .isEqualTo(0);
+    assertThat(playingState.getTrickPointsForPlayer(p3))
+        .as(String.format("%s: check p3 has 0 pts (trick)", testCaseName))
+        .isEqualTo(0);
+    assertThat(playingState.getTrickPointsForPlayer(p4))
+        .as(String.format("%s: check p4 has 0 pts (trick)", testCaseName))
+        .isEqualTo(0);
+    assertThat(playingState.getCurrentTrickNumber())
+        .as(String.format("%s: check current trick # is 1", testCaseName))
+        .isEqualTo(1);
+    currentTrick = playingState.getCurrentTrick();
+    assertThat(currentTrick.isEmpty())
+        .as(String.format("%s: check current trick is empty", testCaseName))
+        .isTrue();
 
     /*
      * NEW TEST CASE

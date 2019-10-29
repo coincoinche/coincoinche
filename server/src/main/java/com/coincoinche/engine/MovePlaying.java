@@ -47,8 +47,8 @@ public class MovePlaying extends Move implements Comparable<MovePlaying> {
       throw new IllegalMoveException(this + " is not legal on state " + playingGameState);
     }
     Trick currentTrick = playingGameState.getCurrentTrick();
-    boolean completeTrick = currentTrick.add(player, card);
-    if (!completeTrick) {
+    currentTrick.add(player, card);
+    if (!currentTrick.isComplete()) {
       return;
     }
     // the trick is complete: close it

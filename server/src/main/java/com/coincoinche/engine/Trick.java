@@ -39,14 +39,22 @@ public class Trick {
   }
 
   /**
-   * Add a card played by a player to the trick.
+   * Add a card played by a player to the trick. Also remove the card from the player's hand.
    *
    * @param player is the player who played the card.
    * @param card is the card played by the player.
-   * @return true if the trick is complete after adding the card, else false.
    */
-  public boolean add(Player player, Card card) {
+  public void add(Player player, Card card) {
     playedCards.add(new PlayedCard(player, card));
+    player.removeCard(card);
+  }
+
+  /**
+   * Check if the trick is complete.
+   *
+   * @return true if the trick is complete, else false.
+   */
+  public boolean isComplete() {
     return playedCards.size() >= 4;
   }
 
