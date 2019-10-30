@@ -1,5 +1,6 @@
 import * as React from "react";
 import axios from "axios";
+import { API_BASE_URL } from '../constants';
 
 type State = {
   data: string;
@@ -16,7 +17,7 @@ export default class TestComponent extends React.Component<{}, State> {
 
   async fetchData() {
     try {
-      const response = await axios.get('http://localhost:8080/greetings');
+      const response = await axios.get(`${API_BASE_URL}/greetings`);
       return response.data;
     } catch (error) {
       this.setState({
