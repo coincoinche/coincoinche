@@ -32,4 +32,4 @@ COPY --from=build /app/build /var/www
 # Copy our custom nginx config
 COPY nginx.conf /etc/nginx/nginx.conf
 
-ENTRYPOINT ["nginx","-g","daemon off;"]
+CMD sed -i -e 's/$PORT/'"$PORT"'/g' /etc/nginx/nginx.conf && nginx -g 'daemon off;'
