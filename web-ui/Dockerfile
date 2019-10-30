@@ -23,15 +23,13 @@ ENV REACT_APP_API_BASE_URL=${REACT_APP_API_BASE_URL}
 # Build the application
 RUN yarn run build
 
-#### Stage 2: Serve the React application
-FROM node:8.12.0-alpine
-
-# Add the serve command
-RUN yarn global add serve
-
-WORKDIR /app
+#### Stage 2: Serve the React application from Nginx
+FROM nginx:1.17.0-alpine
 
 # Copy the react build from Stage 1
-COPY --from=build /app/build .
+COPY --from=build /app/build /var/www
 
-CMD ["serve", "-p", "3000", "-s", "."]
+# Copy our custom nginx config
+COPY nginx.conf /etc/nginx/nginx.conf
+
+ENTRYPOINT ["nginx","-g","daemon off;"]

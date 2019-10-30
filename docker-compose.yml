@@ -16,18 +16,6 @@ services:
     volumes:
       - ".psql/data/pgdata:/var/lib/postgresql/data/pgdata"
 
-  # Nginx webserver
-  nginx:
-    restart: always
-    build:
-      context:  nginx
-      dockerfile: Dockerfile
-    ports:
-      - 80:80
-    depends_on:
-      - server
-      - web-ui
-
   # App backend service
   server:
     restart: always
@@ -47,5 +35,7 @@ services:
       dockerfile: Dockerfile
       args:
         REACT_APP_API_BASE_URL: http://localhost/api
-    expose:
-      - 3000
+    ports:
+      - 80:80
+    depends_on:
+      - server
