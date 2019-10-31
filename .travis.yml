@@ -1,9 +1,13 @@
 language: java
 sudo: false
 jdk: openjdk11
-
 services:
 - docker
+addons:
+  apt:
+    packages:
+    - pass
+    - gnupg2
 
 env:
   global:
