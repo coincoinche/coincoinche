@@ -22,6 +22,8 @@ services:
     build:
       context: server
       dockerfile: Dockerfile
+      args:
+        ENVIRONMENT: local
     expose:
       - 8080
     depends_on:
