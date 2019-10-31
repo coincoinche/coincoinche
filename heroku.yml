@@ -1,8 +1,0 @@
-build:
-  docker:
-    server: server/Dockerfile
-    web: web-ui/Dockerfile
-  config:
-    REACT_APP_API_BASE_URL: http://coincoinche.herokuapp.com/api
-    BACKEND_NAME: server.coincoinche.app.localspace:8080
-
