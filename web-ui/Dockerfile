@@ -26,10 +26,16 @@ RUN yarn run build
 #### Stage 2: Serve the React application from Nginx
 FROM nginx:1.17.0-alpine
 
+# Arguments
+ARG BACKEND_NAME
+ENV BACKEND_NAME=${BACKEND_NAME}
+
+ENV SUBSTVARS='$BACKEND_NAME:$PORT'
+
 # Copy the react build from Stage 1
 COPY --from=build /app/build /var/www
 
 # Copy our custom nginx config
-COPY nginx.conf /etc/nginx/nginx.conf
+COPY nginx.conf.template /etc/nginx/nginx.conf.template
 
-CMD sed -i -e 's/$PORT/'"$PORT"'/g' /etc/nginx/nginx.conf && nginx -g 'daemon off;'
+CMD  envsubst "$SUBSTVARS" < /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf && nginx -g 'daemon off;'

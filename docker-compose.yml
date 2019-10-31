@@ -35,7 +35,10 @@ services:
       dockerfile: Dockerfile
       args:
         REACT_APP_API_BASE_URL: http://localhost/api
+        BACKEND_NAME: server:8080
     ports:
       - 80:80
+    environment:
+      - PORT=80
     depends_on:
       - server
