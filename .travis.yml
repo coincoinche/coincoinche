@@ -2,10 +2,51 @@ language: java
 sudo: false
 jdk: openjdk11
 
+services:
+- docker
+
+env:
+  global:
+  - REGISTRY_URL=registry.heroku.com
+  - DOCKER_REPO_FRONT=coincoinche/web
+  - DOCKER_REPO_BACK=coincoinche-api/web
+  - BUILD_ENVIRONMENT=heroku
+  - BUILD_API_URL=http://coincoinche-api.herokuapp.com
+  - BUILD_BACKEND=coincoinche-api.herokuapp.com
+  - secure: OEC9PtTmJszq85kmyuoLe2FwQXMvBxeP5XBzr0L8KrBzbA+cARVdMRU6LTEnnKGANFAcEYQcKFTesG8QRAwmeox2Bo7qg5jmaup7eRTzCbcR9TVMS/r2f4QAVHk4OJ/AlKCjDE4dePqnwVLN7PfHTklGjBvGOoch6KUpRY0ZcjR5RhvVDVGmgAYyKVClVvIvlPIpVRUfyF5Kzf/l28DxBWd4bRY4RxirgKvm2Cvik3hGdmkGp/QJ8z3IO2T1/XapORgYRHUkHf4n0/32dOhYvHqvZeMdjgheu0ZxBFua2KALN+Lv2Ky2OU8L5cXwxTGtoXzrQTj9l4nJIRXc2aAr2mAH59U3sH7bab4xsusb3GzhPx0fzzW1qH1HlSOD6wnKqR4wjcI1v+MxdFnmnsidt5z3aVfUkE0b0rMLySW/ZQQlxmei7ABz8ihuRGPdqbkqkwB7Gz3V/2WflxFKmszkrsiZmxebZYAbQewxq5e+lj8nKUhTm/QJGuXc7OIJoFlTN/+iNUKmSxbnLVNEpXp8wQ4jRsbVvCzSVJ1fY++G6FAtvZtCSyvG2gIYw7Nmfp5sGD5OZPEJbnadvA6RF4hLFI15+d6/s3hlFr6vNBMfOapCP3Cm0/gunCImaBV7ELKmcgbG9B7L2JUBqV9bQ88vD57VB9C7NavXfOb2SFWBA3U=
+  - secure: Y129k3EdxdgMqv82mWPsyKq+ucapI+I+6sINqafOGwKXzgO3wD/3F2n7KENaHo6gudk5Bgc/DfRZXXSZIPB54iS1hB1/TvsGtcnovePQJXd4sKIGyTlhPOj/MfKzptUeVrJtmhdVro7ojl+r5IqWTDJdPFkC3Z63CIDIBrtyUz4dWsBZAsd50YTt3/nnr19NCHXKQizCgoAbm9T4FrtcEdbHnwtXG8JjUipfkUkuDiq2Sr0hwCBfAtfGTDbbd8xGn+CUNxW4TIV46u/deReUHFiS5sC1UB55QJa1yDt+rnpr+rLzxTMzh7VqGNArKBK1VlTf6I0XdX32jOztIGd6337sWggiiE/B7ajxWvrMwa+Zzh/xQ5q0Ia6uxK2skJWejj1STlPb7NPh2Sukgh2CHj7vOIDW2YXAT0a7RckvUSUeX653K1+OfsCoQ2div2jI/qu0UGxM5It7IaJ36ScPDV5zJl2GvHelhwzVJ1tfWPHXdQeW/4sApku+ggnthdmxKU0MKUuU6BCMf2JhCG8qMn94fZ5dDNNpcMtLpR7Ipd8Z0BBd8g5RHciOgpfUuv7I1K91wQrD/4UXTZLCUhv14LtcyftOEANotjpwb0aitTtp80Ig2CUKeQeqMZ/71m5ckrgT38NBjqiEqviYKHura5nT0bJ8SQQxjfml4vnvzIo=
+  - secure: YlXxSv1vR7C57uqy7WRM6lXzMPRyyHT8btbjOTiOO7GB+piubyjWR1rQMbe34AMO7DhQp/+K8b/0OmIkPRf21U/AhiNpapuyBHZdIZiZ4rgmXVEmL8Z6SPdqKFD2EscMmnp+IFz+sKmd9C/NMl3/+/otHt6zSXMvzx8WgUY/EDg6Bx8cvZKnsA7JIK5ft6C+vmfgG8hmyskF48Qkiw5XYwczt1N2mWBmcsaXFfxXJJVY42sRH9WWcvDrOn7Jrh4m4epgePkw/wQCk1SHHPLdCDkCVs174CGlIH4eyllfN6APKd1WBBCzGbEFZm9xwdDsokX51t0M1oFONfxydiuS5jV5pxRDBC9PKg+mJlj81eQWsoPpiaqqXsZcRzU49pNSR05zwfLSb3BkSZ7YfLtAlo8EGxofKIOL84/CYrW3oX+h51azRIz4++vIUbzCjqm18suDUgjtUQGgH3dJr6cDONfqcgcvJO+BaUT8dzXbUvY45d7iMjBALcAWCJ4oCiF2cGmTc1AK44m0FwFjD6AlXEeQnxLBMGMwLBDoNffwlW9SuRP1zXlFw7Ss3ZPNckshmzynQrawuZ4/f28JnRw3XhWxY5Mir/UFJBQzrL3ZVlUfAW7bI+1tfvFuAvID9ao4scmW6eSlQz7Hf4yofm98l8wtrcCUqAYO9Y0hm5BhLVA=
+
+stages:
+- test
+- name: deploy
+  if: branch = master
+- name: release
+  if: branch = master
+
 jobs:
   include:
-    - stage: test
-      before_script:
-        - cd server
-      script:
-        - ./mvnw test
+  - stage: test
+    before_script:
+    - cd server
+    script:
+    - "./mvnw test"
+  - stage: deploy
+    before_script:
+    - bash docker_build.sh
+    script:
+    - bash docker_push.sh
+  - stage: release
+    name: Release backend
+    script: skip
+    deploy:
+      provider: heroku
+      app: coincoinche-api
+      api_key: "$HEROKU_AUTH_TOKEN"
+  - stage: release
+    name: Release frontend
+    script: skip
+    deploy:
+      provider: heroku
+      app: coincoinche
+      api_key: "$HEROKU_AUTH_TOKEN"
