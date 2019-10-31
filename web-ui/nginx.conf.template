@@ -30,11 +30,11 @@ http {
         '"$http_referer" "$http_user_agent"';
 
     upstream backend {
-        server server:8080;
+        server ${BACKEND_NAME};
     }
 
     server {
-        listen $PORT;
+        listen ${PORT};
         server_name coincoinche.com www.coincoinche.com;
 
         # save logs here
