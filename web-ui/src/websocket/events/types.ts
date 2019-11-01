@@ -17,7 +17,8 @@ export enum EventType {
   ROUND_STARTED = 'ROUND_STARTED',
   ROUND_PHASE_STARTED = 'ROUND_PHASE_STARTED',
   CLIENT_READY = 'CLIENT_READY',
-  TURN_STARTED = 'TURN_STARTED',
+  BIDDING_TURN_STARTED = 'BIDDING_TURN_STARTED',
+  PLAYING_TURN_STARTED = 'PLAYING_TURN_STARTED',
   PLAYER_BADE = 'PLAYER_BADE',
 }
 
@@ -44,9 +45,19 @@ export type RoundPhaseStartedEvent = {
   phase: GameRoundPhase,
 }
 
-export type TurnStartedEvent = {
-  type: EventType.TURN_STARTED,
+export type BiddingTurnStartedEvent = {
+  type: EventType.BIDDING_TURN_STARTED,
   legalMoves: LegalBiddingMove[],
 }
 
-export type Event = PlayerBadeEvent | RoundStartedEvent | TurnStartedEvent | RoundPhaseStartedEvent;
+export type PlayingTurnStartedEvent = {
+  type: EventType.PLAYING_TURN_STARTED,
+  legalMoves: CardValue[],
+}
+
+export type Event =
+  PlayerBadeEvent |
+  RoundStartedEvent |
+  BiddingTurnStartedEvent |
+  RoundPhaseStartedEvent |
+  PlayingTurnStartedEvent;

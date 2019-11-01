@@ -3,8 +3,8 @@ package com.coincoinche.events;
 public class TurnStartedEvent extends Event {
   private String[] legalMoves;
 
-  public TurnStartedEvent(String[] legalMoves) {
-    super(EventType.TURN_STARTED);
+  TurnStartedEvent(EventType eventType, String[] legalMoves) {
+    super(eventType);
     this.legalMoves = legalMoves;
   }
 

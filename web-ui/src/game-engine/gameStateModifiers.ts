@@ -7,7 +7,7 @@ import {
   PlayerBadeEvent,
   RoundPhaseStartedEvent,
   RoundStartedEvent,
-  TurnStartedEvent
+  BiddingTurnStartedEvent, PlayingTurnStartedEvent
 } from '../websocket/events/types';
 import {GameRoundPhase, GameState, LegalBiddingMove, Position} from "./gameStateTypes";
 import {CardValue} from "../assets/cards";
@@ -165,9 +165,15 @@ const applyRoundPhaseStartedEvent = ({ phase }: RoundPhaseStartedEvent, gameStat
     .retrieveNewState();
 };
 
-const applyTurnStartedEvent = ({ legalMoves }: TurnStartedEvent, gameState: GameState): GameState => {
+const applyBiddingTurnStartedEvent = ({ legalMoves }: BiddingTurnStartedEvent, gameState: GameState): GameState => {
   return new GameStateModifier(gameState)
     .setLegalBiddingMoves(legalMoves)
+    .retrieveNewState();
+};
+
+const applyPlayingTurnStartedEvent = ({ legalMoves }: PlayingTurnStartedEvent, gameState: GameState): GameState => {
+  return new GameStateModifier(gameState)
+    .setLegalPlayingMoves(legalMoves)
     .retrieveNewState();
 };
 
@@ -179,8 +185,10 @@ export const applyEvent = (event: Event, gameState: GameState): GameState => {
       return applyRoundStartedEvent(event, gameState);
     case EventType.ROUND_PHASE_STARTED:
       return applyRoundPhaseStartedEvent(event, gameState);
-    case EventType.TURN_STARTED:
-      return applyTurnStartedEvent(event, gameState);
+    case EventType.BIDDING_TURN_STARTED:
+      return applyBiddingTurnStartedEvent(event, gameState);
+    case EventType.PLAYING_TURN_STARTED:
+      return applyPlayingTurnStartedEvent(event, gameState);
     default:
       throw new InvalidEventError('Unknown event type.');
   }

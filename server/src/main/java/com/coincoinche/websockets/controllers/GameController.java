@@ -46,8 +46,15 @@ public class GameController {
         authorisedPlaysJson[i] = legalMoves.get(i).toJson();
       }
 
-      this.template.convertAndSend(
-          getTopicPath(gameId, username), new TurnStartedEvent(authorisedPlaysJson));
+      if (game.getCurrentRoundPhase() == CoincheGame.Phase.BIDDING) {
+        this.template.convertAndSend(
+            getTopicPath(gameId, username), new BiddingTurnStartedEvent(authorisedPlaysJson));
+      }
+
+      if (game.getCurrentRoundPhase() == CoincheGame.Phase.MAIN) {
+        this.template.convertAndSend(
+            getTopicPath(gameId, username), new PlayingTurnStartedEvent(authorisedPlaysJson));
+      }
     }
   }
 

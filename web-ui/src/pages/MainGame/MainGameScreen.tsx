@@ -61,8 +61,14 @@ export default class MainGameScreen extends React.Component<Props, State> {
 
     this.props.registerOnMessageReceivedCallback(
       getGameTopic(this.props.gameId, this.props.username),
-      EventType.TURN_STARTED,
-      (jsonEvent: string) => this.applyEventToState(EventType.TURN_STARTED, jsonEvent),
+      EventType.BIDDING_TURN_STARTED,
+      (jsonEvent: string) => this.applyEventToState(EventType.BIDDING_TURN_STARTED, jsonEvent),
+    );
+
+    this.props.registerOnMessageReceivedCallback(
+      getGameTopic(this.props.gameId, this.props.username),
+      EventType.PLAYING_TURN_STARTED,
+      (jsonEvent: string) => this.applyEventToState(EventType.PLAYING_TURN_STARTED, jsonEvent),
     );
 
     this.props.registerOnMessageReceivedCallback(
