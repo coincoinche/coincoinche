@@ -29,6 +29,7 @@ const isFull = (trick: Trick): boolean => !!trick.top && !!trick.bottom && !!tri
 type Props = InjectedProps & {
   gameId: string;
   username: string;
+  usernames: string[];
 }
 
 type State = GameState;
@@ -41,7 +42,7 @@ const getBroadcastGameTopic = (gameId: string) => TopicTemplate.GAME_BROADCAST
   .replace('{gameId}', gameId);
 
 export default class MainGameScreen extends React.Component<Props, State> {
-  state: State = gameStateInit();
+  state: State = gameStateInit(this.props.usernames, this.props.usernames.indexOf(this.props.username));
 
   componentDidMount(): void {
     this.props.registerOnMessageReceivedCallback(
@@ -77,6 +78,12 @@ export default class MainGameScreen extends React.Component<Props, State> {
       (jsonEvent: string) => this.applyEventToState(EventType.PLAYER_BADE, jsonEvent),
     );
 
+    this.props.registerOnMessageReceivedCallback(
+      getBroadcastGameTopic(this.props.gameId),
+      EventType.CARD_PLAYED,
+      (jsonEvent: string) => this.applyEventToState(EventType.CARD_PLAYED, jsonEvent),
+    );
+
     this.props.subscribe(getGameTopic(this.props.gameId, this.props.username));
     this.props.subscribe(getBroadcastGameTopic(this.props.gameId));
     // TODO replace socket endpoint by Socket endpoint template
@@ -102,20 +109,37 @@ export default class MainGameScreen extends React.Component<Props, State> {
   };
 
   onCardPlayed = (player: Position, card: CardValue) => {
+    console.log("onCardPlayed");
     if (
         this.state.currentPhase !== GameRoundPhase.MAIN ||
         !this.state.cardsInHand.includes(card) ||
         !this.state.legalMoves.includes(card) ||
         player !== this.state.currentPlayer
     ) {
+      console.log("here", {
+        usernames: this.state.usernames,
+        usernamesByPosition: this.state.usernamesByPosition,
+        phase: this.state.currentPhase,
+        cardsInHand: this.state.cardsInHand,
+        legalMoves: this.state.legalMoves,
+        player,
+        currentPlayer: this.state.currentPlayer,
+      });
       return;
     }
+
+    this.props.sendMessage(
+      `/app/game/${this.props.gameId}/player/${this.props.username}/play`,
+      outboundGameEventConverter[EventType.CARD_PLAYED]({
+        type: EventType.CARD_PLAYED,
+        card,
+      })
+    );
 
     this.setState(prevState =>
       new GameStateModifier(prevState)
         .playCardFromHand(card)
-        .addCardToCurrentTrick(player, card)
-        .rotateCurrentPlayer()
+        .setLegalPlayingMoves([])
         .retrieveNewState()
     );
   };

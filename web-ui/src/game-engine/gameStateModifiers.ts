@@ -1,38 +1,22 @@
 import _ from 'lodash';
 
 import {
+  BiddingTurnStartedEvent,
+  CardPlayedEvent,
   Event,
   EventType,
   MoveType,
   PlayerBadeEvent,
+  PlayingTurnStartedEvent,
   RoundPhaseStartedEvent,
-  RoundStartedEvent,
-  BiddingTurnStartedEvent, PlayingTurnStartedEvent
+  RoundStartedEvent
 } from '../websocket/events/types';
 import {GameRoundPhase, GameState, LegalBiddingMove, Position} from "./gameStateTypes";
 import {CardValue} from "../assets/cards";
+import {positionFromUsername} from "./playerPositionning";
 
 class IllegalStateModificationError extends Error {}
 class InvalidEventError extends Error {}
-
-const getNextPlayer = (currentPlayer: Position): Position => {
-  if (currentPlayer === Position.bottom) {
-    return Position.left;
-  }
-
-  if (currentPlayer === Position.left) {
-    return Position.top;
-  }
-
-  if (currentPlayer === Position.top) {
-    return Position.right;
-  }
-
-  if (currentPlayer === Position.right) {
-    return Position.bottom;
-  }
-  throw new Error('Unknown position');
-};
 
 export class GameStateModifier {
   gameState: GameState;
@@ -41,8 +25,11 @@ export class GameStateModifier {
     this.gameState = _.cloneDeep(initialGameState);
   }
 
-  rotateCurrentPlayer = () => {
-    this.gameState.currentPlayer = getNextPlayer(this.gameState.currentPlayer);
+  setCurrentPlayer = (playerIndex: number) => {
+    this.gameState.currentPlayer = positionFromUsername(
+      this.gameState.usernames[playerIndex],
+      this.gameState.usernamesByPosition
+    );
     return this;
   };
 
@@ -118,8 +105,7 @@ export class GameStateModifier {
 const applyPlayerBadeEvent = (event: PlayerBadeEvent, gameState: GameState): GameState => {
   const gameStateModifier = new GameStateModifier(gameState)
     .setCurrentlySelectedContract(null)
-    .setLegalBiddingMoves([])
-    .rotateCurrentPlayer();
+    .setLegalBiddingMoves([]);
 
   if (event.moveType === MoveType.SPECIAL_BIDDING) {
     return gameStateModifier
@@ -141,6 +127,12 @@ const applyPlayerBadeEvent = (event: PlayerBadeEvent, gameState: GameState): Gam
   }
 
   throw new InvalidEventError('Invalid move type');
+};
+
+const applyCardPlayedEvent = (event: CardPlayedEvent, gameState: GameState): GameState => {
+  return new GameStateModifier(gameState)
+    .addCardToCurrentTrick(gameState.currentPlayer, event.card)
+    .retrieveNewState();
 };
 
 const applyRoundStartedEvent = ({ playerCards }: RoundStartedEvent, gameState: GameState): GameState => {
@@ -165,15 +157,17 @@ const applyRoundPhaseStartedEvent = ({ phase }: RoundPhaseStartedEvent, gameStat
     .retrieveNewState();
 };
 
-const applyBiddingTurnStartedEvent = ({ legalMoves }: BiddingTurnStartedEvent, gameState: GameState): GameState => {
+const applyBiddingTurnStartedEvent = ({ legalMoves, playerIndex }: BiddingTurnStartedEvent, gameState: GameState): GameState => {
   return new GameStateModifier(gameState)
     .setLegalBiddingMoves(legalMoves)
+    .setCurrentPlayer(playerIndex)
     .retrieveNewState();
 };
 
-const applyPlayingTurnStartedEvent = ({ legalMoves }: PlayingTurnStartedEvent, gameState: GameState): GameState => {
+const applyPlayingTurnStartedEvent = ({ legalMoves, playerIndex }: PlayingTurnStartedEvent, gameState: GameState): GameState => {
   return new GameStateModifier(gameState)
     .setLegalPlayingMoves(legalMoves)
+    .setCurrentPlayer(playerIndex)
     .retrieveNewState();
 };
 
@@ -181,6 +175,8 @@ export const applyEvent = (event: Event, gameState: GameState): GameState => {
   switch (event.type) {
     case EventType.PLAYER_BADE:
       return applyPlayerBadeEvent(event, gameState);
+    case EventType.CARD_PLAYED:
+      return applyCardPlayedEvent(event, gameState);
     case EventType.ROUND_STARTED:
       return applyRoundStartedEvent(event, gameState);
     case EventType.ROUND_PHASE_STARTED:

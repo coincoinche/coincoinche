@@ -40,6 +40,14 @@ public class Card {
     return rank.getShortName() + suit.getShortName();
   }
 
+  public static Card valueOfByShortName(String shortName) {
+    char rankChar = shortName.charAt(0);
+    char suitChar = shortName.charAt(1);
+    Rank rank = Rank.valueOfByShortName(String.valueOf(rankChar));
+    Suit suit = Suit.valueOfByShortName(String.valueOf(suitChar));
+    return new Card(suit, rank);
+  }
+
   @Override
   public String toString() {
     return rank.toString() + suit.toString();

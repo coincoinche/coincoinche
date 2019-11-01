@@ -53,4 +53,8 @@ public class RotatingPlayersGame<P> {
     }
     return playersIndexes;
   }
+
+  public List<P> getPlayers() {
+    return players;
+  }
 }

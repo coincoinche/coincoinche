@@ -1,9 +1,7 @@
 package com.coincoinche.websockets.controllers;
 
-import com.coincoinche.engine.CoincheGame;
-import com.coincoinche.engine.IllegalMoveException;
-import com.coincoinche.engine.Move;
-import com.coincoinche.engine.MoveBidding;
+import com.coincoinche.engine.*;
+import com.coincoinche.engine.teams.Player;
 import com.coincoinche.events.*;
 import com.coincoinche.store.GameStore;
 import com.coincoinche.store.InMemoryGameStore;
@@ -38,6 +36,8 @@ public class GameController {
 
   private void notifyPlayerTurnStarted(String gameId, String username) {
     CoincheGame game = this.store.getGame(gameId);
+    int newPlayerIndex = game.getCurrentRound().getCurrentPlayerIndex();
+    System.out.println("Current player index: " + newPlayerIndex);
 
     if (username.equals(game.getCurrentRound().getCurrentPlayer().getUsername())) {
       List<Move> legalMoves = game.getCurrentRound().getLegalMoves();
@@ -45,15 +45,26 @@ public class GameController {
       for (int i = 0; i < legalMoves.size(); i++) {
         authorisedPlaysJson[i] = legalMoves.get(i).toJson();
       }
-
+      TurnStartedEvent eventForNextPlayer;
+      TurnStartedEvent eventForOtherPlayers;
       if (game.getCurrentRoundPhase() == CoincheGame.Phase.BIDDING) {
-        this.template.convertAndSend(
-            getTopicPath(gameId, username), new BiddingTurnStartedEvent(authorisedPlaysJson));
+        eventForNextPlayer = new BiddingTurnStartedEvent(authorisedPlaysJson, newPlayerIndex);
+        eventForOtherPlayers = new BiddingTurnStartedEvent(new String[0], newPlayerIndex);
+      } else {
+        eventForNextPlayer = new PlayingTurnStartedEvent(authorisedPlaysJson, newPlayerIndex);
+        eventForOtherPlayers = new PlayingTurnStartedEvent(new String[0], newPlayerIndex);
       }
 
-      if (game.getCurrentRoundPhase() == CoincheGame.Phase.MAIN) {
-        this.template.convertAndSend(
-            getTopicPath(gameId, username), new PlayingTurnStartedEvent(authorisedPlaysJson));
+      // send the authorised plays to the next player.
+      this.template.convertAndSend(getTopicPath(gameId, username), eventForNextPlayer);
+
+      // signal to the other players who is currently playing.
+      List<Player> players = game.getPlayers();
+      for (Player player : players) {
+        if (!player.getUsername().equals(username)) {
+          this.template.convertAndSend(
+              getTopicPath(gameId, player.getUsername()), eventForOtherPlayers);
+        }
       }
     }
   }
@@ -119,7 +130,7 @@ public class GameController {
   }
 
   /**
-   * To be called by the client when the player bids.
+   * To be called by the client when the player plays a card.
    *
    * @param gameId - id of the game
    * @param username - username of the player
@@ -130,7 +141,38 @@ public class GameController {
       @DestinationVariable String username,
       @Payload CardPlayedEvent event) {
     CoincheGame game = this.store.getGame(gameId);
-    System.out.println("here in playCard");
+
+    MovePlaying move = MovePlaying.fromEvent(event);
+    try {
+      move.applyOnGame(game);
+      this.template.convertAndSend(getBroadcastTopicPath(gameId), event);
+    } catch (IllegalMoveException e) {
+      e.printStackTrace();
+      this.template.convertAndSend(
+          getTopicPath(gameId, username), new Event(EventType.INVALID_MESSAGE));
+
+      try {
+        // make the player play the first authorised card
+        Move firstLegalMove = game.getCurrentRound().getLegalMoves().get(0);
+        firstLegalMove.applyOnGame(game);
+
+        this.template.convertAndSend(
+            getBroadcastTopicPath(gameId), new CardPlayedEvent(firstLegalMove.toJson()));
+      } catch (IllegalMoveException illegalPassMoveException) {
+        illegalPassMoveException.printStackTrace();
+      }
+    }
+
+    if (game.getCurrentRoundPhase() == CoincheGame.Phase.BIDDING) {
+      // TODO handle when the first round finishes
+    }
+
+    System.out.println("playing card, username order:");
+    for (Player player : game.getPlayers()) {
+      System.out.println(player.getUsername());
+    }
+
+    this.notifyPlayerTurnStarted(gameId, game.getCurrentRound().getCurrentPlayer().getUsername());
   }
 
   /**

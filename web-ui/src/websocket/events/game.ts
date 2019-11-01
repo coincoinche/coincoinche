@@ -5,7 +5,7 @@ import {
   PlayerBadeEvent,
   RoundPhaseStartedEvent,
   RoundStartedEvent,
-  BiddingTurnStartedEvent, PlayingTurnStartedEvent
+  BiddingTurnStartedEvent, PlayingTurnStartedEvent, CardPlayedEvent
 } from "./types";
 import {ContractBiddingMove, SpecialBiddingMove, Suit} from "../../game-engine/gameStateTypes";
 
@@ -51,6 +51,14 @@ export const inboundGameEventParser: { [type in EventType]?: (event: any) => Eve
     throw new Error('Invalid move type');
   },
 
+  [EventType.CARD_PLAYED]: (event: any): CardPlayedEvent => {
+    const { card } = event;
+    return {
+      type: EventType.CARD_PLAYED,
+      card,
+    }
+  },
+
   [EventType.ROUND_STARTED]: (event: any): RoundStartedEvent => {
     const { playerCards } = event;
     return {
@@ -68,7 +76,7 @@ export const inboundGameEventParser: { [type in EventType]?: (event: any) => Eve
   },
 
   [EventType.BIDDING_TURN_STARTED]: (event: any): BiddingTurnStartedEvent => {
-    const { legalMoves: jsonLegalMoves } = event;
+    const { legalMoves: jsonLegalMoves, playerIndex } = event;
     const legalMoves = jsonLegalMoves.map((jsonMove: string) => {
       const move = JSON.parse(jsonMove);
       const { value, suit, moveType, special } = move;
@@ -92,14 +100,16 @@ export const inboundGameEventParser: { [type in EventType]?: (event: any) => Eve
     return {
       type: EventType.BIDDING_TURN_STARTED,
       legalMoves,
+      playerIndex,
     }
   },
 
   [EventType.PLAYING_TURN_STARTED]: (event: any): PlayingTurnStartedEvent => {
-    const { legalMoves } = event;
+    const { legalMoves, playerIndex } = event;
     return {
       type: EventType.PLAYING_TURN_STARTED,
       legalMoves,
+      playerIndex,
     }
   },
 };
@@ -126,4 +136,6 @@ export const outboundGameEventConverter = {
 
     throw new Error('Invalid move type');
   },
+
+  [EventType.CARD_PLAYED]: (event: CardPlayedEvent) => event,
 };

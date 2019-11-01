@@ -20,6 +20,7 @@ export enum EventType {
   BIDDING_TURN_STARTED = 'BIDDING_TURN_STARTED',
   PLAYING_TURN_STARTED = 'PLAYING_TURN_STARTED',
   PLAYER_BADE = 'PLAYER_BADE',
+  CARD_PLAYED = 'CARD_PLAYED',
 }
 
 export enum MoveType {
@@ -31,9 +32,20 @@ export type SocketMessage = {
   type: EventType;
 };
 
+export type GameStartedEvent = {
+  type: EventType.GAME_STARTED,
+  gameId: string,
+  usernames: string[]
+}
+
 export type PlayerBadeEvent = {
   type: EventType.PLAYER_BADE,
 } & LegalBiddingMove;
+
+export type CardPlayedEvent = {
+  type: EventType.CARD_PLAYED,
+  card: CardValue,
+};
 
 export type RoundStartedEvent = {
   type: EventType.ROUND_STARTED,
@@ -48,15 +60,18 @@ export type RoundPhaseStartedEvent = {
 export type BiddingTurnStartedEvent = {
   type: EventType.BIDDING_TURN_STARTED,
   legalMoves: LegalBiddingMove[],
+  playerIndex: number,
 }
 
 export type PlayingTurnStartedEvent = {
   type: EventType.PLAYING_TURN_STARTED,
   legalMoves: CardValue[],
+  playerIndex: number,
 }
 
 export type Event =
   PlayerBadeEvent |
+  CardPlayedEvent |
   RoundStartedEvent |
   BiddingTurnStartedEvent |
   RoundPhaseStartedEvent |
