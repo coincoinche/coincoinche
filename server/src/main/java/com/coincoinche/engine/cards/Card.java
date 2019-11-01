@@ -40,6 +40,12 @@ public class Card {
     return rank.getShortName() + suit.getShortName();
   }
 
+  /**
+   * Get a card by using its short name.
+   *
+   * @param shortName is the short name of the card.
+   * @return the corresponding card.
+   */
   public static Card valueOfByShortName(String shortName) {
     char rankChar = shortName.charAt(0);
     char suitChar = shortName.charAt(1);
