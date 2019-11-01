@@ -9,7 +9,7 @@ import {EventType, MoveType, PlayerBadeEvent, TopicTemplate,} from "../../websoc
 import {
   ContractBiddingMove,
   ContractValue,
-  GamePhase,
+  GameRoundPhase,
   GameState,
   LegalBiddingMove,
   Position,
@@ -50,6 +50,15 @@ export default class MainGameScreen extends React.Component<Props, State> {
       (jsonEvent: string) => this.applyEventToState(EventType.ROUND_STARTED, jsonEvent),
     );
 
+    [getGameTopic(this.props.gameId, this.props.username), getBroadcastGameTopic(this.props.gameId)]
+      .forEach((topic: string) =>
+        this.props.registerOnMessageReceivedCallback(
+          topic,
+          EventType.ROUND_PHASE_STARTED,
+          (jsonEvent: string) => this.applyEventToState(EventType.ROUND_PHASE_STARTED, jsonEvent),
+        )
+      );
+
     this.props.registerOnMessageReceivedCallback(
       getGameTopic(this.props.gameId, this.props.username),
       EventType.TURN_STARTED,
@@ -69,7 +78,7 @@ export default class MainGameScreen extends React.Component<Props, State> {
   }
 
   componentDidUpdate(prevProps: Readonly<InjectedProps>): void {
-    if (this.state.currentPhase === GamePhase.main && isFull(this.state.currentTrick)) {
+    if (this.state.currentPhase === GameRoundPhase.MAIN && isFull(this.state.currentTrick)) {
       setTimeout(() => {
         this.setState(prevState => new GameStateModifier(prevState).resetCurrentTrick().retrieveNewState())
       }, CLEAN_TRICK_TIMOUT_MS)
@@ -88,7 +97,7 @@ export default class MainGameScreen extends React.Component<Props, State> {
 
   onCardPlayed = (player: Position, card: CardValue) => {
     if (
-        this.state.currentPhase !== GamePhase.main ||
+        this.state.currentPhase !== GameRoundPhase.MAIN ||
         !this.state.cardsInHand.includes(card) ||
         !this.state.legalMoves.includes(card) ||
         player !== this.state.currentPlayer
@@ -125,7 +134,7 @@ export default class MainGameScreen extends React.Component<Props, State> {
     let authorisedContractSuits: Suit[] = [];
     let authorisedSpecialBiddings: SpecialBidding[] = [];
     let lastBiddingContract: Partial<LegalBiddingMove>;
-    if (this.state.currentPhase === GamePhase.bidding) {
+    if (this.state.currentPhase === GameRoundPhase.BIDDING) {
       authorisedContractValues = this.state.legalMoves
         .filter(move => move.moveType === MoveType.CONTRACT_BIDDING)
         .map(move => (move as ContractBiddingMove).value);
@@ -141,7 +150,7 @@ export default class MainGameScreen extends React.Component<Props, State> {
 
     let legalCardsToPlay: boolean[] = [];
     let currentTrick: Trick;
-    if (this.state.currentPhase === GamePhase.main) {
+    if (this.state.currentPhase === GameRoundPhase.MAIN) {
       legalCardsToPlay = this.state.cardsInHand.map(
         (cardsInHand: CardValue) => (this.state.legalMoves as CardValue[]).includes(cardsInHand)
       );
@@ -165,7 +174,7 @@ export default class MainGameScreen extends React.Component<Props, State> {
           onCardPlayed={(card: CardValue) => this.onCardPlayed(Position.left, card)}
         />
         {
-          currentPhase === GamePhase.bidding && <BiddingBoard
+          currentPhase === GameRoundPhase.BIDDING && <BiddingBoard
             authorisedContractValues={authorisedContractValues}
             authorisedSpecialBiddings={authorisedSpecialBiddings}
             authorisedContractSuits={authorisedContractSuits}
@@ -174,7 +183,7 @@ export default class MainGameScreen extends React.Component<Props, State> {
           />
         }
         {
-          currentPhase === GamePhase.main && <CardBoard
+          currentPhase === GameRoundPhase.MAIN && <CardBoard
             left={currentTrick![Position.left]}
             right={currentTrick![Position.right]}
             bottom={currentTrick![Position.bottom]}

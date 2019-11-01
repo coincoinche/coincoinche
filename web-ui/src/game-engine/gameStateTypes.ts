@@ -8,9 +8,9 @@ export enum Position {
   left = 'left',
 }
 
-export enum GamePhase {
-  bidding = 'bidding',
-  main = 'main',
+export enum GameRoundPhase {
+  BIDDING = 'BIDDING',
+  MAIN = 'MAIN',
 }
 
 export type Trick = {
@@ -65,12 +65,12 @@ export type GameState = {
   currentPlayer: Position;
   cardsInHand: CardValue[];
 } & ({
-  currentPhase: GamePhase.bidding;
+  currentPhase: GameRoundPhase.BIDDING;
   currentlySelectedContract: Partial<LegalBiddingMove> | null;
   lastBiddingContract: Partial<LegalBiddingMove>;
   legalMoves: LegalBiddingMove[];
 } | {
-  currentPhase: GamePhase.main;
+  currentPhase: GameRoundPhase.MAIN;
   currentTrick: Trick;
   legalMoves: CardValue[];
 });

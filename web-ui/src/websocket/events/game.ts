@@ -1,4 +1,12 @@
-import {Event, EventType, MoveType, PlayerBadeEvent, RoundStartedEvent, TurnStartedEvent} from "./types";
+import {
+  Event,
+  EventType,
+  MoveType,
+  PlayerBadeEvent,
+  RoundPhaseStartedEvent,
+  RoundStartedEvent,
+  TurnStartedEvent
+} from "./types";
 import {ContractBiddingMove, SpecialBiddingMove, Suit} from "../../game-engine/gameStateTypes";
 
 const suitLetterParser = (suitLetter: string): Suit => {
@@ -42,6 +50,7 @@ export const inboundGameEventParser: { [type in EventType]?: (event: any) => Eve
 
     throw new Error('Invalid move type');
   },
+
   [EventType.ROUND_STARTED]: (event: any): RoundStartedEvent => {
     const { playerCards } = event;
     return {
@@ -49,6 +58,15 @@ export const inboundGameEventParser: { [type in EventType]?: (event: any) => Eve
       playerCards,
     }
   },
+
+  [EventType.ROUND_PHASE_STARTED]: (event: any): RoundPhaseStartedEvent => {
+    const { phase } = event;
+    return {
+      type: EventType.ROUND_PHASE_STARTED,
+      phase,
+    }
+  },
+
   [EventType.TURN_STARTED]: (event: any): TurnStartedEvent => {
     const { legalMoves: jsonLegalMoves } = event;
     const legalMoves = jsonLegalMoves.map((jsonMove: string) => {

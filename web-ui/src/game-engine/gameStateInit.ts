@@ -1,10 +1,10 @@
-import {GamePhase, GameState, Position} from "./gameStateTypes";
+import {GameRoundPhase, GameState, Position} from "./gameStateTypes";
 
 export const gameStateInit = (): GameState => ({
   usernames: [],
   currentPlayer: Position.bottom,
   cardsInHand: [],
-  currentPhase: GamePhase.bidding,
+  currentPhase: GameRoundPhase.BIDDING,
   currentlySelectedContract: null,
   lastBiddingContract: {},
   legalMoves: []

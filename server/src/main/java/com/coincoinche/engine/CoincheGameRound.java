@@ -10,7 +10,6 @@ import java.util.Map;
 
 /** Implementation of a coinche round. */
 public class CoincheGameRound extends RedBlueRotatingPlayersGame<Player> {
-
   private CoincheGame globalGame;
   private GameState state;
 

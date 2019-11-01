@@ -2,6 +2,7 @@ package com.coincoinche.engine;
 
 import com.coincoinche.engine.cards.Card;
 import com.coincoinche.engine.teams.Player;
+import com.fasterxml.jackson.annotation.JsonValue;
 import java.util.List;
 
 /**
@@ -73,5 +74,11 @@ public class MovePlaying extends Move implements Comparable<MovePlaying> {
   @Override
   public String toString() {
     return card.toString();
+  }
+
+  @Override
+  @JsonValue
+  public String toJson() {
+    return this.card.getShortName();
   }
 }

@@ -4,12 +4,7 @@ import com.coincoinche.engine.CoincheGame;
 import com.coincoinche.engine.IllegalMoveException;
 import com.coincoinche.engine.Move;
 import com.coincoinche.engine.MoveBidding;
-import com.coincoinche.events.Event;
-import com.coincoinche.events.EventType;
-import com.coincoinche.events.PlayerBadeEvent;
-import com.coincoinche.events.RoundPhaseStartedEvent;
-import com.coincoinche.events.RoundStartedEvent;
-import com.coincoinche.events.TurnStartedEvent;
+import com.coincoinche.events.*;
 import com.coincoinche.store.GameStore;
 import com.coincoinche.store.InMemoryGameStore;
 import java.util.List;
@@ -48,7 +43,7 @@ public class GameController {
       List<Move> legalMoves = game.getCurrentRound().getLegalMoves();
       String[] authorisedPlaysJson = new String[legalMoves.size()];
       for (int i = 0; i < legalMoves.size(); i++) {
-        authorisedPlaysJson[i] = ((MoveBidding) legalMoves.get(i)).toJson();
+        authorisedPlaysJson[i] = legalMoves.get(i).toJson();
       }
 
       this.template.convertAndSend(
@@ -72,7 +67,7 @@ public class GameController {
         getTopicPath(gameId, username), new RoundStartedEvent(game.getPlayer(username).getCards()));
 
     this.template.convertAndSend(
-        getTopicPath(gameId, username), new RoundPhaseStartedEvent(game.getCurrentPlayerIndex()));
+        getTopicPath(gameId, username), new RoundPhaseStartedEvent(game.getCurrentRoundPhase()));
 
     this.notifyPlayerTurnStarted(gameId, username);
   }
@@ -108,7 +103,27 @@ public class GameController {
       }
     }
 
+    if (game.getCurrentRoundPhase() == CoincheGame.Phase.MAIN) {
+      this.template.convertAndSend(
+          getBroadcastTopicPath(gameId), new RoundPhaseStartedEvent(game.getCurrentRoundPhase()));
+    }
+
     this.notifyPlayerTurnStarted(gameId, game.getCurrentRound().getCurrentPlayer().getUsername());
+  }
+
+  /**
+   * To be called by the client when the player bids.
+   *
+   * @param gameId - id of the game
+   * @param username - username of the player
+   */
+  @MessageMapping("/game/{gameId}/player/{username}/play")
+  public void playCard(
+      @DestinationVariable String gameId,
+      @DestinationVariable String username,
+      @Payload CardPlayedEvent event) {
+    CoincheGame game = this.store.getGame(gameId);
+    System.out.println("here in playCard");
   }
 
   /**
