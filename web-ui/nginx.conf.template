@@ -9,30 +9,53 @@ events {
     multi_accept on;
 }
 
-
 http {
+    gzip on;
+    gzip_comp_level 3;
+    gzip_min_length 150;
+    gzip_proxied any;
+    gzip_types text/plain text/css text/json text/javascript
+      application/javascript application/x-javascript application/json
+      application/rss+xml application/vnd.ms-fontobject application/x-font-ttf
+      application/xml font/opentype image/svg+xml text/xml;
+
     # what times to include
-    include       /etc/nginx/mime.types;
+    include /etc/nginx/mime.types;
     # what is the default one
-    default_type  application/octet-stream;
+    default_type application/octet-stream;
 
     # Sets the path, format, and configuration for a buffered log write
     log_format compression '$remote_addr - $remote_user [$time_local] '
         '"$request" $status $upstream_addr '
         '"$http_referer" "$http_user_agent"';
 
+    upstream backend {
+        server ${BACKEND_NAME};
+    }
+
     server {
-        # listen on port 80
-        listen 80;
+        listen ${PORT};
+        server_name coincoinche.com www.coincoinche.com;
 
         # save logs here
         access_log /var/log/nginx/access.log compression;
 
         # nginx root directory
         root /var/www;
-        
+
         # what file to server as index
         index index.html index.htm;
+
+        location /api/ {
+          proxy_pass http://backend/;
+
+          proxy_http_version 1.1;
+          proxy_set_header Host $host;
+          proxy_set_header X-Real-IP $remote_addr;
+          proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+          proxy_read_timeout 1800;
+          proxy_connect_timeout 1800;
+        }
 
         location / {
             # First attempt to serve request as file, then
@@ -59,5 +82,7 @@ http {
         location ~ ^.+\..+$ {
             try_files $uri =404;
         }
+
     }
+
 }
