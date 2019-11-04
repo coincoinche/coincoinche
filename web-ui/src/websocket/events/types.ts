@@ -1,5 +1,5 @@
 import {CardValue} from "../../assets/cards";
-import {LegalBiddingMove} from "../../game-engine/gameStateTypes";
+import {GameRoundPhase, LegalBiddingMove} from "../../game-engine/gameStateTypes";
 
 export enum TopicTemplate {
   LOBBY='/topic/lobby',
@@ -15,9 +15,12 @@ export enum EventType {
   JOIN_LOBBY = 'PLAYER_JOINED_LOBBY',
   GAME_STARTED = 'GAME_STARTED',
   ROUND_STARTED = 'ROUND_STARTED',
+  ROUND_PHASE_STARTED = 'ROUND_PHASE_STARTED',
   CLIENT_READY = 'CLIENT_READY',
-  TURN_STARTED = 'TURN_STARTED',
+  BIDDING_TURN_STARTED = 'BIDDING_TURN_STARTED',
+  PLAYING_TURN_STARTED = 'PLAYING_TURN_STARTED',
   PLAYER_BADE = 'PLAYER_BADE',
+  CARD_PLAYED = 'CARD_PLAYED',
 }
 
 export enum MoveType {
@@ -29,18 +32,47 @@ export type SocketMessage = {
   type: EventType;
 };
 
+export type GameStartedEvent = {
+  type: EventType.GAME_STARTED,
+  gameId: string,
+  usernames: string[]
+}
+
 export type PlayerBadeEvent = {
   type: EventType.PLAYER_BADE,
 } & LegalBiddingMove;
+
+export type CardPlayedEvent = {
+  type: EventType.CARD_PLAYED,
+  card: CardValue,
+};
 
 export type RoundStartedEvent = {
   type: EventType.ROUND_STARTED,
   playerCards: CardValue[]
 }
 
-export type TurnStartedEvent = {
-  type: EventType.TURN_STARTED,
-  legalMoves: LegalBiddingMove[],
+export type RoundPhaseStartedEvent = {
+  type: EventType.ROUND_PHASE_STARTED,
+  phase: GameRoundPhase,
 }
 
-export type Event = PlayerBadeEvent | RoundStartedEvent | TurnStartedEvent;
+export type BiddingTurnStartedEvent = {
+  type: EventType.BIDDING_TURN_STARTED,
+  legalMoves: LegalBiddingMove[],
+  playerIndex: number,
+}
+
+export type PlayingTurnStartedEvent = {
+  type: EventType.PLAYING_TURN_STARTED,
+  legalMoves: CardValue[],
+  playerIndex: number,
+}
+
+export type Event =
+  PlayerBadeEvent |
+  CardPlayedEvent |
+  RoundStartedEvent |
+  BiddingTurnStartedEvent |
+  RoundPhaseStartedEvent |
+  PlayingTurnStartedEvent;

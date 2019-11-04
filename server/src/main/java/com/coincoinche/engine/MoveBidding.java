@@ -210,6 +210,7 @@ public class MoveBidding extends Move implements Comparable<MoveBidding> {
    * @return a json representation of the bidding move.
    */
   @JsonValue
+  @Override
   public String toJson() {
     String specialMoveJsonTemplate = "{\"moveType\":\"%s\", \"special\":\"%s\"}";
 

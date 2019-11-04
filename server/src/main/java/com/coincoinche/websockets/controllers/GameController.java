@@ -4,9 +4,14 @@ import com.coincoinche.engine.CoincheGame;
 import com.coincoinche.engine.IllegalMoveException;
 import com.coincoinche.engine.Move;
 import com.coincoinche.engine.MoveBidding;
+import com.coincoinche.engine.MovePlaying;
+import com.coincoinche.engine.teams.Player;
+import com.coincoinche.events.BiddingTurnStartedEvent;
+import com.coincoinche.events.CardPlayedEvent;
 import com.coincoinche.events.Event;
 import com.coincoinche.events.EventType;
 import com.coincoinche.events.PlayerBadeEvent;
+import com.coincoinche.events.PlayingTurnStartedEvent;
 import com.coincoinche.events.RoundPhaseStartedEvent;
 import com.coincoinche.events.RoundStartedEvent;
 import com.coincoinche.events.TurnStartedEvent;
@@ -43,16 +48,36 @@ public class GameController {
 
   private void notifyPlayerTurnStarted(String gameId, String username) {
     CoincheGame game = this.store.getGame(gameId);
+    int newPlayerIndex = game.getCurrentRound().getCurrentPlayerIndex();
+    System.out.println("Current player index: " + newPlayerIndex);
 
     if (username.equals(game.getCurrentRound().getCurrentPlayer().getUsername())) {
       List<Move> legalMoves = game.getCurrentRound().getLegalMoves();
       String[] authorisedPlaysJson = new String[legalMoves.size()];
       for (int i = 0; i < legalMoves.size(); i++) {
-        authorisedPlaysJson[i] = ((MoveBidding) legalMoves.get(i)).toJson();
+        authorisedPlaysJson[i] = legalMoves.get(i).toJson();
+      }
+      TurnStartedEvent eventForNextPlayer;
+      TurnStartedEvent eventForOtherPlayers;
+      if (game.getCurrentRoundPhase() == CoincheGame.Phase.BIDDING) {
+        eventForNextPlayer = new BiddingTurnStartedEvent(authorisedPlaysJson, newPlayerIndex);
+        eventForOtherPlayers = new BiddingTurnStartedEvent(new String[0], newPlayerIndex);
+      } else {
+        eventForNextPlayer = new PlayingTurnStartedEvent(authorisedPlaysJson, newPlayerIndex);
+        eventForOtherPlayers = new PlayingTurnStartedEvent(new String[0], newPlayerIndex);
       }
 
-      this.template.convertAndSend(
-          getTopicPath(gameId, username), new TurnStartedEvent(authorisedPlaysJson));
+      // send the authorised plays to the next player.
+      this.template.convertAndSend(getTopicPath(gameId, username), eventForNextPlayer);
+
+      // signal to the other players who is currently playing.
+      List<Player> players = game.getPlayers();
+      for (Player player : players) {
+        if (!player.getUsername().equals(username)) {
+          this.template.convertAndSend(
+              getTopicPath(gameId, player.getUsername()), eventForOtherPlayers);
+        }
+      }
     }
   }
 
@@ -72,7 +97,7 @@ public class GameController {
         getTopicPath(gameId, username), new RoundStartedEvent(game.getPlayer(username).getCards()));
 
     this.template.convertAndSend(
-        getTopicPath(gameId, username), new RoundPhaseStartedEvent(game.getCurrentPlayerIndex()));
+        getTopicPath(gameId, username), new RoundPhaseStartedEvent(game.getCurrentRoundPhase()));
 
     this.notifyPlayerTurnStarted(gameId, username);
   }
@@ -106,6 +131,57 @@ public class GameController {
       } catch (IllegalMoveException illegalPassMoveException) {
         illegalPassMoveException.printStackTrace();
       }
+    }
+
+    if (game.getCurrentRoundPhase() == CoincheGame.Phase.MAIN) {
+      this.template.convertAndSend(
+          getBroadcastTopicPath(gameId), new RoundPhaseStartedEvent(game.getCurrentRoundPhase()));
+    }
+
+    this.notifyPlayerTurnStarted(gameId, game.getCurrentRound().getCurrentPlayer().getUsername());
+  }
+
+  /**
+   * To be called by the client when the player plays a card.
+   *
+   * @param gameId - id of the game
+   * @param username - username of the player
+   */
+  @MessageMapping("/game/{gameId}/player/{username}/play")
+  public void playCard(
+      @DestinationVariable String gameId,
+      @DestinationVariable String username,
+      @Payload CardPlayedEvent event) {
+    CoincheGame game = this.store.getGame(gameId);
+
+    MovePlaying move = MovePlaying.fromEvent(event);
+    try {
+      move.applyOnGame(game);
+      this.template.convertAndSend(getBroadcastTopicPath(gameId), event);
+    } catch (IllegalMoveException e) {
+      e.printStackTrace();
+      this.template.convertAndSend(
+          getTopicPath(gameId, username), new Event(EventType.INVALID_MESSAGE));
+
+      try {
+        // make the player play the first authorised card
+        Move firstLegalMove = game.getCurrentRound().getLegalMoves().get(0);
+        firstLegalMove.applyOnGame(game);
+
+        this.template.convertAndSend(
+            getBroadcastTopicPath(gameId), new CardPlayedEvent(firstLegalMove.toJson()));
+      } catch (IllegalMoveException illegalPassMoveException) {
+        illegalPassMoveException.printStackTrace();
+      }
+    }
+
+    if (game.getCurrentRoundPhase() == CoincheGame.Phase.BIDDING) {
+      // TODO handle when the first round finishes
+    }
+
+    System.out.println("playing card, username order:");
+    for (Player player : game.getPlayers()) {
+      System.out.println(player.getUsername());
     }
 
     this.notifyPlayerTurnStarted(gameId, game.getCurrentRound().getCurrentPlayer().getUsername());

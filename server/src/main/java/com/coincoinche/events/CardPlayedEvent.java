@@ -1,33 +1,22 @@
 package com.coincoinche.events;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+
 public class CardPlayedEvent extends Event {
-  private int playerIndex;
-  private String suit;
-  private String rank;
+  private String card;
 
   /**
    * Event sent by the client when the player plays a card during the main phase of the round.
    *
-   * @param playerIndex - the index of the player.
-   * @param suit - the suit of the card played.
-   * @param rank - the rank of the card played.
+   * @param card - String corresponding to the card short name.
    */
-  public CardPlayedEvent(int playerIndex, String suit, String rank) {
+  @JsonCreator
+  public CardPlayedEvent(String card) {
     super(EventType.CARD_PLAYED);
-    this.playerIndex = playerIndex;
-    this.suit = suit;
-    this.rank = rank;
+    this.card = card;
   }
 
-  public int getPlayerIndex() {
-    return playerIndex;
-  }
-
-  public String getSuit() {
-    return suit;
-  }
-
-  public String getRank() {
-    return rank;
+  public String getCard() {
+    return card;
   }
 }

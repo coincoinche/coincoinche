@@ -2,6 +2,8 @@ package com.coincoinche.engine;
 
 import com.coincoinche.engine.cards.Card;
 import com.coincoinche.engine.teams.Player;
+import com.coincoinche.events.CardPlayedEvent;
+import com.fasterxml.jackson.annotation.JsonValue;
 import java.util.List;
 
 /**
@@ -73,5 +75,21 @@ public class MovePlaying extends Move implements Comparable<MovePlaying> {
   @Override
   public String toString() {
     return card.toString();
+  }
+
+  @Override
+  @JsonValue
+  public String toJson() {
+    return this.card.getShortName();
+  }
+
+  /**
+   * Create a playing move from a CardPlayedEvent event.
+   *
+   * @param event - card played event from the client.
+   * @return the newly constructed bidding move.
+   */
+  public static MovePlaying fromEvent(CardPlayedEvent event) {
+    return cardMove(Card.valueOfByShortName(event.getCard()));
   }
 }
