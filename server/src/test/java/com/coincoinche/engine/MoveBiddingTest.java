@@ -429,8 +429,8 @@ public class MoveBiddingTest extends GameEngineTestHelper {
         .as(String.format("%s: check round hasn't changed", testCaseName))
         .isEqualTo(preMoveRound);
     assertThat(round.getCurrentPlayer())
-        .as(String.format("%s: check current player index is 4", testCaseName))
-        .isEqualTo(p4);
+        .as(String.format("%s: check current player index is 1", testCaseName))
+        .isEqualTo(p1);
     state = round.getState();
     assertThat(state)
         .as(String.format("%s: check state is playing state", testCaseName))

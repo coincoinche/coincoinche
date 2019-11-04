@@ -44,7 +44,7 @@ public class CoincheGameRound extends RedBlueRotatingPlayersGame<Player> {
       // update round's state type
       if (state instanceof GameStateTransition) {
         GameStateTransition transitionState = (GameStateTransition) state;
-        GameState newState = transitionState.createNextGameState();
+        GameState newState = transitionState.createNextGameState(this);
         this.state = newState;
         // ensure consistency of current player
         setCurrentPlayer(newState.getCurrentPlayer());
@@ -73,5 +73,9 @@ public class CoincheGameRound extends RedBlueRotatingPlayersGame<Player> {
 
   public GameState getState() {
     return state;
+  }
+
+  public CoincheGame getGlobalGame() {
+    return globalGame;
   }
 }
