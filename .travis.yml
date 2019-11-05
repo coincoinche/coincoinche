@@ -11,6 +11,8 @@ addons:
 env:
   global:
   - REGISTRY_URL=registry.heroku.com
+  - HEROKU_APP_FRONT=coincoinche
+  - HEROKU_APP_BACK=coincoinche-api
   - DOCKER_REPO_FRONT=coincoinche/web
   - DOCKER_REPO_BACK=coincoinche-api/web
   - BUILD_ENVIRONMENT=heroku
@@ -19,6 +21,9 @@ env:
   - secure: iWuqAnPu1p6NpFt9tj/I2keRam/gQDvuY3CHoH+C7c3Lw5LbEbl5FduTaNFjxv9GkbscuTD9KXxeExe1zbkHeWzW8yw2aEDmpaSTjg7jnYABAg/O3pa8hP898G6W4ZB9f2D4IOR3ofyr4zcyrgGt9QlAnGjkSfa4NfAZ+iPmo0zIfe+nIDlbjan+zTiEnI3YTDocBzJn7cmDSyNwTz9wl80wGpYDzlAl0SrkUNxiq/l5E8TgIOFwVQRDrILNYErs6f3EkN0jPOTZo9sGDmtJwONaKhrvsh1To1tn0R5GrUXy44bznYIjTK4NTTZTYuFaiSkH7sFpnQ6or7zOwvRtgrsxOhKbzHYnR+uCIloghEULxUeCNF3vYJez+tMnQtLn0Q0aIXQc6dIC56h5xINkehdN6HCFGhur7Est54v242rk9z3MCn/twPdZAR+dlnUzRn6RJ6cLFDt0ZffTqfmsDIPc9Za90mS8G4VV4bpxppBug0wHrRoIVNrUIbrHrdu+pYMCE2Fdv96rkW9J6/5zarFJ2/u02GuKYHFq+jgxl15WDN32QB0CKhIK7ejfK20fD0UWhcJtsmtQBMCOgU3Gj097itj+K+2VSAqy2HT264+lpnKH4vhHxhBxxZTo51JAFtpmU5SdI59iZi1I0BnZeEw6oYBT2q9kUjWPcWJaFIQ=
   - secure: npKGT4PypevW01AU7RivI0bKRFWEdqxZjYOJvxJMWlulPRpQF68idl903UCik8ze+s4KhYagYE7Srmr3xFpZF/V7RRyW2LF7TAKvp0cbvLbltdExlef7Cr8+/4CgidV8PZ6NqCtd8+XkBa5zYUNjn1co1+LForFin18LV7sAd5S6a4N0ctdU0K9yY5qeo794uGiLoCfVyqifvdZPtI37dSsX0vftCJEcZQ32DN8PJDxpGXTjpcI2EQx+tAt8zBW/A2pZZ14t0UeVS7qclHr2/79m3F5YzBWPYKkxgDdr++0nhe6u+znPDQpzf1rSnGlF+6B8sWBYKVFRAG/p6/9TA72lfWHiygtqxJ5HcwEdmhwD5Xb388XXBeqIezr4hWokwW2rvluETLta2TGp7ktwNSLZBMF3rjvTgIybQP23vCWs3F0B7eINIumQK2DHFO3FYKs+NYlgnyqzt0m0GlV6cEZH8IqFkUrvfdveUS/DSe0pIvsmUSvo29tPS42azWAuLph7T/M3pYKnesuw+mLz91b47s+lnEClodgVbOl16TIW/3ewQ/I9U/i+0iBuTLVSIqLF3wDcypShQ9YBFsTOUiJ9I0S16t4NuM+ijDkpVPA69qgQXtiLUtHM7B4X0Eg/GTKF7+D06+w0Lszm/O/E842AN4B0dwHxRda29u1OJqQ=
   - secure: mUVJuqOwDpminWB8v824a+ZX9VkPJp0qt07UzyUz/MUGy1aOtFcbLtF7tfLFCC9J3G7pYprBaBwEq0aiDp2/i0Ox+PmNDkPszUI6wOR035rJ+UQK/3pVeiSynmxvGwoTxUlm4KNEJPmusSWgq0yvAWkJLlhxSf5Wry6b1Ae1AYJCtF4XhWrTaQRrX49TVGQg/onYj99UuQWZYEJAxl9JS6yPh/KtBQPuMT/Wu3t0vkIrAqcPjBWlfXNJ0rxT1Kz4qsLJmJP98XcbS2njuawD+JL/Hl/hhmlTeZM0tMbSH8WW61uE+/CEGvJelwjADpYuWmP6RoCGTaRqXAZikr+17b7BIjoQ5zVY5Hi0a8dRRDICl/D2ZjnrR1RoNnrO5UCePwsQ+4W5xvnj4oRnqgVmRQeT05sDxkOtGD3qFSpMD3kvt/O92ghJHs7ZQjUX8YtYQi92DTpPyYsjgBxCSjrJvFpYK9x4j72I5blpwAeqHZ9bJ8cUgzFNGdncQVhQfi409MWT+LM/lOoEhTNQdEYgtw5oc7AkZ84e2ixZvfsD4Ug/uHX8Vr81ySOl3FrFdx63GmOxgQtLnUhe2tdVSAI7P15vuAIZviq/Ioz0jV8fd5+99kPVN3pwUz9kZsJY61/RxIJi/LIl9i7Fqw2KDxWhIRudauw3fKttD+4klFcc8yg=
+  - secure: ag20ynXvpHp2RsORqJCvOyBLqje+kVMnMCksl91mhojjwLWzroaNJe+/tCzLvSAre0GM6IKy33zjU/Mg82pdCNBjPTi1oKSRcOuZjjM8myjqn4yqUQ+Dy/X6QYmtd6x81pLSIXMQyB1AYyeQtYH9zjDDdfZjHo8smaVo+RBWRjzazvge6PJ2G5VNVhzUDgx16ybUQWgw9pRc9+7KDeQVSveks2DOwXfDpoaCmvazzatwpnx7uOguMG7h4No5uT54IXv392EggjyeyUGVVAhj8A1NcRkl8ZeXSmv6p0BZTIAz8AYSsyJCx7PnROdDG0eFNdRLIVu5T0paStof42aBLA6h8PTx146Sjc2dsR6N5XObd97EHOtMTUDAKwATGG492gn6dwGG8pomQFQPNX/KEbLnUrDmAKwp0c2SvpbKjcxrhfxhd6hEWrCFC2uCLthm0ZstbA/17hDP9zpEQCBX+i2tLC7OfsN59YCHwIy5KgyUjAmzAfytE0Cou2F9IOvH+Z0JGRXjgaiFpUCbOumSZ4wVp00QqaWLGBZof7ERahnN+e14AFjxhHUDNPo22+gOp+x2+9d/KTuziji9E+97z7cKDPT0mMcsTy83qWxCVnwIlEXy5rbfotLwRraa5mMVhe91HKraIUILI8vLiZB2CmldOg3SbnblDnRR8ZEJmx0=
+script:
+- echo "Skipping tests"
 stages:
 - test
 - name: deploy
@@ -39,15 +44,11 @@ jobs:
     - bash docker_push.sh
   - stage: release
     name: Release backend
-    script: skip
     deploy:
-      provider: heroku
-      app: coincoinche-api
-      api_key: "$HEROKU_AUTH_TOKEN"
+      provider: script
+      script: bash heroku_release.sh $HEROKU_APP_BACK
   - stage: release
     name: Release frontend
-    script: skip
     deploy:
-      provider: heroku
-      app: coincoinche
-      api_key: "$HEROKU_AUTH_TOKEN"
+      provider: script
+      script: bash heroku_release.sh $HEROKU_APP_FRONT
