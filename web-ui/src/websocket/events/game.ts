@@ -5,7 +5,7 @@ import {
   PlayerBadeEvent,
   RoundPhaseStartedEvent,
   RoundStartedEvent,
-  BiddingTurnStartedEvent, PlayingTurnStartedEvent, CardPlayedEvent
+  BiddingTurnStartedEvent, PlayingTurnStartedEvent, CardPlayedEvent, GameFinishedEvent
 } from "./types";
 import {ContractBiddingMove, SpecialBiddingMove, Suit} from "../../game-engine/gameStateTypes";
 
@@ -112,6 +112,13 @@ export const inboundGameEventParser: { [type in EventType]?: (event: any) => Eve
       playerIndex,
     }
   },
+  [EventType.GAME_FINISHED]: (event: any): GameFinishedEvent => {
+    const { winning } = event;
+    return {
+      type: EventType.GAME_FINISHED,
+      winning,
+    }
+  }
 };
 
 export const outboundGameEventConverter = {

@@ -14,6 +14,7 @@ export enum SocketEndpoint {
 export enum EventType {
   JOIN_LOBBY = 'PLAYER_JOINED_LOBBY',
   GAME_STARTED = 'GAME_STARTED',
+  GAME_FINISHED = 'GAME_FINISHED',
   ROUND_STARTED = 'ROUND_STARTED',
   ROUND_PHASE_STARTED = 'ROUND_PHASE_STARTED',
   CLIENT_READY = 'CLIENT_READY',
@@ -36,6 +37,11 @@ export type GameStartedEvent = {
   type: EventType.GAME_STARTED,
   gameId: string,
   usernames: string[]
+}
+
+export type GameFinishedEvent = {
+  type: EventType.GAME_FINISHED,
+  winning: boolean,
 }
 
 export type PlayerBadeEvent = {
@@ -75,4 +81,5 @@ export type Event =
   RoundStartedEvent |
   BiddingTurnStartedEvent |
   RoundPhaseStartedEvent |
-  PlayingTurnStartedEvent;
+  PlayingTurnStartedEvent |
+  GameFinishedEvent;

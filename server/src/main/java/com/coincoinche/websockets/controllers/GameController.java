@@ -5,16 +5,10 @@ import com.coincoinche.engine.IllegalMoveException;
 import com.coincoinche.engine.Move;
 import com.coincoinche.engine.MoveBidding;
 import com.coincoinche.engine.MovePlaying;
+import com.coincoinche.engine.game.GameResult;
 import com.coincoinche.engine.teams.Player;
-import com.coincoinche.events.BiddingTurnStartedEvent;
-import com.coincoinche.events.CardPlayedEvent;
-import com.coincoinche.events.Event;
-import com.coincoinche.events.EventType;
-import com.coincoinche.events.PlayerBadeEvent;
-import com.coincoinche.events.PlayingTurnStartedEvent;
-import com.coincoinche.events.RoundPhaseStartedEvent;
-import com.coincoinche.events.RoundStartedEvent;
-import com.coincoinche.events.TurnStartedEvent;
+import com.coincoinche.engine.teams.Team;
+import com.coincoinche.events.*;
 import com.coincoinche.store.GameStore;
 import com.coincoinche.store.InMemoryGameStore;
 import java.util.List;
@@ -155,8 +149,21 @@ public class GameController {
 
     MovePlaying move = MovePlaying.fromEvent(event);
     try {
-      move.applyOnGame(game);
+      GameResult<Team> result = move.applyOnGame(game);
       this.template.convertAndSend(getBroadcastTopicPath(gameId), event);
+
+      if (result.isFinished()) {
+        for (Player player : game.getPlayers()) {
+          if (result.getWinnerTeam().getPlayers().contains(player)) {
+            this.template.convertAndSend(
+                getTopicPath(gameId, player.getUsername()), new GameFinishedEvent(true));
+          } else {
+            this.template.convertAndSend(
+                getTopicPath(gameId, player.getUsername()), new GameFinishedEvent(false));
+          }
+        }
+      }
+
     } catch (IllegalMoveException e) {
       e.printStackTrace();
       this.template.convertAndSend(
