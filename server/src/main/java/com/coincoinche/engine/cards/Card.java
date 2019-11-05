@@ -3,7 +3,7 @@ package com.coincoinche.engine.cards;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 /** Card represents a card, represented by a suit and a rank. */
-public class Card {
+public class Card implements Comparable<Card> {
   private Suit suit;
   private Rank rank;
 
@@ -57,5 +57,15 @@ public class Card {
   @Override
   public String toString() {
     return rank.toString() + suit.toString();
+  }
+
+  @Override
+  public int compareTo(Card o) {
+    // First, compare the card's suit, then the card's absolute rank
+    int suitComparison = suit.compareTo(o.suit);
+    if (suitComparison != 0) {
+      return suitComparison;
+    }
+    return rank.compareTo(o.rank);
   }
 }

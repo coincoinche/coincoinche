@@ -33,6 +33,7 @@ public class Deck {
         for (int i = 0; i < 8; i++) {
           player.addCard(cards.pop());
         }
+        player.sortCards();
       }
     }
   }
