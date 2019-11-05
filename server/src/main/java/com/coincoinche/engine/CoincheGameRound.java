@@ -6,10 +6,10 @@ import com.coincoinche.engine.game.RedBlueRotatingPlayersGame;
 import com.coincoinche.engine.teams.Player;
 import com.coincoinche.engine.teams.Team;
 import java.util.List;
+import java.util.Map;
 
 /** Implementation of a coinche round. */
 public class CoincheGameRound extends RedBlueRotatingPlayersGame<Player> {
-
   private CoincheGame globalGame;
   private GameState state;
 
@@ -24,9 +24,7 @@ public class CoincheGameRound extends RedBlueRotatingPlayersGame<Player> {
    */
   GameResult<Team> moveWasApplied() {
     // rotate players before checking if the state must change
-    rotatePlayers();
-    Player newPlayer = getCurrentPlayer();
-    state.setCurrentPlayer(newPlayer);
+    state.rotatePlayers(this);
     // handle the case when all players pass the bidding phase: new round must start
     if (state instanceof GameStateBidding) {
       GameStateBidding biddingState = (GameStateBidding) state;
@@ -39,10 +37,17 @@ public class CoincheGameRound extends RedBlueRotatingPlayersGame<Player> {
     if (state.mustChange()) {
       if (state instanceof GameStateTerminal) {
         GameStateTerminal terminalState = (GameStateTerminal) state;
-        Team winnerTeam = terminalState.getWinnerTeam();
-        int winnerPoints = terminalState.getWinnerPoints();
-        return GameResult.finishedResult(winnerTeam, winnerPoints);
-        // TODO nockty: must change the round's state here if non-terminal
+        Map<Team, Integer> teamsPoints = terminalState.getTeamsPoints();
+        return GameResult.finishedResult(teamsPoints);
+      }
+      // update round's state type
+      if (state instanceof GameStateTransition) {
+        GameStateTransition transitionState = (GameStateTransition) state;
+        GameState newState = transitionState.createNextGameState(this);
+        this.state = newState;
+        // ensure consistency of current player
+        setCurrentPlayer(newState.getCurrentPlayer());
+        return GameResult.unfinishedResult();
       }
     }
     return GameResult.unfinishedResult();
@@ -67,5 +72,9 @@ public class CoincheGameRound extends RedBlueRotatingPlayersGame<Player> {
 
   public GameState getState() {
     return state;
+  }
+
+  public CoincheGame getGlobalGame() {
+    return globalGame;
   }
 }

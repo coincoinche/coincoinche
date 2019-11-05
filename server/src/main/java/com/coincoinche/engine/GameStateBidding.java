@@ -1,12 +1,14 @@
 package com.coincoinche.engine;
 
+import com.coincoinche.engine.contracts.Contract;
+import com.coincoinche.engine.contracts.ContractFactory;
 import com.coincoinche.engine.teams.Player;
 import com.coincoinche.engine.teams.Team;
 import java.util.ArrayList;
 import java.util.List;
 
 /** TODO nockty add detailed documentation here. */
-public class GameStateBidding implements GameStateTerminal {
+public class GameStateBidding implements GameStateTransition {
 
   private Player currentPlayer;
   // last player who made a non-pass move
@@ -14,6 +16,7 @@ public class GameStateBidding implements GameStateTerminal {
   private Contract highestBidding;
   private boolean coinched;
   private boolean surcoinched;
+  private List<Team> teams;
 
   GameStateBidding(
       Player currentPlayer,
@@ -55,7 +58,7 @@ public class GameStateBidding implements GameStateTerminal {
       return legalMoves;
     }
     // contracts strictly better than current contract are legal
-    for (Contract contract : Contract.generateAllContracts()) {
+    for (Contract contract : ContractFactory.createAllContracts()) {
       if (contract.isHigherThan(highestBidding)) {
         legalMoves.add(MoveBidding.contractMove(contract));
       }
@@ -77,16 +80,6 @@ public class GameStateBidding implements GameStateTerminal {
     return highestBidding != null && (surcoinched || currentPlayer.equals(lastPlayer));
   }
 
-  @Override
-  public Team getWinnerTeam() {
-    return highestBidding.getPlayer().getTeam();
-  }
-
-  @Override
-  public int getWinnerPoints() {
-    return highestBidding.getPoints();
-  }
-
   public void setCoinched(boolean coinched) {
     this.coinched = coinched;
   }
@@ -97,6 +90,10 @@ public class GameStateBidding implements GameStateTerminal {
 
   public void setHighestBidding(Contract highestBidding) {
     this.highestBidding = highestBidding;
+  }
+
+  public void setTeams(List<Team> teams) {
+    this.teams = teams;
   }
 
   public Contract getHighestBidding() {
@@ -117,13 +114,28 @@ public class GameStateBidding implements GameStateTerminal {
 
   // TODO nockty see if we can use a default method here
   @Override
-  public void setCurrentPlayer(Player currentPlayer) {
-    this.currentPlayer = currentPlayer;
-  }
-
-  // TODO nockty see if we can use a default method here
-  @Override
   public Player getCurrentPlayer() {
     return currentPlayer;
+  }
+
+  @Override
+  public void rotatePlayers(CoincheGameRound round) {
+    round.rotatePlayers();
+    currentPlayer = round.getCurrentPlayer();
+  }
+
+  @Override
+  public GameState createNextGameState(CoincheGameRound round) {
+    // first player of playing phase is first player of bidding phase
+    Player firstPlayer = round.getGlobalGame().getCurrentPlayer();
+    GameStatePlaying nextState =
+        GameStatePlaying.initialGameStatePlaying(firstPlayer, highestBidding);
+    nextState.setTeams(teams);
+    if (surcoinched) {
+      nextState.setMultiplier(4);
+    } else if (coinched) {
+      nextState.setMultiplier(2);
+    }
+    return nextState;
   }
 }

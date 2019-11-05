@@ -1,20 +1,22 @@
 package com.coincoinche.events;
 
+import com.coincoinche.engine.CoincheGame;
+
 public class RoundPhaseStartedEvent extends Event {
-  private int firstPlayerIndex;
+  private CoincheGame.Phase phase;
 
   /**
    * Event broadcasted by the server to all players when a new round phase starts for a game. (i.e.
    * bidding or main phase).
    *
-   * @param firstPlayerIndex - index of the first player to play in this phase.
+   * @param phase - the round phase name that started.
    */
-  public RoundPhaseStartedEvent(int firstPlayerIndex) {
+  public RoundPhaseStartedEvent(CoincheGame.Phase phase) {
     super(EventType.ROUND_PHASE_STARTED);
-    this.firstPlayerIndex = firstPlayerIndex;
+    this.phase = phase;
   }
 
-  public int getFirstPlayerIndex() {
-    return firstPlayerIndex;
+  public CoincheGame.Phase getPhase() {
+    return phase;
   }
 }

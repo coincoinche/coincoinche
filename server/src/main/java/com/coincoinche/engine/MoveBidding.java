@@ -1,5 +1,7 @@
 package com.coincoinche.engine;
 
+import com.coincoinche.engine.contracts.Contract;
+import com.coincoinche.engine.contracts.ContractFactory;
 import com.coincoinche.engine.teams.Player;
 import com.coincoinche.events.PlayerBadeEvent;
 import com.fasterxml.jackson.annotation.JsonValue;
@@ -77,7 +79,12 @@ public class MoveBidding extends Move implements Comparable<MoveBidding> {
   public static MoveBidding fromEvent(PlayerBadeEvent event) {
     Special special = event.getSpecial();
     if (special == null) {
-      return contractMove(Contract.pointsContract(event.getValue(), event.getSuit()));
+      try {
+        Contract contract = ContractFactory.createContract(event.getValue(), event.getSuit());
+        return contractMove(contract);
+      } catch (IllegalArgumentException e) {
+        return passMove();
+      }
     }
 
     switch (special) {
@@ -100,7 +107,7 @@ public class MoveBidding extends Move implements Comparable<MoveBidding> {
     GameStateBidding biddingGameState = (GameStateBidding) state;
     List<Move> legalMoves = biddingGameState.getLegalMoves();
     if (!legalMoves.contains(this)) {
-      throw new IllegalMoveException(this + " is not legal on state " + state);
+      throw new IllegalMoveException(this + " is not legal on state " + biddingGameState);
     }
     if (specialMove != null) {
       switch (specialMove) {
@@ -203,6 +210,7 @@ public class MoveBidding extends Move implements Comparable<MoveBidding> {
    * @return a json representation of the bidding move.
    */
   @JsonValue
+  @Override
   public String toJson() {
     String specialMoveJsonTemplate = "{\"moveType\":\"%s\", \"special\":\"%s\"}";
 

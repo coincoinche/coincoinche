@@ -3,6 +3,7 @@ package com.coincoinche.engine;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.coincoinche.engine.cards.Suit;
+import com.coincoinche.engine.contracts.ContractFactory;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.Before;
@@ -50,165 +51,285 @@ public class GameStateBiddingTest extends GameEngineTestHelper {
                     new ArrayList<>(
                         List.of(
                             MoveBidding.passMove(),
-                            MoveBidding.contractMove(Contract.pointsContract(80, Suit.SPADES)),
-                            MoveBidding.contractMove(Contract.pointsContract(80, Suit.HEARTS)),
-                            MoveBidding.contractMove(Contract.pointsContract(80, Suit.CLUBS)),
-                            MoveBidding.contractMove(Contract.pointsContract(80, Suit.DIAMONDS)),
-                            MoveBidding.contractMove(Contract.pointsContract(90, Suit.SPADES)),
-                            MoveBidding.contractMove(Contract.pointsContract(90, Suit.HEARTS)),
-                            MoveBidding.contractMove(Contract.pointsContract(90, Suit.CLUBS)),
-                            MoveBidding.contractMove(Contract.pointsContract(90, Suit.DIAMONDS)),
-                            MoveBidding.contractMove(Contract.pointsContract(100, Suit.SPADES)),
-                            MoveBidding.contractMove(Contract.pointsContract(100, Suit.HEARTS)),
-                            MoveBidding.contractMove(Contract.pointsContract(100, Suit.CLUBS)),
-                            MoveBidding.contractMove(Contract.pointsContract(100, Suit.DIAMONDS)),
-                            MoveBidding.contractMove(Contract.pointsContract(110, Suit.SPADES)),
-                            MoveBidding.contractMove(Contract.pointsContract(110, Suit.HEARTS)),
-                            MoveBidding.contractMove(Contract.pointsContract(110, Suit.CLUBS)),
-                            MoveBidding.contractMove(Contract.pointsContract(110, Suit.DIAMONDS)),
-                            MoveBidding.contractMove(Contract.pointsContract(120, Suit.SPADES)),
-                            MoveBidding.contractMove(Contract.pointsContract(120, Suit.HEARTS)),
-                            MoveBidding.contractMove(Contract.pointsContract(120, Suit.CLUBS)),
-                            MoveBidding.contractMove(Contract.pointsContract(120, Suit.DIAMONDS)),
-                            MoveBidding.contractMove(Contract.pointsContract(130, Suit.SPADES)),
-                            MoveBidding.contractMove(Contract.pointsContract(130, Suit.HEARTS)),
-                            MoveBidding.contractMove(Contract.pointsContract(130, Suit.CLUBS)),
-                            MoveBidding.contractMove(Contract.pointsContract(130, Suit.DIAMONDS)),
-                            MoveBidding.contractMove(Contract.pointsContract(140, Suit.SPADES)),
-                            MoveBidding.contractMove(Contract.pointsContract(140, Suit.HEARTS)),
-                            MoveBidding.contractMove(Contract.pointsContract(140, Suit.CLUBS)),
-                            MoveBidding.contractMove(Contract.pointsContract(140, Suit.DIAMONDS)),
-                            MoveBidding.contractMove(Contract.pointsContract(150, Suit.SPADES)),
-                            MoveBidding.contractMove(Contract.pointsContract(150, Suit.HEARTS)),
-                            MoveBidding.contractMove(Contract.pointsContract(150, Suit.CLUBS)),
-                            MoveBidding.contractMove(Contract.pointsContract(150, Suit.DIAMONDS)),
-                            MoveBidding.contractMove(Contract.pointsContract(160, Suit.SPADES)),
-                            MoveBidding.contractMove(Contract.pointsContract(160, Suit.HEARTS)),
-                            MoveBidding.contractMove(Contract.pointsContract(160, Suit.CLUBS)),
-                            MoveBidding.contractMove(Contract.pointsContract(160, Suit.DIAMONDS)),
-                            MoveBidding.contractMove(Contract.capotContract(Suit.SPADES)),
-                            MoveBidding.contractMove(Contract.capotContract(Suit.HEARTS)),
-                            MoveBidding.contractMove(Contract.capotContract(Suit.CLUBS)),
-                            MoveBidding.contractMove(Contract.capotContract(Suit.DIAMONDS)),
-                            MoveBidding.contractMove(Contract.generaleContract(Suit.SPADES)),
-                            MoveBidding.contractMove(Contract.generaleContract(Suit.HEARTS)),
-                            MoveBidding.contractMove(Contract.generaleContract(Suit.CLUBS)),
-                            MoveBidding.contractMove(Contract.generaleContract(Suit.DIAMONDS))))),
+                            MoveBidding.contractMove(
+                                ContractFactory.createContract(80, Suit.SPADES)),
+                            MoveBidding.contractMove(
+                                ContractFactory.createContract(80, Suit.HEARTS)),
+                            MoveBidding.contractMove(
+                                ContractFactory.createContract(80, Suit.CLUBS)),
+                            MoveBidding.contractMove(
+                                ContractFactory.createContract(80, Suit.DIAMONDS)),
+                            MoveBidding.contractMove(
+                                ContractFactory.createContract(90, Suit.SPADES)),
+                            MoveBidding.contractMove(
+                                ContractFactory.createContract(90, Suit.HEARTS)),
+                            MoveBidding.contractMove(
+                                ContractFactory.createContract(90, Suit.CLUBS)),
+                            MoveBidding.contractMove(
+                                ContractFactory.createContract(90, Suit.DIAMONDS)),
+                            MoveBidding.contractMove(
+                                ContractFactory.createContract(100, Suit.SPADES)),
+                            MoveBidding.contractMove(
+                                ContractFactory.createContract(100, Suit.HEARTS)),
+                            MoveBidding.contractMove(
+                                ContractFactory.createContract(100, Suit.CLUBS)),
+                            MoveBidding.contractMove(
+                                ContractFactory.createContract(100, Suit.DIAMONDS)),
+                            MoveBidding.contractMove(
+                                ContractFactory.createContract(110, Suit.SPADES)),
+                            MoveBidding.contractMove(
+                                ContractFactory.createContract(110, Suit.HEARTS)),
+                            MoveBidding.contractMove(
+                                ContractFactory.createContract(110, Suit.CLUBS)),
+                            MoveBidding.contractMove(
+                                ContractFactory.createContract(110, Suit.DIAMONDS)),
+                            MoveBidding.contractMove(
+                                ContractFactory.createContract(120, Suit.SPADES)),
+                            MoveBidding.contractMove(
+                                ContractFactory.createContract(120, Suit.HEARTS)),
+                            MoveBidding.contractMove(
+                                ContractFactory.createContract(120, Suit.CLUBS)),
+                            MoveBidding.contractMove(
+                                ContractFactory.createContract(120, Suit.DIAMONDS)),
+                            MoveBidding.contractMove(
+                                ContractFactory.createContract(130, Suit.SPADES)),
+                            MoveBidding.contractMove(
+                                ContractFactory.createContract(130, Suit.HEARTS)),
+                            MoveBidding.contractMove(
+                                ContractFactory.createContract(130, Suit.CLUBS)),
+                            MoveBidding.contractMove(
+                                ContractFactory.createContract(130, Suit.DIAMONDS)),
+                            MoveBidding.contractMove(
+                                ContractFactory.createContract(140, Suit.SPADES)),
+                            MoveBidding.contractMove(
+                                ContractFactory.createContract(140, Suit.HEARTS)),
+                            MoveBidding.contractMove(
+                                ContractFactory.createContract(140, Suit.CLUBS)),
+                            MoveBidding.contractMove(
+                                ContractFactory.createContract(140, Suit.DIAMONDS)),
+                            MoveBidding.contractMove(
+                                ContractFactory.createContract(150, Suit.SPADES)),
+                            MoveBidding.contractMove(
+                                ContractFactory.createContract(150, Suit.HEARTS)),
+                            MoveBidding.contractMove(
+                                ContractFactory.createContract(150, Suit.CLUBS)),
+                            MoveBidding.contractMove(
+                                ContractFactory.createContract(150, Suit.DIAMONDS)),
+                            MoveBidding.contractMove(
+                                ContractFactory.createContract(160, Suit.SPADES)),
+                            MoveBidding.contractMove(
+                                ContractFactory.createContract(160, Suit.HEARTS)),
+                            MoveBidding.contractMove(
+                                ContractFactory.createContract(160, Suit.CLUBS)),
+                            MoveBidding.contractMove(
+                                ContractFactory.createContract(160, Suit.DIAMONDS)),
+                            MoveBidding.contractMove(
+                                ContractFactory.createContract(250, Suit.SPADES)),
+                            MoveBidding.contractMove(
+                                ContractFactory.createContract(250, Suit.HEARTS)),
+                            MoveBidding.contractMove(
+                                ContractFactory.createContract(250, Suit.CLUBS)),
+                            MoveBidding.contractMove(
+                                ContractFactory.createContract(250, Suit.DIAMONDS)),
+                            MoveBidding.contractMove(
+                                ContractFactory.createContract(500, Suit.SPADES)),
+                            MoveBidding.contractMove(
+                                ContractFactory.createContract(500, Suit.HEARTS)),
+                            MoveBidding.contractMove(
+                                ContractFactory.createContract(500, Suit.CLUBS)),
+                            MoveBidding.contractMove(
+                                ContractFactory.createContract(500, Suit.DIAMONDS))))),
                 new TestCase(
                     "Team mate has contract - not coinched",
                     new GameStateBidding(
                         p1,
                         null,
-                        Contract.pointsContract(100, Suit.CLUBS).withPlayer(p3),
+                        ContractFactory.createContract(100, Suit.CLUBS).withPlayer(p3),
                         false,
                         false),
                     new ArrayList<>(
                         List.of(
                             MoveBidding.passMove(),
-                            MoveBidding.contractMove(Contract.pointsContract(110, Suit.SPADES)),
-                            MoveBidding.contractMove(Contract.pointsContract(110, Suit.HEARTS)),
-                            MoveBidding.contractMove(Contract.pointsContract(110, Suit.CLUBS)),
-                            MoveBidding.contractMove(Contract.pointsContract(110, Suit.DIAMONDS)),
-                            MoveBidding.contractMove(Contract.pointsContract(120, Suit.SPADES)),
-                            MoveBidding.contractMove(Contract.pointsContract(120, Suit.HEARTS)),
-                            MoveBidding.contractMove(Contract.pointsContract(120, Suit.CLUBS)),
-                            MoveBidding.contractMove(Contract.pointsContract(120, Suit.DIAMONDS)),
-                            MoveBidding.contractMove(Contract.pointsContract(130, Suit.SPADES)),
-                            MoveBidding.contractMove(Contract.pointsContract(130, Suit.HEARTS)),
-                            MoveBidding.contractMove(Contract.pointsContract(130, Suit.CLUBS)),
-                            MoveBidding.contractMove(Contract.pointsContract(130, Suit.DIAMONDS)),
-                            MoveBidding.contractMove(Contract.pointsContract(140, Suit.SPADES)),
-                            MoveBidding.contractMove(Contract.pointsContract(140, Suit.HEARTS)),
-                            MoveBidding.contractMove(Contract.pointsContract(140, Suit.CLUBS)),
-                            MoveBidding.contractMove(Contract.pointsContract(140, Suit.DIAMONDS)),
-                            MoveBidding.contractMove(Contract.pointsContract(150, Suit.SPADES)),
-                            MoveBidding.contractMove(Contract.pointsContract(150, Suit.HEARTS)),
-                            MoveBidding.contractMove(Contract.pointsContract(150, Suit.CLUBS)),
-                            MoveBidding.contractMove(Contract.pointsContract(150, Suit.DIAMONDS)),
-                            MoveBidding.contractMove(Contract.pointsContract(160, Suit.SPADES)),
-                            MoveBidding.contractMove(Contract.pointsContract(160, Suit.HEARTS)),
-                            MoveBidding.contractMove(Contract.pointsContract(160, Suit.CLUBS)),
-                            MoveBidding.contractMove(Contract.pointsContract(160, Suit.DIAMONDS)),
-                            MoveBidding.contractMove(Contract.capotContract(Suit.SPADES)),
-                            MoveBidding.contractMove(Contract.capotContract(Suit.HEARTS)),
-                            MoveBidding.contractMove(Contract.capotContract(Suit.CLUBS)),
-                            MoveBidding.contractMove(Contract.capotContract(Suit.DIAMONDS)),
-                            MoveBidding.contractMove(Contract.generaleContract(Suit.SPADES)),
-                            MoveBidding.contractMove(Contract.generaleContract(Suit.HEARTS)),
-                            MoveBidding.contractMove(Contract.generaleContract(Suit.CLUBS)),
-                            MoveBidding.contractMove(Contract.generaleContract(Suit.DIAMONDS))))),
+                            MoveBidding.contractMove(
+                                ContractFactory.createContract(110, Suit.SPADES)),
+                            MoveBidding.contractMove(
+                                ContractFactory.createContract(110, Suit.HEARTS)),
+                            MoveBidding.contractMove(
+                                ContractFactory.createContract(110, Suit.CLUBS)),
+                            MoveBidding.contractMove(
+                                ContractFactory.createContract(110, Suit.DIAMONDS)),
+                            MoveBidding.contractMove(
+                                ContractFactory.createContract(120, Suit.SPADES)),
+                            MoveBidding.contractMove(
+                                ContractFactory.createContract(120, Suit.HEARTS)),
+                            MoveBidding.contractMove(
+                                ContractFactory.createContract(120, Suit.CLUBS)),
+                            MoveBidding.contractMove(
+                                ContractFactory.createContract(120, Suit.DIAMONDS)),
+                            MoveBidding.contractMove(
+                                ContractFactory.createContract(130, Suit.SPADES)),
+                            MoveBidding.contractMove(
+                                ContractFactory.createContract(130, Suit.HEARTS)),
+                            MoveBidding.contractMove(
+                                ContractFactory.createContract(130, Suit.CLUBS)),
+                            MoveBidding.contractMove(
+                                ContractFactory.createContract(130, Suit.DIAMONDS)),
+                            MoveBidding.contractMove(
+                                ContractFactory.createContract(140, Suit.SPADES)),
+                            MoveBidding.contractMove(
+                                ContractFactory.createContract(140, Suit.HEARTS)),
+                            MoveBidding.contractMove(
+                                ContractFactory.createContract(140, Suit.CLUBS)),
+                            MoveBidding.contractMove(
+                                ContractFactory.createContract(140, Suit.DIAMONDS)),
+                            MoveBidding.contractMove(
+                                ContractFactory.createContract(150, Suit.SPADES)),
+                            MoveBidding.contractMove(
+                                ContractFactory.createContract(150, Suit.HEARTS)),
+                            MoveBidding.contractMove(
+                                ContractFactory.createContract(150, Suit.CLUBS)),
+                            MoveBidding.contractMove(
+                                ContractFactory.createContract(150, Suit.DIAMONDS)),
+                            MoveBidding.contractMove(
+                                ContractFactory.createContract(160, Suit.SPADES)),
+                            MoveBidding.contractMove(
+                                ContractFactory.createContract(160, Suit.HEARTS)),
+                            MoveBidding.contractMove(
+                                ContractFactory.createContract(160, Suit.CLUBS)),
+                            MoveBidding.contractMove(
+                                ContractFactory.createContract(160, Suit.DIAMONDS)),
+                            MoveBidding.contractMove(
+                                ContractFactory.createContract(250, Suit.SPADES)),
+                            MoveBidding.contractMove(
+                                ContractFactory.createContract(250, Suit.HEARTS)),
+                            MoveBidding.contractMove(
+                                ContractFactory.createContract(250, Suit.CLUBS)),
+                            MoveBidding.contractMove(
+                                ContractFactory.createContract(250, Suit.DIAMONDS)),
+                            MoveBidding.contractMove(
+                                ContractFactory.createContract(500, Suit.SPADES)),
+                            MoveBidding.contractMove(
+                                ContractFactory.createContract(500, Suit.HEARTS)),
+                            MoveBidding.contractMove(
+                                ContractFactory.createContract(500, Suit.CLUBS)),
+                            MoveBidding.contractMove(
+                                ContractFactory.createContract(500, Suit.DIAMONDS))))),
                 new TestCase(
                     "Team mate has contract - coinched",
                     new GameStateBidding(
                         p1,
                         null,
-                        Contract.pointsContract(90, Suit.DIAMONDS).withPlayer(p3),
+                        ContractFactory.createContract(90, Suit.DIAMONDS).withPlayer(p3),
                         true,
                         false),
                     new ArrayList<>(List.of(MoveBidding.passMove(), MoveBidding.surcoincheMove()))),
                 new TestCase(
                     "Player has contract - coinched",
                     new GameStateBidding(
-                        p1, null, Contract.capotContract(Suit.HEARTS).withPlayer(p1), true, false),
+                        p1,
+                        null,
+                        ContractFactory.createContract(250, Suit.HEARTS).withPlayer(p1),
+                        true,
+                        false),
                     new ArrayList<>(List.of(MoveBidding.passMove(), MoveBidding.surcoincheMove()))),
                 new TestCase(
                     "Opponent has contract - not coinched",
                     new GameStateBidding(
                         p2,
                         null,
-                        Contract.pointsContract(80, Suit.HEARTS).withPlayer(p1),
+                        ContractFactory.createContract(80, Suit.HEARTS).withPlayer(p1),
                         false,
                         false),
                     new ArrayList<>(
                         List.of(
                             MoveBidding.passMove(),
                             MoveBidding.coincheMove(),
-                            MoveBidding.contractMove(Contract.pointsContract(90, Suit.SPADES)),
-                            MoveBidding.contractMove(Contract.pointsContract(90, Suit.HEARTS)),
-                            MoveBidding.contractMove(Contract.pointsContract(90, Suit.CLUBS)),
-                            MoveBidding.contractMove(Contract.pointsContract(90, Suit.DIAMONDS)),
-                            MoveBidding.contractMove(Contract.pointsContract(100, Suit.SPADES)),
-                            MoveBidding.contractMove(Contract.pointsContract(100, Suit.HEARTS)),
-                            MoveBidding.contractMove(Contract.pointsContract(100, Suit.CLUBS)),
-                            MoveBidding.contractMove(Contract.pointsContract(100, Suit.DIAMONDS)),
-                            MoveBidding.contractMove(Contract.pointsContract(110, Suit.SPADES)),
-                            MoveBidding.contractMove(Contract.pointsContract(110, Suit.HEARTS)),
-                            MoveBidding.contractMove(Contract.pointsContract(110, Suit.CLUBS)),
-                            MoveBidding.contractMove(Contract.pointsContract(110, Suit.DIAMONDS)),
-                            MoveBidding.contractMove(Contract.pointsContract(120, Suit.SPADES)),
-                            MoveBidding.contractMove(Contract.pointsContract(120, Suit.HEARTS)),
-                            MoveBidding.contractMove(Contract.pointsContract(120, Suit.CLUBS)),
-                            MoveBidding.contractMove(Contract.pointsContract(120, Suit.DIAMONDS)),
-                            MoveBidding.contractMove(Contract.pointsContract(130, Suit.SPADES)),
-                            MoveBidding.contractMove(Contract.pointsContract(130, Suit.HEARTS)),
-                            MoveBidding.contractMove(Contract.pointsContract(130, Suit.CLUBS)),
-                            MoveBidding.contractMove(Contract.pointsContract(130, Suit.DIAMONDS)),
-                            MoveBidding.contractMove(Contract.pointsContract(140, Suit.SPADES)),
-                            MoveBidding.contractMove(Contract.pointsContract(140, Suit.HEARTS)),
-                            MoveBidding.contractMove(Contract.pointsContract(140, Suit.CLUBS)),
-                            MoveBidding.contractMove(Contract.pointsContract(140, Suit.DIAMONDS)),
-                            MoveBidding.contractMove(Contract.pointsContract(150, Suit.SPADES)),
-                            MoveBidding.contractMove(Contract.pointsContract(150, Suit.HEARTS)),
-                            MoveBidding.contractMove(Contract.pointsContract(150, Suit.CLUBS)),
-                            MoveBidding.contractMove(Contract.pointsContract(150, Suit.DIAMONDS)),
-                            MoveBidding.contractMove(Contract.pointsContract(160, Suit.SPADES)),
-                            MoveBidding.contractMove(Contract.pointsContract(160, Suit.HEARTS)),
-                            MoveBidding.contractMove(Contract.pointsContract(160, Suit.CLUBS)),
-                            MoveBidding.contractMove(Contract.pointsContract(160, Suit.DIAMONDS)),
-                            MoveBidding.contractMove(Contract.capotContract(Suit.SPADES)),
-                            MoveBidding.contractMove(Contract.capotContract(Suit.HEARTS)),
-                            MoveBidding.contractMove(Contract.capotContract(Suit.CLUBS)),
-                            MoveBidding.contractMove(Contract.capotContract(Suit.DIAMONDS)),
-                            MoveBidding.contractMove(Contract.generaleContract(Suit.SPADES)),
-                            MoveBidding.contractMove(Contract.generaleContract(Suit.HEARTS)),
-                            MoveBidding.contractMove(Contract.generaleContract(Suit.CLUBS)),
-                            MoveBidding.contractMove(Contract.generaleContract(Suit.DIAMONDS))))),
+                            MoveBidding.contractMove(
+                                ContractFactory.createContract(90, Suit.SPADES)),
+                            MoveBidding.contractMove(
+                                ContractFactory.createContract(90, Suit.HEARTS)),
+                            MoveBidding.contractMove(
+                                ContractFactory.createContract(90, Suit.CLUBS)),
+                            MoveBidding.contractMove(
+                                ContractFactory.createContract(90, Suit.DIAMONDS)),
+                            MoveBidding.contractMove(
+                                ContractFactory.createContract(100, Suit.SPADES)),
+                            MoveBidding.contractMove(
+                                ContractFactory.createContract(100, Suit.HEARTS)),
+                            MoveBidding.contractMove(
+                                ContractFactory.createContract(100, Suit.CLUBS)),
+                            MoveBidding.contractMove(
+                                ContractFactory.createContract(100, Suit.DIAMONDS)),
+                            MoveBidding.contractMove(
+                                ContractFactory.createContract(110, Suit.SPADES)),
+                            MoveBidding.contractMove(
+                                ContractFactory.createContract(110, Suit.HEARTS)),
+                            MoveBidding.contractMove(
+                                ContractFactory.createContract(110, Suit.CLUBS)),
+                            MoveBidding.contractMove(
+                                ContractFactory.createContract(110, Suit.DIAMONDS)),
+                            MoveBidding.contractMove(
+                                ContractFactory.createContract(120, Suit.SPADES)),
+                            MoveBidding.contractMove(
+                                ContractFactory.createContract(120, Suit.HEARTS)),
+                            MoveBidding.contractMove(
+                                ContractFactory.createContract(120, Suit.CLUBS)),
+                            MoveBidding.contractMove(
+                                ContractFactory.createContract(120, Suit.DIAMONDS)),
+                            MoveBidding.contractMove(
+                                ContractFactory.createContract(130, Suit.SPADES)),
+                            MoveBidding.contractMove(
+                                ContractFactory.createContract(130, Suit.HEARTS)),
+                            MoveBidding.contractMove(
+                                ContractFactory.createContract(130, Suit.CLUBS)),
+                            MoveBidding.contractMove(
+                                ContractFactory.createContract(130, Suit.DIAMONDS)),
+                            MoveBidding.contractMove(
+                                ContractFactory.createContract(140, Suit.SPADES)),
+                            MoveBidding.contractMove(
+                                ContractFactory.createContract(140, Suit.HEARTS)),
+                            MoveBidding.contractMove(
+                                ContractFactory.createContract(140, Suit.CLUBS)),
+                            MoveBidding.contractMove(
+                                ContractFactory.createContract(140, Suit.DIAMONDS)),
+                            MoveBidding.contractMove(
+                                ContractFactory.createContract(150, Suit.SPADES)),
+                            MoveBidding.contractMove(
+                                ContractFactory.createContract(150, Suit.HEARTS)),
+                            MoveBidding.contractMove(
+                                ContractFactory.createContract(150, Suit.CLUBS)),
+                            MoveBidding.contractMove(
+                                ContractFactory.createContract(150, Suit.DIAMONDS)),
+                            MoveBidding.contractMove(
+                                ContractFactory.createContract(160, Suit.SPADES)),
+                            MoveBidding.contractMove(
+                                ContractFactory.createContract(160, Suit.HEARTS)),
+                            MoveBidding.contractMove(
+                                ContractFactory.createContract(160, Suit.CLUBS)),
+                            MoveBidding.contractMove(
+                                ContractFactory.createContract(160, Suit.DIAMONDS)),
+                            MoveBidding.contractMove(
+                                ContractFactory.createContract(250, Suit.SPADES)),
+                            MoveBidding.contractMove(
+                                ContractFactory.createContract(250, Suit.HEARTS)),
+                            MoveBidding.contractMove(
+                                ContractFactory.createContract(250, Suit.CLUBS)),
+                            MoveBidding.contractMove(
+                                ContractFactory.createContract(250, Suit.DIAMONDS)),
+                            MoveBidding.contractMove(
+                                ContractFactory.createContract(500, Suit.SPADES)),
+                            MoveBidding.contractMove(
+                                ContractFactory.createContract(500, Suit.HEARTS)),
+                            MoveBidding.contractMove(
+                                ContractFactory.createContract(500, Suit.CLUBS)),
+                            MoveBidding.contractMove(
+                                ContractFactory.createContract(500, Suit.DIAMONDS))))),
                 new TestCase(
                     "Opponent has contract - coinched",
                     new GameStateBidding(
                         p4,
                         null,
-                        Contract.pointsContract(100, Suit.CLUBS).withPlayer(p1),
+                        ContractFactory.createContract(100, Suit.CLUBS).withPlayer(p1),
                         true,
                         false),
                     new ArrayList<>(List.of(MoveBidding.passMove())))));

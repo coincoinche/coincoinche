@@ -12,6 +12,7 @@ import com.coincoinche.model.User;
 import com.coincoinche.repositories.UserRepository;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -84,8 +85,13 @@ public class LobbyController {
     CoincheGame game = new CoincheGame(redTeam, blueTeam);
 
     String gameId = UUID.randomUUID().toString();
+    String[] orderedUsernames =
+        game.getPlayers().stream()
+            .map(Player::getUsername)
+            .collect(Collectors.toList())
+            .toArray(new String[4]);
 
-    this.template.convertAndSend("/topic/lobby", new GameStartedEvent(gameId));
+    this.template.convertAndSend("/topic/lobby", new GameStartedEvent(gameId, orderedUsernames));
     this.gameController.registerNewGame(gameId, game);
   }
 }

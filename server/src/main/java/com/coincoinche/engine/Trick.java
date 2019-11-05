@@ -39,13 +39,23 @@ public class Trick {
   }
 
   /**
-   * Add a card played by a player to the trick.
+   * Add a card played by a player to the trick. Also remove the card from the player's hand.
    *
    * @param player is the player who played the card.
    * @param card is the card played by the player.
    */
   public void add(Player player, Card card) {
     playedCards.add(new PlayedCard(player, card));
+    player.removeCard(card);
+  }
+
+  /**
+   * Check if the trick is complete.
+   *
+   * @return true if the trick is complete, else false.
+   */
+  public boolean isComplete() {
+    return playedCards.size() >= 4;
   }
 
   /**
@@ -71,6 +81,17 @@ public class Trick {
       throw new RuntimeException("Trick is empty; it has no master");
     }
     return masterCard.player;
+  }
+
+  /**
+   * Get the total value of the trick, which is the sum of the cards' values.
+   *
+   * @return an integer representing the trick's value (points earned by the trick's master).
+   */
+  public int getValue() {
+    return playedCards.stream()
+        .mapToInt(pc -> ValuedCard.fromCard(pc.card, trumpSuit).getValue())
+        .sum();
   }
 
   /**

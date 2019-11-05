@@ -1,5 +1,6 @@
 import * as React from "react";
 import { EventType, SocketMessage } from "./events/types";
+import { API_BASE_URL } from '../constants';
 
 const Stomp = require('stompjs');
 const SockJS = require('sockjs-client');
@@ -70,7 +71,7 @@ function withWebsocketConnection<BaseProps>(WrappedComponent: React.ComponentTyp
     };
 
     connect = () => {
-      const socketClient = new SockJS('http://localhost:8080/ws');
+      const socketClient = new SockJS(`${API_BASE_URL}/ws`);
       this.stompClient = Stomp.over(socketClient);
       this.stompClient.connect({}, this.onConnected, this.onError);
     };

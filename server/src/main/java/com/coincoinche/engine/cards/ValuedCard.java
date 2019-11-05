@@ -44,6 +44,7 @@ public class ValuedCard extends Card {
 
   /**
    * Get the value from a card. The value depends on the trump nature of the card.
+   *
    * @return the value of the card (points earned by winning the card).
    */
   public int getValue() {

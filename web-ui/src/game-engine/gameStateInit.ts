@@ -1,10 +1,12 @@
-import {GamePhase, GameState, Position} from "./gameStateTypes";
+import {GameRoundPhase, GameState, Position} from "./gameStateTypes";
+import {buildUsernamesByPosition} from "./playerPositionning";
 
-export const gameStateInit = (): GameState => ({
-  usernames: [],
+export const gameStateInit = (usernames: string[], bottomPlayerIndex: number): GameState => ({
+  usernames,
+  usernamesByPosition: buildUsernamesByPosition(usernames, bottomPlayerIndex),
   currentPlayer: Position.bottom,
   cardsInHand: [],
-  currentPhase: GamePhase.bidding,
+  currentPhase: GameRoundPhase.BIDDING,
   currentlySelectedContract: null,
   lastBiddingContract: {},
   legalMoves: []
