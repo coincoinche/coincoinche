@@ -9,12 +9,14 @@ services:
     image: postgres:12.0
     ports:
       - "5432:5432"
+    expose:
+      - "5432"
     environment:
-      POSTGRES_DB: 'main'
-      POSTGRES_USER: 'server'
-      PGDATA: '/var/lib/postgresql/data/pgdata'
+      POSTGRES_DB: main
+      POSTGRES_USER: coincoinche
+      PGDATA: /var/lib/postgresql/data/pgdata
     volumes:
-      - ".psql/data/pgdata:/var/lib/postgresql/data/pgdata"
+      - .psql/data/pgdata:/var/lib/postgresql/data/pgdata
 
   # App backend service
   server:
