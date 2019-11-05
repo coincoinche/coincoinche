@@ -152,7 +152,7 @@ public class GameController {
       @DestinationVariable String gameId,
       @DestinationVariable String username,
       @Payload CardPlayedEvent event) {
-    CoincheGame game = this.store.getGame(gameId);
+    CoincheGame game = this.repository.getGame(gameId);
 
     MovePlaying move = MovePlaying.fromEvent(event);
     try {
