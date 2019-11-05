@@ -125,9 +125,9 @@ public class GameStateBidding implements GameStateTransition {
   }
 
   @Override
-  public GameState createNextGameState() {
-    // TODO nockty: fix this as the first player is not him
-    Player firstPlayer = highestBidding.getPlayer();
+  public GameState createNextGameState(CoincheGameRound round) {
+    // first player of playing phase is first player of bidding phase
+    Player firstPlayer = round.getGlobalGame().getCurrentPlayer();
     GameStatePlaying nextState =
         GameStatePlaying.initialGameStatePlaying(firstPlayer, highestBidding);
     nextState.setTeams(teams);
