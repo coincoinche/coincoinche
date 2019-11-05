@@ -49,7 +49,6 @@ public class GameController {
   private void notifyPlayerTurnStarted(String gameId, String username) {
     CoincheGame game = this.store.getGame(gameId);
     int newPlayerIndex = game.getCurrentRound().getCurrentPlayerIndex();
-    System.out.println("Current player index: " + newPlayerIndex);
 
     if (username.equals(game.getCurrentRound().getCurrentPlayer().getUsername())) {
       List<Move> legalMoves = game.getCurrentRound().getLegalMoves();
@@ -176,12 +175,8 @@ public class GameController {
     }
 
     if (game.getCurrentRoundPhase() == CoincheGame.Phase.BIDDING) {
-      // TODO handle when the first round finishes
-    }
-
-    System.out.println("playing card, username order:");
-    for (Player player : game.getPlayers()) {
-      System.out.println(player.getUsername());
+      this.template.convertAndSend(
+          getBroadcastTopicPath(gameId), new RoundPhaseStartedEvent(game.getCurrentRoundPhase()));
     }
 
     this.notifyPlayerTurnStarted(gameId, game.getCurrentRound().getCurrentPlayer().getUsername());
