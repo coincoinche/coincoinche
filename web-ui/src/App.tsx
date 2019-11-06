@@ -5,6 +5,8 @@ import MainMenu from "./pages/MainMenu/MainMenu";
 import './App.css';
 import Ladder from "./pages/Ladder/Ladder";
 import Lobby from "./pages/Lobby";
+import Login from "./pages/UserAuthentication/Login/Login"
+import Logout from "./pages/UserAuthentication/Logout/Logout"
 
 const App: React.FC = () => {
   return (
@@ -16,6 +18,12 @@ const App: React.FC = () => {
             </Route>
             <Route path="/ladder">
               <Ladder />
+            </Route>
+            <Route path="/login">
+              <Login />
+            </Route>
+            <Route path="/logout">
+              <Logout />
             </Route>
             <Route path="/">
               <MainMenu />
