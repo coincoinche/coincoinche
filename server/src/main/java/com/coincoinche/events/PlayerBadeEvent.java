@@ -9,6 +9,11 @@ public class PlayerBadeEvent extends Event {
   private int value;
   private Suit suit;
   private MoveType moveType;
+  private int playerIndex;
+
+  public PlayerBadeEvent() {
+    super(EventType.PLAYER_BADE);
+  }
 
   /**
    * Event sent by the client when the player did a special bidding during the bidding phase of the
@@ -16,10 +21,11 @@ public class PlayerBadeEvent extends Event {
    *
    * @param special - the value of the special bidding.
    */
-  public PlayerBadeEvent(MoveBidding.Special special) {
+  public PlayerBadeEvent(int playerIndex, MoveBidding.Special special) {
     super(EventType.PLAYER_BADE);
     this.special = special;
     this.moveType = MoveType.SPECIAL_BIDDING;
+    this.playerIndex = playerIndex;
   }
 
   /**
@@ -29,11 +35,14 @@ public class PlayerBadeEvent extends Event {
    * @param value - the value of the bidding.
    * @param suit - the suit of the bidding.
    */
-  public PlayerBadeEvent(int value, Suit suit) {
+  public PlayerBadeEvent(
+      int playerIndex, MoveType moveType, int value, Suit suit, MoveBidding.Special special) {
     super(EventType.PLAYER_BADE);
     this.value = value;
     this.suit = suit;
-    this.moveType = MoveType.CONTRACT_BIDDING;
+    this.moveType = moveType;
+    this.special = special;
+    this.playerIndex = playerIndex;
   }
 
   public MoveBidding.Special getSpecial() {
@@ -50,5 +59,9 @@ public class PlayerBadeEvent extends Event {
 
   public MoveType getMoveType() {
     return moveType;
+  }
+
+  public int getPlayerIndex() {
+    return playerIndex;
   }
 }

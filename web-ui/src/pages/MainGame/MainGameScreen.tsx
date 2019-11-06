@@ -21,8 +21,8 @@ import {
 import {gameStateInit} from "../../game-engine/gameStateInit";
 import {applyEvent, GameStateModifier} from "../../game-engine/gameStateModifiers";
 import {inboundGameEventParser, outboundGameEventConverter} from "../../websocket/events/game";
-import {withRouter} from "react-router";
-import {RouteComponentProps} from "react-router";
+import {RouteComponentProps, withRouter} from "react-router";
+import {playerIndexFromPosition} from "../../game-engine/playerPositionning";
 
 const CLEAN_TRICK_TIMOUT_MS = 2000;
 
@@ -117,6 +117,7 @@ class MainGameScreen extends React.Component<Props, State> {
       outboundGameEventConverter[EventType.CARD_PLAYED]({
         type: EventType.CARD_PLAYED,
         card,
+        playerIndex: playerIndexFromPosition(Position.bottom, this.state.usernamesByPosition, this.state.usernames),
       })
     );
 
@@ -131,6 +132,7 @@ class MainGameScreen extends React.Component<Props, State> {
   onContractPicked = (biddingMove: LegalBiddingMove) => {
     const event: PlayerBadeEvent = {
       type: EventType.PLAYER_BADE,
+      playerIndex: playerIndexFromPosition(Position.bottom, this.state.usernamesByPosition, this.state.usernames),
       ...biddingMove
     };
 

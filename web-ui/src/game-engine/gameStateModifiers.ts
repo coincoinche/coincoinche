@@ -13,7 +13,7 @@ import {
 } from '../websocket/events/types';
 import {GameRoundPhase, GameState, LegalBiddingMove, Position} from "./gameStateTypes";
 import {CardValue} from "../assets/cards";
-import {positionFromUsername} from "./playerPositionning";
+import {positionFromPlayerIndex, positionFromUsername} from "./playerPositionning";
 
 class InvalidEventError extends Error {}
 
@@ -72,10 +72,10 @@ export class GameStateModifier {
     return this;
   };
 
-  addCardToCurrentTrick = (position: Position, card: CardValue) => {
+  addCardToCurrentTrick = (playerIndex: number, card: CardValue) => {
     this.gameState.currentTrick = {
       ...this.gameState.currentTrick,
-      [position]: card,
+      [positionFromPlayerIndex(playerIndex, this.gameState.usernamesByPosition, this.gameState.usernames)]: card,
     };
     return this;
   };
@@ -112,7 +112,7 @@ const applyPlayerBadeEvent = (event: PlayerBadeEvent, gameState: GameState): Gam
 
 const applyCardPlayedEvent = (event: CardPlayedEvent, gameState: GameState): GameState => {
   return new GameStateModifier(gameState)
-    .addCardToCurrentTrick(gameState.currentPlayer, event.card)
+    .addCardToCurrentTrick(event.playerIndex, event.card)
     .retrieveNewState();
 };
 
