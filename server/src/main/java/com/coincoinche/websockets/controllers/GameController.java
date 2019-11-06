@@ -15,8 +15,8 @@ import com.coincoinche.events.PlayingTurnStartedEvent;
 import com.coincoinche.events.RoundPhaseStartedEvent;
 import com.coincoinche.events.RoundStartedEvent;
 import com.coincoinche.events.TurnStartedEvent;
-import com.coincoinche.store.GameStore;
-import com.coincoinche.store.InMemoryGameStore;
+import com.coincoinche.repositories.GameRepository;
+import com.coincoinche.repositories.InMemoryGameRepository;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,10 +32,10 @@ public class GameController {
   private static final Logger logger = LoggerFactory.getLogger(GameController.class);
 
   @Autowired private SimpMessagingTemplate template;
-  private GameStore store;
+  private GameRepository repository;
 
   public GameController() {
-    this.store = new InMemoryGameStore();
+    this.repository = new InMemoryGameRepository();
   }
 
   private String getTopicPath(String gameId, String username) {
@@ -47,7 +47,7 @@ public class GameController {
   }
 
   private void notifyPlayerTurnStarted(String gameId, String username) {
-    CoincheGame game = this.store.getGame(gameId);
+    CoincheGame game = this.repository.getGame(gameId);
     int newPlayerIndex = game.getCurrentRound().getCurrentPlayerIndex();
     System.out.println("Current player index: " + newPlayerIndex);
 
@@ -91,7 +91,7 @@ public class GameController {
   public void getNewHandForRound(
       @DestinationVariable String gameId, @DestinationVariable String username) {
     // TODO error handling if the game is not found
-    CoincheGame game = this.store.getGame(gameId);
+    CoincheGame game = this.repository.getGame(gameId);
 
     this.template.convertAndSend(
         getTopicPath(gameId, username), new RoundStartedEvent(game.getPlayer(username).getCards()));
@@ -113,7 +113,7 @@ public class GameController {
       @DestinationVariable String gameId,
       @DestinationVariable String username,
       @Payload PlayerBadeEvent event) {
-    CoincheGame game = this.store.getGame(gameId);
+    CoincheGame game = this.repository.getGame(gameId);
     MoveBidding move = MoveBidding.fromEvent(event);
     try {
       move.applyOnGame(game);
@@ -152,7 +152,7 @@ public class GameController {
       @DestinationVariable String gameId,
       @DestinationVariable String username,
       @Payload CardPlayedEvent event) {
-    CoincheGame game = this.store.getGame(gameId);
+    CoincheGame game = this.repository.getGame(gameId);
 
     MovePlaying move = MovePlaying.fromEvent(event);
     try {
@@ -194,6 +194,6 @@ public class GameController {
    * @param game - CoincheGame object
    */
   public void registerNewGame(String gameId, CoincheGame game) {
-    this.store.saveGame(gameId, game);
+    this.repository.saveGame(gameId, game);
   }
 }

@@ -30,3 +30,12 @@ docker-compose -f docker-compose.dev.yml up
 The React frontend runs in development mode, which means files can be edited with a live reload.
 
 For the moment, the Java backend is the same as the one in production, so there is no live reload and no debugging.
+
+## Run tests with Docker
+
+Likewise, it is advised to run tests by using `docker-compose` because of the dependencies of the web application.
+
+```
+docker-compose -f docker-compose.test.yml build
+docker-compose -f docker-compose.test.yml run server_test
+```

@@ -49,13 +49,13 @@ Run integration tests with `./mvnw failsafe:integration-test`.
 
 ### Local database setup
 
-#### Using Docker
+#### Database creation using the app docker-comnpose file
 If you used docker-compose, you can connect to the database from the terminal:
 `docker-compose exec database /bin/bash`
 Then, inside the container
 `psql -U server main`
 
-#### Local setup without docker
+#### Database creation using standalone local docker
 `docker run \
          --name postgres \
          -e POSTGRES_DB=main \
@@ -65,4 +65,9 @@ Then, inside the container
          -v .psql/data/pgdata:/var/lib/postgresql/data/pgdata \
          postgres:12.0
 `
+
 Then run `docker exec -it postgres /bin/bash` to connect to the container and `psql -U server main` to connect to the database.
+
+#### Install required Postgres extensions:
+- Connect to the database: `psql -U server main`
+- Run `CREATE EXTENSION pgcrypto;`. This extension is used to generate UUIDs.

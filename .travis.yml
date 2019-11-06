@@ -1,6 +1,4 @@
-language: java
 sudo: false
-jdk: openjdk11
 services:
 - docker
 addons:
@@ -33,22 +31,23 @@ stages:
 jobs:
   include:
   - stage: test
+    name: Test
     before_script:
-    - cd server
+    - docker-compose -f docker-compose.test.yml build
     script:
-    - "./mvnw test"
+    - docker-compose -f docker-compose.test.yml run server_test
   - stage: deploy
-    before_script:
-    - bash docker_build.sh
-    script:
-    - bash docker_push.sh
+    name: Deploy
+    deploy:
+      provider: script
+      script: bash scripts/deploy.sh
   - stage: release
     name: Release backend
     deploy:
       provider: script
-      script: bash heroku_release.sh $HEROKU_APP_BACK
+      script: bash scripts/heroku_release.sh $HEROKU_APP_BACK
   - stage: release
     name: Release frontend
     deploy:
       provider: script
-      script: bash heroku_release.sh $HEROKU_APP_FRONT
+      script: bash scripts/heroku_release.sh $HEROKU_APP_FRONT
