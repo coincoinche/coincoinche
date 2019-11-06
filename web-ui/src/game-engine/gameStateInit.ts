@@ -9,5 +9,7 @@ export const gameStateInit = (usernames: string[], bottomPlayerIndex: number): G
   currentPhase: GameRoundPhase.BIDDING,
   currentlySelectedContract: null,
   lastBiddingContract: {},
-  legalMoves: []
+  legalBiddingMoves: [],
+  legalPlayingMoves: [],
+  currentTrick: {},
 });

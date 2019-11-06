@@ -106,7 +106,7 @@ class MainGameScreen extends React.Component<Props, State> {
     if (
         this.state.currentPhase !== GameRoundPhase.MAIN ||
         !this.state.cardsInHand.includes(card) ||
-        !this.state.legalMoves.includes(card) ||
+        !this.state.legalPlayingMoves.includes(card) ||
         player !== this.state.currentPlayer
     ) {
       return;
@@ -149,13 +149,13 @@ class MainGameScreen extends React.Component<Props, State> {
     let authorisedSpecialBiddings: SpecialBidding[] = [];
     let lastBiddingContract: Partial<LegalBiddingMove>;
     if (this.state.currentPhase === GameRoundPhase.BIDDING) {
-      authorisedContractValues = this.state.legalMoves
+      authorisedContractValues = this.state.legalBiddingMoves
         .filter(move => move.moveType === MoveType.CONTRACT_BIDDING)
         .map(move => (move as ContractBiddingMove).value);
-      authorisedContractSuits = this.state.legalMoves
+      authorisedContractSuits = this.state.legalBiddingMoves
         .filter(move => move.moveType === MoveType.CONTRACT_BIDDING)
         .map(move => (move as ContractBiddingMove).suit);
-      authorisedSpecialBiddings = this.state.legalMoves
+      authorisedSpecialBiddings = this.state.legalBiddingMoves
         .filter(move => move.moveType === MoveType.SPECIAL_BIDDING)
         .map(move => (move as SpecialBiddingMove).bidding);
 
@@ -166,7 +166,7 @@ class MainGameScreen extends React.Component<Props, State> {
     let currentTrick: Trick;
     if (this.state.currentPhase === GameRoundPhase.MAIN) {
       legalCardsToPlay = this.state.cardsInHand.map(
-        (cardsInHand: CardValue) => (this.state.legalMoves as CardValue[]).includes(cardsInHand)
+        (cardsInHand: CardValue) => (this.state.legalPlayingMoves as CardValue[]).includes(cardsInHand)
       );
       currentTrick = this.state.currentTrick;
     }

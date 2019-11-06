@@ -99,7 +99,7 @@ export const inboundGameEventParser: { [type in EventType]?: (event: any) => Eve
     });
     return {
       type: EventType.BIDDING_TURN_STARTED,
-      legalMoves,
+      legalBiddingMoves: legalMoves,
       playerIndex,
     }
   },
@@ -108,7 +108,7 @@ export const inboundGameEventParser: { [type in EventType]?: (event: any) => Eve
     const { legalMoves, playerIndex } = event;
     return {
       type: EventType.PLAYING_TURN_STARTED,
-      legalMoves,
+      legalPlayingMoves: legalMoves,
       playerIndex,
     }
   },

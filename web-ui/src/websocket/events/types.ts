@@ -65,13 +65,13 @@ export type RoundPhaseStartedEvent = {
 
 export type BiddingTurnStartedEvent = {
   type: EventType.BIDDING_TURN_STARTED,
-  legalMoves: LegalBiddingMove[],
+  legalBiddingMoves: LegalBiddingMove[],
   playerIndex: number,
 }
 
 export type PlayingTurnStartedEvent = {
   type: EventType.PLAYING_TURN_STARTED,
-  legalMoves: CardValue[],
+  legalPlayingMoves: CardValue[],
   playerIndex: number,
 }
 

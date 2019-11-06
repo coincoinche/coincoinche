@@ -1,12 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
 import {Link} from "react-router-dom";
-import casual from "../../assets/menu/casual.png";
-import ranked from "../../assets/menu/ranked.png";
-import ladder from "../../assets/menu/ladder.png";
 
 import logo from '../../assets/coincoinche_logo.png';
-import Card from "../../components/cards/Card";
 
 type State = {};
 
