@@ -26,6 +26,13 @@ public class Player {
     cards.add(card);
   }
 
+  /**
+   * Sort cards in the player's hand according to the cards natural ordering.
+   */
+  public void sortCards() {
+    cards.sort(null);
+  }
+
   public List<Card> getCards() {
     return cards;
   }
