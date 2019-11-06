@@ -21,12 +21,14 @@ import {
 import {gameStateInit} from "../../game-engine/gameStateInit";
 import {applyEvent, GameStateModifier} from "../../game-engine/gameStateModifiers";
 import {inboundGameEventParser, outboundGameEventConverter} from "../../websocket/events/game";
+import {withRouter} from "react-router";
+import {RouteComponentProps} from "react-router";
 
 const CLEAN_TRICK_TIMOUT_MS = 2000;
 
 const isFull = (trick: Trick): boolean => !!trick.top && !!trick.bottom && !!trick.left && !!trick.right;
 
-type Props = InjectedProps & {
+type Props = RouteComponentProps & InjectedProps & {
   gameId: string;
   username: string;
   usernames: string[];
@@ -41,47 +43,26 @@ const getGameTopic = (gameId: string, username: string) => TopicTemplate.GAME
 const getBroadcastGameTopic = (gameId: string) => TopicTemplate.GAME_BROADCAST
   .replace('{gameId}', gameId);
 
-export default class MainGameScreen extends React.Component<Props, State> {
+class MainGameScreen extends React.Component<Props, State> {
   state: State = gameStateInit(this.props.usernames, this.props.usernames.indexOf(this.props.username));
 
   componentDidMount(): void {
-    this.props.registerOnMessageReceivedCallback(
-      getGameTopic(this.props.gameId, this.props.username),
-      EventType.ROUND_STARTED,
-      (jsonEvent: string) => this.applyEventToState(EventType.ROUND_STARTED, jsonEvent),
-    );
+    const playerTopic = getGameTopic(this.props.gameId, this.props.username);
+    const broadcastTopic = getBroadcastGameTopic(this.props.gameId);
 
-    [getGameTopic(this.props.gameId, this.props.username), getBroadcastGameTopic(this.props.gameId)]
-      .forEach((topic: string) =>
-        this.props.registerOnMessageReceivedCallback(
-          topic,
-          EventType.ROUND_PHASE_STARTED,
-          (jsonEvent: string) => this.applyEventToState(EventType.ROUND_PHASE_STARTED, jsonEvent),
-        )
-      );
+    this.registerCallback(EventType.ROUND_STARTED, playerTopic);
+    this.registerCallback(EventType.ROUND_PHASE_STARTED, playerTopic);
+    this.registerCallback(EventType.ROUND_PHASE_STARTED, broadcastTopic);
+    this.registerCallback(EventType.BIDDING_TURN_STARTED, playerTopic);
+    this.registerCallback(EventType.PLAYING_TURN_STARTED, playerTopic);
+    this.registerCallback(EventType.PLAYER_BADE, broadcastTopic);
+    this.registerCallback(EventType.CARD_PLAYED, broadcastTopic);
+    this.registerCallback(EventType.GAME_FINISHED, playerTopic);
 
     this.props.registerOnMessageReceivedCallback(
-      getGameTopic(this.props.gameId, this.props.username),
-      EventType.BIDDING_TURN_STARTED,
-      (jsonEvent: string) => this.applyEventToState(EventType.BIDDING_TURN_STARTED, jsonEvent),
-    );
-
-    this.props.registerOnMessageReceivedCallback(
-      getGameTopic(this.props.gameId, this.props.username),
-      EventType.PLAYING_TURN_STARTED,
-      (jsonEvent: string) => this.applyEventToState(EventType.PLAYING_TURN_STARTED, jsonEvent),
-    );
-
-    this.props.registerOnMessageReceivedCallback(
-      getBroadcastGameTopic(this.props.gameId),
-      EventType.PLAYER_BADE,
-      (jsonEvent: string) => this.applyEventToState(EventType.PLAYER_BADE, jsonEvent),
-    );
-
-    this.props.registerOnMessageReceivedCallback(
-      getBroadcastGameTopic(this.props.gameId),
-      EventType.CARD_PLAYED,
-      (jsonEvent: string) => this.applyEventToState(EventType.CARD_PLAYED, jsonEvent),
+      playerTopic,
+      EventType.GAME_FINISHED,
+      (jsonEvent: string) => this.onGameFinished(jsonEvent),
     );
 
     this.props.subscribe(getGameTopic(this.props.gameId, this.props.username));
@@ -89,6 +70,19 @@ export default class MainGameScreen extends React.Component<Props, State> {
     // TODO replace socket endpoint by Socket endpoint template
     this.props.sendMessage(`/app/game/${this.props.gameId}/player/${this.props.username}/ready`, { type: EventType.CLIENT_READY })
   }
+
+  onGameFinished = (event: string) => {
+    console.log("Game finished! ", event);
+    this.props.history.push('/');
+  };
+
+  registerCallback = (eventType: EventType, topic: string): void => {
+    this.props.registerOnMessageReceivedCallback(
+      topic,
+      eventType,
+      (jsonEvent: string) => this.applyEventToState(eventType, jsonEvent),
+    );
+  };
 
   componentDidUpdate(prevProps: Readonly<InjectedProps>): void {
     if (this.state.currentPhase === GameRoundPhase.MAIN && isFull(this.state.currentTrick)) {
@@ -109,22 +103,12 @@ export default class MainGameScreen extends React.Component<Props, State> {
   };
 
   onCardPlayed = (player: Position, card: CardValue) => {
-    console.log("onCardPlayed");
     if (
         this.state.currentPhase !== GameRoundPhase.MAIN ||
         !this.state.cardsInHand.includes(card) ||
         !this.state.legalMoves.includes(card) ||
         player !== this.state.currentPlayer
     ) {
-      console.log("here", {
-        usernames: this.state.usernames,
-        usernamesByPosition: this.state.usernamesByPosition,
-        phase: this.state.currentPhase,
-        cardsInHand: this.state.cardsInHand,
-        legalMoves: this.state.legalMoves,
-        player,
-        currentPlayer: this.state.currentPlayer,
-      });
       return;
     }
 
@@ -236,3 +220,5 @@ export default class MainGameScreen extends React.Component<Props, State> {
     </Container>;
   }
 }
+
+export default withRouter(MainGameScreen);

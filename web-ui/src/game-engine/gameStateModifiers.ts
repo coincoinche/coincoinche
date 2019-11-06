@@ -56,7 +56,7 @@ export class GameStateModifier {
 
   setLastBiddingContract = (contract: LegalBiddingMove) => {
     if (this.gameState.currentPhase !== GameRoundPhase.BIDDING) {
-      throw new IllegalStateModificationError('Can only set legal moves during the BIDDING phase');
+      return this;
     }
     this.gameState.lastBiddingContract = contract;
     return this;
@@ -64,7 +64,7 @@ export class GameStateModifier {
 
   setCurrentlySelectedContract = (contract: Partial<LegalBiddingMove | null>) => {
     if (this.gameState.currentPhase !== GameRoundPhase.BIDDING) {
-      throw new IllegalStateModificationError('Can only set legal moves during the BIDDING phase');
+      return this;
     }
     this.gameState.currentlySelectedContract = contract;
     return this;
@@ -82,7 +82,7 @@ export class GameStateModifier {
 
   resetCurrentTrick = () => {
     if (this.gameState.currentPhase !== GameRoundPhase.MAIN) {
-      throw new IllegalStateModificationError('Can only update the current trick during the MAIN game phase');
+      return this;
     }
     this.gameState.currentTrick = {};
     return this;
@@ -90,7 +90,7 @@ export class GameStateModifier {
 
   addCardToCurrentTrick = (position: Position, card: CardValue) => {
     if (this.gameState.currentPhase !== GameRoundPhase.MAIN) {
-      throw new IllegalStateModificationError('Can only update the current trick during the MAIN game phase');
+      return this;
     }
     this.gameState.currentTrick = {
       ...this.gameState.currentTrick,
