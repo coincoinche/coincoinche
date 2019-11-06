@@ -1,6 +1,4 @@
-language: java
 sudo: false
-jdk: openjdk11
 services:
 - docker
 addons:
@@ -34,9 +32,9 @@ jobs:
   include:
   - stage: test
     before_script:
-    - cd server
+    - docker-compose -f docker-compose.test.yml build
     script:
-    - "./mvnw test"
+    - docker-compose -f docker-compose.test.yml run server_test
   - stage: deploy
     before_script:
     - bash docker_build.sh
