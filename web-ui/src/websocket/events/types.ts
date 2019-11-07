@@ -46,10 +46,12 @@ export type GameFinishedEvent = {
 
 export type PlayerBadeEvent = {
   type: EventType.PLAYER_BADE,
+  playerIndex: number,
 } & LegalBiddingMove;
 
 export type CardPlayedEvent = {
   type: EventType.CARD_PLAYED,
+  playerIndex: number,
   card: CardValue,
 };
 
@@ -65,13 +67,13 @@ export type RoundPhaseStartedEvent = {
 
 export type BiddingTurnStartedEvent = {
   type: EventType.BIDDING_TURN_STARTED,
-  legalMoves: LegalBiddingMove[],
+  legalBiddingMoves: LegalBiddingMove[],
   playerIndex: number,
 }
 
 export type PlayingTurnStartedEvent = {
   type: EventType.PLAYING_TURN_STARTED,
-  legalMoves: CardValue[],
+  legalPlayingMoves: CardValue[],
   playerIndex: number,
 }
 

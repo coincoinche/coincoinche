@@ -69,13 +69,12 @@ export type GameState = {
   usernamesByPosition: UsernamesByPosition;
   currentPlayer: Position;
   cardsInHand: CardValue[];
-} & ({
-  currentPhase: GameRoundPhase.BIDDING;
+
+  currentPhase: GameRoundPhase;
   currentlySelectedContract: Partial<LegalBiddingMove> | null;
   lastBiddingContract: Partial<LegalBiddingMove>;
-  legalMoves: LegalBiddingMove[];
-} | {
-  currentPhase: GameRoundPhase.MAIN;
+  legalBiddingMoves: LegalBiddingMove[];
+
   currentTrick: Trick;
-  legalMoves: CardValue[];
-});
+  legalPlayingMoves: CardValue[];
+};

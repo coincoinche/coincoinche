@@ -30,13 +30,14 @@ const suitLetterParser = (suitLetter: string): Suit => {
 
 export const inboundGameEventParser: { [type in EventType]?: (event: any) => Event } = {
   [EventType.PLAYER_BADE]: (event: any): PlayerBadeEvent => {
-    const { value, suit, moveType, special } = event;
+    const { value, suit, moveType, special, playerIndex } = event;
     if (moveType === MoveType.CONTRACT_BIDDING) {
       return {
         type: EventType.PLAYER_BADE,
         moveType: MoveType.CONTRACT_BIDDING,
         value: value.toString(),
         suit: suit.toLowerCase(),
+        playerIndex,
       }
     }
 
@@ -45,6 +46,7 @@ export const inboundGameEventParser: { [type in EventType]?: (event: any) => Eve
         type: EventType.PLAYER_BADE,
         moveType: MoveType.SPECIAL_BIDDING,
         bidding: special,
+        playerIndex,
       }
     }
 
@@ -52,10 +54,11 @@ export const inboundGameEventParser: { [type in EventType]?: (event: any) => Eve
   },
 
   [EventType.CARD_PLAYED]: (event: any): CardPlayedEvent => {
-    const { card } = event;
+    const { card, playerIndex } = event;
     return {
       type: EventType.CARD_PLAYED,
       card,
+      playerIndex,
     }
   },
 
@@ -99,7 +102,7 @@ export const inboundGameEventParser: { [type in EventType]?: (event: any) => Eve
     });
     return {
       type: EventType.BIDDING_TURN_STARTED,
-      legalMoves,
+      legalBiddingMoves: legalMoves,
       playerIndex,
     }
   },
@@ -108,7 +111,7 @@ export const inboundGameEventParser: { [type in EventType]?: (event: any) => Eve
     const { legalMoves, playerIndex } = event;
     return {
       type: EventType.PLAYING_TURN_STARTED,
-      legalMoves,
+      legalPlayingMoves: legalMoves,
       playerIndex,
     }
   },

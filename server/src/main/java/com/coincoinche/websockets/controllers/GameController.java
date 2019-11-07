@@ -128,6 +128,7 @@ public class GameController {
       @Payload PlayerBadeEvent event) {
     CoincheGame game = this.repository.getGame(gameId);
     MoveBidding move = MoveBidding.fromEvent(event);
+    int playerIndex = game.getCurrentRound().getCurrentPlayerIndex();
     try {
       move.applyOnGame(game);
       this.template.convertAndSend(getBroadcastTopicPath(gameId), event);
@@ -140,7 +141,8 @@ public class GameController {
         // make the player pass if the bidding move is invalid.
         MoveBidding.passMove().applyOnGame(game);
         this.template.convertAndSend(
-            getBroadcastTopicPath(gameId), new PlayerBadeEvent(MoveBidding.Special.PASS));
+            getBroadcastTopicPath(gameId),
+            new PlayerBadeEvent(playerIndex, MoveBidding.Special.PASS));
       } catch (IllegalMoveException illegalPassMoveException) {
         illegalPassMoveException.printStackTrace();
       }
@@ -166,8 +168,9 @@ public class GameController {
       @DestinationVariable String username,
       @Payload CardPlayedEvent event) {
     CoincheGame game = this.repository.getGame(gameId);
-
     MovePlaying move = MovePlaying.fromEvent(event);
+    int playerIndex = game.getCurrentRound().getCurrentPlayerIndex();
+
     try {
       GameResult<Team> result = move.applyOnGame(game);
       this.template.convertAndSend(getBroadcastTopicPath(gameId), event);
@@ -195,7 +198,8 @@ public class GameController {
         firstLegalMove.applyOnGame(game);
 
         this.template.convertAndSend(
-            getBroadcastTopicPath(gameId), new CardPlayedEvent(firstLegalMove.toJson()));
+            getBroadcastTopicPath(gameId),
+            new CardPlayedEvent(playerIndex, firstLegalMove.toJson()));
       } catch (IllegalMoveException illegalPassMoveException) {
         illegalPassMoveException.printStackTrace();
       }
