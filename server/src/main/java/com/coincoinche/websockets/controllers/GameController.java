@@ -18,6 +18,7 @@ import com.coincoinche.events.PlayingTurnStartedEvent;
 import com.coincoinche.events.RoundPhaseStartedEvent;
 import com.coincoinche.events.RoundStartedEvent;
 import com.coincoinche.events.TurnStartedEvent;
+import com.coincoinche.ratingplayer.EloService;
 import com.coincoinche.repositories.GameRepository;
 import com.coincoinche.repositories.InMemoryGameRepository;
 import java.util.List;
@@ -35,7 +36,12 @@ public class GameController {
   private static final Logger logger = LoggerFactory.getLogger(GameController.class);
 
   @Autowired private SimpMessagingTemplate template;
+  @Autowired private EloService eloService;
   private GameRepository repository;
+
+  public EloService getEloService() {
+    return eloService;
+  }
 
   public GameController() {
     this.repository = new InMemoryGameRepository();
@@ -162,8 +168,12 @@ public class GameController {
       this.template.convertAndSend(getBroadcastTopicPath(gameId), event);
 
       if (result.isFinished()) {
+        logger.info(String.format("Game finished: %s", result));
+        Team winnerTeam = result.getWinnerTeam();
+        Team loserTeam = result.getLoserTeam();
+        eloService.updateRatings(winnerTeam, loserTeam);
         for (Player player : game.getPlayers()) {
-          if (result.getWinnerTeam().getPlayers().contains(player)) {
+          if (winnerTeam.getPlayers().contains(player)) {
             this.template.convertAndSend(
                 getTopicPath(gameId, player.getUsername()), new GameFinishedEvent(true));
           } else {

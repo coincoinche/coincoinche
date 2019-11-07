@@ -59,6 +59,24 @@ public class GameResult<T> {
     return winnerTeam;
   }
 
+  /**
+   * Get the loser team of the game, i.e. the team with the least points.
+   *
+   * @return the team that lost the game.
+   */
+  public T getLoserTeam() {
+    int minPoints = Integer.MAX_VALUE;
+    T loserTeam = null;
+    for (Entry<T, Integer> entry : teamsPoints.entrySet()) {
+      if (entry.getValue() >= minPoints) {
+        continue;
+      }
+      minPoints = entry.getValue();
+      loserTeam = entry.getKey();
+    }
+    return loserTeam;
+  }
+
   @Override
   public String toString() {
     StringBuffer prettyString = new StringBuffer();
