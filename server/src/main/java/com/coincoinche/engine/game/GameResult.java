@@ -47,12 +47,13 @@ public class GameResult<T> {
    * @return the team that won the game.
    */
   public T getWinnerTeam() {
-    int maxPoints = -1;
+    int maxPoints = Integer.MIN_VALUE;
     T winnerTeam = null;
     for (Entry<T, Integer> entry : teamsPoints.entrySet()) {
-      if (!(entry.getValue() > maxPoints)) {
+      if (entry.getValue() <= maxPoints) {
         continue;
       }
+      maxPoints = entry.getValue();
       winnerTeam = entry.getKey();
     }
     return winnerTeam;
