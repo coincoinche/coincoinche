@@ -79,8 +79,8 @@ public class LobbyController {
     Player player3 = new Player(usernames[2]);
     Player player4 = new Player(usernames[3]);
 
-    Team redTeam = new Team(player1, player2, Team.Color.RED);
-    Team blueTeam = new Team(player3, player4, Team.Color.BLUE);
+    Team redTeam = new Team(player1, player3, Team.Color.RED);
+    Team blueTeam = new Team(player2, player4, Team.Color.BLUE);
 
     CoincheGame game = new CoincheGame(redTeam, blueTeam);
 
