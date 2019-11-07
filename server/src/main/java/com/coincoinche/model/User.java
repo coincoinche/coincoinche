@@ -10,9 +10,8 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "user", schema = "public")
 public class User {
-  public User(String username) {
-    this.username = username;
-  }
+  private static final int DEFAULT_RATING = 1000;
+  private static final int DEFAULT_RATING_ADJUSTMENT = 32;
 
   @Id
   @GeneratedValue(generator = "UUID")
@@ -20,6 +19,27 @@ public class User {
 
   @Column(columnDefinition = "VARCHAR(25)")
   private String username;
+
+  @Column(columnDefinition = "integer")
+  private int rating;
+
+  @Column(columnDefinition = "integer", name = "rating_adjustment")
+  private int ratingAdjustment;
+
+  protected User() {
+    super();
+  }
+
+  /**
+   * Create a new user.
+   *
+   * @param username is the new user's username.
+   */
+  public User(String username) {
+    this.username = username;
+    this.rating = DEFAULT_RATING;
+    this.ratingAdjustment = DEFAULT_RATING_ADJUSTMENT;
+  }
 
   public UUID getId() {
     return id;
@@ -29,7 +49,19 @@ public class User {
     return username;
   }
 
-  public void setUsername(String username) {
-    this.username = username;
+  public int getRating() {
+    return rating;
+  }
+
+  public int getRatingAdjustment() {
+    return ratingAdjustment;
+  }
+
+  public void setRating(int rating) {
+    this.rating = rating;
+  }
+
+  public void setRatingAdjustment(int ratingAdjustment) {
+    this.ratingAdjustment = ratingAdjustment;
   }
 }

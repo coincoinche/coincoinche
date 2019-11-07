@@ -52,4 +52,9 @@ public class Team implements TeamInterface<Player> {
   public int getPoints() {
     return points;
   }
+
+  @Override
+  public String toString() {
+    return String.format("%s: [%s, %s]", color, players.get(0), players.get(1));
+  }
 }
