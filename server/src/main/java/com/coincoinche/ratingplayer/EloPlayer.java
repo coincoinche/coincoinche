@@ -1,6 +1,8 @@
 package com.coincoinche.ratingplayer;
 
 import com.coincoinche.model.User;
+import com.fasterxml.jackson.annotation.JsonRawValue;
+import com.fasterxml.jackson.annotation.JsonValue;
 
 /** Wrapper around User to implement a player rated with Elo. */
 public class EloPlayer {
@@ -29,5 +31,12 @@ public class EloPlayer {
 
   public User getUser() {
     return user;
+  }
+
+  @JsonValue
+  @JsonRawValue
+  public String toJson() {
+    return String.format(
+        "{\"username\":\"%s\",\"rating\":%s}", user.getUsername(), user.getRating());
   }
 }
