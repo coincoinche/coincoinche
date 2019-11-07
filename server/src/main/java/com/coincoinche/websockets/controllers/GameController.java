@@ -83,6 +83,21 @@ public class GameController {
     }
   }
 
+  private void notifyPlayersRoundStarted(String gameId, CoincheGame game) {
+    for (Player player : game.getPlayers()) {
+      notifyPlayerRoundStarted(gameId, player);
+    }
+  }
+
+  private void notifyPlayerRoundStarted(String gameId, Player player) {
+    this.template.convertAndSend(
+        getTopicPath(gameId, player.getUsername()), new RoundStartedEvent(player.getCards()));
+
+    this.template.convertAndSend(
+        getTopicPath(gameId, player.getUsername()),
+        new RoundPhaseStartedEvent(CoincheGame.Phase.BIDDING));
+  }
+
   /**
    * To be called after the client loaded the game. Send its hand to the player.
    *
@@ -95,11 +110,7 @@ public class GameController {
     // TODO error handling if the game is not found
     CoincheGame game = this.repository.getGame(gameId);
 
-    this.template.convertAndSend(
-        getTopicPath(gameId, username), new RoundStartedEvent(game.getPlayer(username).getCards()));
-
-    this.template.convertAndSend(
-        getTopicPath(gameId, username), new RoundPhaseStartedEvent(game.getCurrentRoundPhase()));
+    notifyPlayerRoundStarted(gameId, game.getPlayer(username));
 
     this.notifyPlayerTurnStarted(gameId, username);
   }
@@ -191,8 +202,7 @@ public class GameController {
     }
 
     if (game.getCurrentRoundPhase() == CoincheGame.Phase.BIDDING) {
-      this.template.convertAndSend(
-          getBroadcastTopicPath(gameId), new RoundPhaseStartedEvent(game.getCurrentRoundPhase()));
+      notifyPlayersRoundStarted(gameId, game);
     }
 
     this.notifyPlayerTurnStarted(gameId, game.getCurrentRound().getCurrentPlayer().getUsername());
