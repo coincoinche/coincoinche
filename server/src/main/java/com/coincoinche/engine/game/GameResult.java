@@ -58,4 +58,20 @@ public class GameResult<T> {
     }
     return winnerTeam;
   }
+
+  @Override
+  public String toString() {
+    StringBuffer prettyString = new StringBuffer();
+    if (finished) {
+      prettyString.append("Finished");
+    } else {
+      prettyString.append("Unfinished");
+    }
+    if (draw) {
+      prettyString.append(" (draw)");
+    }
+    prettyString.append(": ");
+    prettyString.append(teamsPoints);
+    return prettyString.toString();
+  }
 }
