@@ -1,9 +1,5 @@
-package com.coincoinche.engine;
+package com.coincoinche.engine.cards;
 
-import com.coincoinche.engine.cards.Card;
-import com.coincoinche.engine.cards.Suit;
-import com.coincoinche.engine.cards.ValuedCard;
-import com.coincoinche.engine.cards.ValuedCardComparator;
 import com.coincoinche.engine.teams.Player;
 import java.util.ArrayList;
 import java.util.List;

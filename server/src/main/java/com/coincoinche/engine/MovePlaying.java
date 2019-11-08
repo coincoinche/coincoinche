@@ -1,6 +1,7 @@
 package com.coincoinche.engine;
 
 import com.coincoinche.engine.cards.Card;
+import com.coincoinche.engine.cards.Trick;
 import com.coincoinche.engine.teams.Player;
 import com.coincoinche.events.CardPlayedEvent;
 import com.fasterxml.jackson.annotation.JsonValue;

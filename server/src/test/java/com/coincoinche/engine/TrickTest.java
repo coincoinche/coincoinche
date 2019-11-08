@@ -3,6 +3,7 @@ package com.coincoinche.engine;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.coincoinche.engine.cards.Suit;
+import com.coincoinche.engine.cards.Trick;
 import com.coincoinche.engine.cards.ValuedCard;
 import com.coincoinche.engine.teams.Player;
 import java.util.ArrayList;

@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 import com.coincoinche.engine.cards.Suit;
+import com.coincoinche.engine.cards.Trick;
 import com.coincoinche.engine.cards.ValuedCard;
 import com.coincoinche.engine.contracts.Contract;
 import com.coincoinche.engine.contracts.ContractFactory;

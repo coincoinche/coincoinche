@@ -4,6 +4,7 @@ import static com.coincoinche.engine.CoincheGame.MAX_TRICKS_POINTS;
 
 import com.coincoinche.engine.cards.Card;
 import com.coincoinche.engine.cards.Suit;
+import com.coincoinche.engine.cards.Trick;
 import com.coincoinche.engine.cards.ValuedCard;
 import com.coincoinche.engine.cards.ValuedCardComparator;
 import com.coincoinche.engine.contracts.Contract;

@@ -3,6 +3,7 @@ package com.coincoinche.engine;
 import com.coincoinche.engine.cards.Card;
 import com.coincoinche.engine.cards.Rank;
 import com.coincoinche.engine.cards.Suit;
+import com.coincoinche.engine.cards.Trick;
 import com.coincoinche.engine.teams.Player;
 import com.coincoinche.engine.teams.Team;
 import java.util.HashMap;
