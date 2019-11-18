@@ -1,10 +1,11 @@
 package com.coincoinche.engine;
 
 import com.coincoinche.engine.contracts.Contract;
-import com.coincoinche.engine.contracts.ContractFactory;
+import com.coincoinche.engine.serialization.json.MoveBiddingDeserializer;
+import com.coincoinche.engine.serialization.json.MoveBiddingSerializer;
 import com.coincoinche.engine.teams.Player;
-import com.coincoinche.events.PlayerBadeEvent;
-import com.fasterxml.jackson.annotation.JsonValue;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import java.util.List;
 
 /**
@@ -17,12 +18,20 @@ import java.util.List;
  *   <li>a contract higher than the previous one
  * </ul>
  */
+@JsonSerialize(using = MoveBiddingSerializer.class)
+@JsonDeserialize(using = MoveBiddingDeserializer.class)
 public class MoveBidding extends Move implements Comparable<MoveBidding> {
 
   public enum Special {
-    PASS,
-    COINCHE,
-    SURCOINCHE;
+    PASS("pass"),
+    COINCHE("coinche"),
+    SURCOINCHE("surcoinche");
+
+    private final String shortName;
+
+    private Special(String shortName) {
+      this.shortName = shortName;
+    }
   }
 
   private Contract contract;
@@ -68,35 +77,6 @@ public class MoveBidding extends Move implements Comparable<MoveBidding> {
    */
   public static MoveBidding surcoincheMove() {
     return new MoveBidding(null, Special.SURCOINCHE);
-  }
-
-  /**
-   * Create a bidding move from a PlayerBade event.
-   *
-   * @param event - player bade event from the client.
-   * @return the newly constructed bidding move.
-   */
-  public static MoveBidding fromEvent(PlayerBadeEvent event) {
-    Special special = event.getSpecial();
-    if (special == null) {
-      try {
-        Contract contract = ContractFactory.createContract(event.getValue(), event.getSuit());
-        return contractMove(contract);
-      } catch (IllegalArgumentException e) {
-        return passMove();
-      }
-    }
-
-    switch (special) {
-      case PASS:
-        return passMove();
-      case COINCHE:
-        return coincheMove();
-      case SURCOINCHE:
-        return surcoincheMove();
-      default:
-        throw new IllegalArgumentException("Invalid special move.");
-    }
   }
 
   @Override
@@ -197,33 +177,18 @@ public class MoveBidding extends Move implements Comparable<MoveBidding> {
   }
 
   @Override
+  public String getShortName() {
+    if (specialMove != null) {
+      return specialMove.shortName;
+    }
+    return contract.getShortName();
+  }
+
+  @Override
   public String toString() {
     if (specialMove != null) {
       return specialMove.toString();
     }
     return contract.toString();
-  }
-
-  /**
-   * Defines the json serialisation for MoveBidding instances.
-   *
-   * @return a json representation of the bidding move.
-   */
-  @JsonValue
-  @Override
-  public String toJson() {
-    String specialMoveJsonTemplate = "{\"moveType\":\"%s\", \"special\":\"%s\"}";
-
-    if (isCoinche()) {
-      return String.format(specialMoveJsonTemplate, MoveType.SPECIAL_BIDDING, Special.COINCHE);
-    }
-    if (isSurcoinche()) {
-      return String.format(specialMoveJsonTemplate, MoveType.SPECIAL_BIDDING, Special.SURCOINCHE);
-    }
-    if (isPass()) {
-      return String.format(specialMoveJsonTemplate, MoveType.SPECIAL_BIDDING, Special.PASS);
-    }
-
-    return getContract().toJson();
   }
 }

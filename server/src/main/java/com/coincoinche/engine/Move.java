@@ -3,7 +3,6 @@ package com.coincoinche.engine;
 import com.coincoinche.engine.game.GameResult;
 import com.coincoinche.engine.teams.Player;
 import com.coincoinche.engine.teams.Team;
-import com.fasterxml.jackson.annotation.JsonValue;
 
 /** Move represents a move which can be applied on a game. */
 public abstract class Move {
@@ -35,11 +34,5 @@ public abstract class Move {
   protected abstract void applyOnRoundState(GameState state, Player player)
       throws IllegalMoveException;
 
-  /**
-   * Defines the json serialisation for Move instances.
-   *
-   * @return a json representation of the move.
-   */
-  @JsonValue
-  public abstract String toJson();
+  public abstract String getShortName();
 }
