@@ -20,7 +20,7 @@ const Card = styled.img`
   width: 100px;
   height: 150px;
   border-radius: 10px;
-  border: ${({highlightBorder}: Props) => highlightBorder ? '3px solid green' : ''};
+  border: ${({highlightBorder}: Props) => highlightBorder ? '3px solid red' : ''};
   transform: ${
     ({rotationDegrees, translationX, translationY, scale}: Props) => getTransformationCSS(rotationDegrees, translationX, translationY, scale)};
   &:hover {

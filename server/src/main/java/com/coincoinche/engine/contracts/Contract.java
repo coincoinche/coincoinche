@@ -1,10 +1,8 @@
 package com.coincoinche.engine.contracts;
 
 import com.coincoinche.engine.GameStatePlaying;
-import com.coincoinche.engine.MoveType;
 import com.coincoinche.engine.cards.Suit;
 import com.coincoinche.engine.teams.Player;
-import com.fasterxml.jackson.annotation.JsonValue;
 
 /** Abstract class for contracts. */
 public abstract class Contract {
@@ -16,7 +14,7 @@ public abstract class Contract {
 
   public abstract int getEarnedPoints();
 
-  public abstract String getShortName();
+  public abstract String getValueShortName();
 
   /**
    * Check if the contract is strictly higher than the other contract.
@@ -79,6 +77,10 @@ public abstract class Contract {
     this.player = player;
   }
 
+  public String getShortName() {
+    return String.format("%s%s", getValueShortName(), suit.getShortName());
+  }
+
   @Override
   public String toString() {
     StringBuffer prettyString = new StringBuffer();
@@ -87,19 +89,6 @@ public abstract class Contract {
       prettyString.append(":");
     }
     prettyString.append(getShortName());
-    prettyString.append(suit.toString());
     return prettyString.toString();
-  }
-
-  /**
-   * Defines the json serialisation for Contract instances.
-   *
-   * @return a json representation of the contract object.
-   */
-  @JsonValue
-  public String toJson() {
-    return String.format(
-        "{\"moveType\":\"%s\", \"value\":%s,\"suit\":\"%s\"}",
-        MoveType.CONTRACT_BIDDING, getEarnedPoints(), suit);
   }
 }

@@ -12,25 +12,11 @@ import java.util.Map.Entry;
 /** Implementation of a coinche game. */
 public class CoincheGame extends RedBlueRotatingPlayersGame<Player> {
 
-  public enum Phase {
-    BIDDING("BIDDING"),
-    MAIN("MAIN");
-
-    private String name;
-
-    Phase(String name) {
-      this.name = name;
-    }
-
-    public String getName() {
-      return name;
-    }
-  }
-
   public static final int MAX_TRICKS_POINTS = 162;
   private static final int WINNING_POINTS = 1000;
   // TODO nockty: consider DI for this
   private CoincheGameRound currentRound;
+  private boolean newRound = false;
 
   public CoincheGame(Team redTeam, Team blueTeam) {
     super(redTeam, blueTeam);
@@ -40,6 +26,7 @@ public class CoincheGame extends RedBlueRotatingPlayersGame<Player> {
   GameResult<Team> moveWasApplied() {
     GameResult<Team> result = currentRound.moveWasApplied();
     if (!result.isFinished()) {
+      newRound = false;
       return GameResult.unfinishedResult();
     }
     if (result.isDraw()) {
@@ -71,6 +58,7 @@ public class CoincheGame extends RedBlueRotatingPlayersGame<Player> {
   }
 
   private void startNextRound() {
+    newRound = true;
     rotatePlayers();
     initializeGameRound();
   }
@@ -90,6 +78,10 @@ public class CoincheGame extends RedBlueRotatingPlayersGame<Player> {
 
   public CoincheGameRound getCurrentRound() {
     return currentRound;
+  }
+
+  public boolean isNewRound() {
+    return newRound;
   }
 
   void setCurrentRound(CoincheGameRound currentRound) {
@@ -116,17 +108,5 @@ public class CoincheGame extends RedBlueRotatingPlayersGame<Player> {
     }
 
     throw new IllegalArgumentException("Player not found with this username");
-  }
-
-  /**
-   * Get the current phase of the game, i.e. BIDDING or MAIN.
-   *
-   * @return the current phase.
-   */
-  public Phase getCurrentRoundPhase() {
-    if (this.getCurrentRound().getState() instanceof GameStateBidding) {
-      return Phase.BIDDING;
-    }
-    return Phase.MAIN;
   }
 }

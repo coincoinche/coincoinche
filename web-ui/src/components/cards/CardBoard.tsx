@@ -2,9 +2,13 @@ import React from 'react';
 import Card from "./Card";
 import Container from "../utils/Container";
 import cards, {CardValue} from "../../assets/cards";
-import {Trick} from "../../game-engine/gameStateTypes";
 
-type Props = Trick;
+type Props = {
+  top: CardValue,
+  left: CardValue,
+  right: CardValue,
+  bottom: CardValue,
+};
 
 const CardBoard = ({top, left, right, bottom}: Props) => {
   return (

@@ -30,6 +30,7 @@ public class Deck {
     Team[] teams = new Team[] {teamOne, teamTwo};
     for (Team team : teams) {
       for (Player player : team.getPlayers()) {
+        player.clearCards();
         for (int i = 0; i < 8; i++) {
           player.addCard(cards.pop());
         }

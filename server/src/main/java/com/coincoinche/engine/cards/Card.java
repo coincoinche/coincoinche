@@ -1,7 +1,5 @@
 package com.coincoinche.engine.cards;
 
-import com.fasterxml.jackson.annotation.JsonValue;
-
 /** Card represents a card, represented by a suit and a rank. */
 public class Card implements Comparable<Card> {
   private Suit suit;
@@ -35,7 +33,6 @@ public class Card implements Comparable<Card> {
     return suit;
   }
 
-  @JsonValue
   public String getShortName() {
     return rank.getShortName() + suit.getShortName();
   }
@@ -45,8 +42,9 @@ public class Card implements Comparable<Card> {
    *
    * @param shortName is the short name of the card.
    * @return the corresponding card.
+   * @throws IllegalArgumentException if the short name doesn't correspond to a card.
    */
-  public static Card valueOfByShortName(String shortName) {
+  public static Card valueOfByShortName(String shortName) throws IllegalArgumentException {
     char rankChar = shortName.charAt(0);
     char suitChar = shortName.charAt(1);
     Rank rank = Rank.valueOfByShortName(String.valueOf(rankChar));

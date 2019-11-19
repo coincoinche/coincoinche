@@ -3,25 +3,17 @@ package com.coincoinche.websockets.controllers;
 import com.coincoinche.engine.CoincheGame;
 import com.coincoinche.engine.IllegalMoveException;
 import com.coincoinche.engine.Move;
-import com.coincoinche.engine.MoveBidding;
-import com.coincoinche.engine.MovePlaying;
+import com.coincoinche.engine.MoveFactory;
 import com.coincoinche.engine.game.GameResult;
 import com.coincoinche.engine.teams.Player;
 import com.coincoinche.engine.teams.Team;
-import com.coincoinche.events.BiddingTurnStartedEvent;
-import com.coincoinche.events.CardPlayedEvent;
-import com.coincoinche.events.Event;
-import com.coincoinche.events.EventType;
-import com.coincoinche.events.GameFinishedEvent;
-import com.coincoinche.events.PlayerBadeEvent;
-import com.coincoinche.events.PlayingTurnStartedEvent;
-import com.coincoinche.events.RoundPhaseStartedEvent;
-import com.coincoinche.events.RoundStartedEvent;
-import com.coincoinche.events.TurnStartedEvent;
 import com.coincoinche.ratingplayer.EloService;
 import com.coincoinche.repositories.GameRepository;
 import com.coincoinche.repositories.InMemoryGameRepository;
+import com.coincoinche.websockets.messages.GameFinishedMessage;
+import com.coincoinche.websockets.messages.NewStateMessage;
 import java.util.List;
+import java.util.Random;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,191 +27,14 @@ import org.springframework.stereotype.Controller;
 public class GameController {
   private static final Logger logger = LoggerFactory.getLogger(GameController.class);
 
+  private static final String INDIVIDUAL_TOPIC_PATH = "/topic/game/%s/player/%s";
+
   @Autowired private SimpMessagingTemplate template;
   @Autowired private EloService eloService;
   private GameRepository repository;
 
-  public EloService getEloService() {
-    return eloService;
-  }
-
   public GameController() {
     this.repository = new InMemoryGameRepository();
-  }
-
-  private String getTopicPath(String gameId, String username) {
-    return String.format("/topic/game/%s/player/%s", gameId, username);
-  }
-
-  private String getBroadcastTopicPath(String gameId) {
-    return String.format("/topic/game/%s", gameId);
-  }
-
-  private void notifyPlayerTurnStarted(String gameId, String username) {
-    CoincheGame game = this.repository.getGame(gameId);
-    int newPlayerIndex = game.getCurrentRound().getCurrentPlayerIndex();
-
-    if (username.equals(game.getCurrentRound().getCurrentPlayer().getUsername())) {
-      List<Move> legalMoves = game.getCurrentRound().getLegalMoves();
-      String[] authorisedPlaysJson = new String[legalMoves.size()];
-      for (int i = 0; i < legalMoves.size(); i++) {
-        authorisedPlaysJson[i] = legalMoves.get(i).toJson();
-      }
-      TurnStartedEvent eventForNextPlayer;
-      TurnStartedEvent eventForOtherPlayers;
-      if (game.getCurrentRoundPhase() == CoincheGame.Phase.BIDDING) {
-        eventForNextPlayer = new BiddingTurnStartedEvent(authorisedPlaysJson, newPlayerIndex);
-        eventForOtherPlayers = new BiddingTurnStartedEvent(new String[0], newPlayerIndex);
-      } else {
-        eventForNextPlayer = new PlayingTurnStartedEvent(authorisedPlaysJson, newPlayerIndex);
-        eventForOtherPlayers = new PlayingTurnStartedEvent(new String[0], newPlayerIndex);
-      }
-
-      // send the authorised plays to the next player.
-      this.template.convertAndSend(getTopicPath(gameId, username), eventForNextPlayer);
-
-      // signal to the other players who is currently playing.
-      List<Player> players = game.getPlayers();
-      for (Player player : players) {
-        if (!player.getUsername().equals(username)) {
-          this.template.convertAndSend(
-              getTopicPath(gameId, player.getUsername()), eventForOtherPlayers);
-        }
-      }
-    }
-  }
-
-  private void notifyPlayersRoundStarted(String gameId, CoincheGame game) {
-    for (Player player : game.getPlayers()) {
-      notifyPlayerRoundStarted(gameId, player);
-    }
-  }
-
-  private void notifyPlayerRoundStarted(String gameId, Player player) {
-    this.template.convertAndSend(
-        getTopicPath(gameId, player.getUsername()), new RoundStartedEvent(player.getCards()));
-
-    this.template.convertAndSend(
-        getTopicPath(gameId, player.getUsername()),
-        new RoundPhaseStartedEvent(CoincheGame.Phase.BIDDING));
-  }
-
-  /**
-   * To be called after the client loaded the game. Send its hand to the player.
-   *
-   * @param gameId - id of the game
-   * @param username - username of the player
-   */
-  @MessageMapping("/game/{gameId}/player/{username}/ready")
-  public void getNewHandForRound(
-      @DestinationVariable String gameId, @DestinationVariable String username) {
-    // TODO error handling if the game is not found
-    CoincheGame game = this.repository.getGame(gameId);
-
-    notifyPlayerRoundStarted(gameId, game.getPlayer(username));
-
-    this.notifyPlayerTurnStarted(gameId, username);
-  }
-
-  /**
-   * To be called by the client when the player bids.
-   *
-   * @param gameId - id of the game
-   * @param username - username of the player
-   */
-  @MessageMapping("/game/{gameId}/player/{username}/bid")
-  public void makeBid(
-      @DestinationVariable String gameId,
-      @DestinationVariable String username,
-      @Payload PlayerBadeEvent event) {
-    CoincheGame game = this.repository.getGame(gameId);
-    MoveBidding move = MoveBidding.fromEvent(event);
-    int playerIndex = game.getCurrentRound().getCurrentPlayerIndex();
-    try {
-      move.applyOnGame(game);
-      this.template.convertAndSend(getBroadcastTopicPath(gameId), event);
-    } catch (IllegalMoveException e) {
-      e.printStackTrace();
-      this.template.convertAndSend(
-          getTopicPath(gameId, username), new Event(EventType.INVALID_MESSAGE));
-
-      try {
-        // make the player pass if the bidding move is invalid.
-        MoveBidding.passMove().applyOnGame(game);
-        this.template.convertAndSend(
-            getBroadcastTopicPath(gameId),
-            new PlayerBadeEvent(playerIndex, MoveBidding.Special.PASS));
-      } catch (IllegalMoveException illegalPassMoveException) {
-        illegalPassMoveException.printStackTrace();
-      }
-    }
-
-    if (game.getCurrentRoundPhase() == CoincheGame.Phase.MAIN) {
-      this.template.convertAndSend(
-          getBroadcastTopicPath(gameId), new RoundPhaseStartedEvent(game.getCurrentRoundPhase()));
-    }
-
-    this.notifyPlayerTurnStarted(gameId, game.getCurrentRound().getCurrentPlayer().getUsername());
-  }
-
-  /**
-   * To be called by the client when the player plays a card.
-   *
-   * @param gameId - id of the game
-   * @param username - username of the player
-   */
-  @MessageMapping("/game/{gameId}/player/{username}/play")
-  public void playCard(
-      @DestinationVariable String gameId,
-      @DestinationVariable String username,
-      @Payload CardPlayedEvent event) {
-    CoincheGame game = this.repository.getGame(gameId);
-    MovePlaying move = MovePlaying.fromEvent(event);
-    int playerIndex = game.getCurrentRound().getCurrentPlayerIndex();
-
-    try {
-      GameResult<Team> result = move.applyOnGame(game);
-      this.template.convertAndSend(getBroadcastTopicPath(gameId), event);
-
-      if (result.isFinished()) {
-        logger.info(String.format("Game finished: %s", result));
-        Team winnerTeam = result.getWinnerTeam();
-        Team loserTeam = result.getLoserTeam();
-        eloService.updateRatings(winnerTeam, loserTeam);
-        for (Player player : game.getPlayers()) {
-          if (winnerTeam.getPlayers().contains(player)) {
-            this.template.convertAndSend(
-                getTopicPath(gameId, player.getUsername()), new GameFinishedEvent(true));
-          } else {
-            this.template.convertAndSend(
-                getTopicPath(gameId, player.getUsername()), new GameFinishedEvent(false));
-          }
-        }
-      }
-
-    } catch (IllegalMoveException e) {
-      e.printStackTrace();
-      this.template.convertAndSend(
-          getTopicPath(gameId, username), new Event(EventType.INVALID_MESSAGE));
-
-      try {
-        // make the player play the first authorised card
-        Move firstLegalMove = game.getCurrentRound().getLegalMoves().get(0);
-        firstLegalMove.applyOnGame(game);
-
-        this.template.convertAndSend(
-            getBroadcastTopicPath(gameId),
-            new CardPlayedEvent(playerIndex, firstLegalMove.toJson()));
-      } catch (IllegalMoveException illegalPassMoveException) {
-        illegalPassMoveException.printStackTrace();
-      }
-    }
-
-    if (game.getCurrentRoundPhase() == CoincheGame.Phase.BIDDING) {
-      notifyPlayersRoundStarted(gameId, game);
-    }
-
-    this.notifyPlayerTurnStarted(gameId, game.getCurrentRound().getCurrentPlayer().getUsername());
   }
 
   /**
@@ -230,5 +45,107 @@ public class GameController {
    */
   public void registerNewGame(String gameId, CoincheGame game) {
     this.repository.saveGame(gameId, game);
+  }
+
+  private String getIndividualTopicPath(String gameId, String username) {
+    return String.format(INDIVIDUAL_TOPIC_PATH, gameId, username);
+  }
+
+  private void pushStateToPlayer(String gameId, CoincheGame game, Player player) {
+    NewStateMessage message = new NewStateMessage(game, player);
+    this.template.convertAndSend(getIndividualTopicPath(gameId, player.getUsername()), message);
+  }
+
+  private void pushStateToAllPlayers(String gameId, CoincheGame game) {
+    logger.debug("Game %s: pushing new state to all players", gameId);
+    for (Player player : game.getPlayers()) {
+      pushStateToPlayer(gameId, game, player);
+    }
+  }
+
+  /**
+   * Notify the client is ready. Send the state of the game to the player.
+   *
+   * @param gameId is the id of the game.
+   * @param username is the username of the player.
+   */
+  @MessageMapping("/game/{gameId}/player/{username}/ready")
+  public void getFirstGameState(
+      @DestinationVariable String gameId, @DestinationVariable String username) {
+    logger.debug("Game %s: received event READY by user %s", gameId, username);
+    // TODO error handling if the game is not found
+    CoincheGame game = this.repository.getGame(gameId);
+    try {
+      Player player = game.getPlayer(username);
+      pushStateToPlayer(gameId, game, player);
+    } catch (IllegalArgumentException e) {
+      logger.error("%s: player %s not found in game %s", e, username, gameId);
+      e.printStackTrace();
+    }
+  }
+
+  /**
+   * Route for making a move on the game.
+   *
+   * @param gameId is the id of the game.
+   * @param username is the user making the move.
+   * @param jsonMove is the JSON representation of the move being made.
+   */
+  @MessageMapping("/game/{gameId}/player/{username}/move")
+  public void move(
+      @DestinationVariable String gameId,
+      @DestinationVariable String username,
+      @Payload String jsonMove) {
+    // TODO nockty: check that the move comes from the current player!
+    logger.debug("Game %s User %s: received move %s", gameId, username, jsonMove);
+    CoincheGame game = repository.getGame(gameId);
+    // create legal move
+    logger.debug("create legal move");
+    Move move;
+    try {
+      move = MoveFactory.createMove(jsonMove);
+    } catch (IllegalMoveException e) {
+      // if the move is illegal, get a random legal move instead
+      logger.warn("Game %s: %s sent an illegal move: %s", gameId, username, jsonMove);
+      List<Move> legalMoves = game.getCurrentRound().getLegalMoves();
+      move = legalMoves.get(new Random().nextInt(legalMoves.size()));
+    }
+    // apply it on game
+    logger.debug("apply move on game");
+    try {
+      GameResult<Team> result = move.applyOnGame(game);
+      if (result.isFinished()) {
+        logger.debug("game is finished");
+        terminateGame(gameId, game, result);
+        return;
+      }
+      if (game.isNewRound()) {
+        logger.debug("new round");
+        pushStateToAllPlayers(gameId, game);
+        return;
+      }
+      logger.debug("round continues");
+      pushStateToAllPlayers(gameId, game);
+    } catch (IllegalMoveException e) {
+      // should never happen
+      logger.error("Inconsistent error: legal move is illegal: %s", move);
+      e.printStackTrace();
+    }
+  }
+
+  private void terminateGame(String gameId, CoincheGame game, GameResult<Team> result) {
+    logger.info(String.format("Game finished: %s", result));
+    Team winnerTeam = result.getWinnerTeam();
+    Team loserTeam = result.getLoserTeam();
+    eloService.updateRatings(winnerTeam, loserTeam);
+    for (Player player : game.getPlayers()) {
+      if (winnerTeam.getPlayers().contains(player)) {
+        this.template.convertAndSend(
+            getIndividualTopicPath(gameId, player.getUsername()), new GameFinishedMessage(true));
+      } else {
+        this.template.convertAndSend(
+            getIndividualTopicPath(gameId, player.getUsername()), new GameFinishedMessage(false));
+      }
+    }
   }
 }

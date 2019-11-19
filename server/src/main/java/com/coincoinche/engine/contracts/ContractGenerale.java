@@ -25,7 +25,7 @@ public class ContractGenerale extends Contract {
   }
 
   @Override
-  public String getShortName() {
-    return "GEN";
+  public String getValueShortName() {
+    return String.valueOf(GENERALE_VALUE);
   }
 }

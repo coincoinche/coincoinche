@@ -4,11 +4,14 @@ import static com.coincoinche.engine.CoincheGame.MAX_TRICKS_POINTS;
 
 import com.coincoinche.engine.cards.Card;
 import com.coincoinche.engine.cards.Suit;
+import com.coincoinche.engine.cards.Trick;
 import com.coincoinche.engine.cards.ValuedCard;
 import com.coincoinche.engine.cards.ValuedCardComparator;
 import com.coincoinche.engine.contracts.Contract;
+import com.coincoinche.engine.serialization.json.GameStatePlayingSerializer;
 import com.coincoinche.engine.teams.Player;
 import com.coincoinche.engine.teams.Team;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -22,6 +25,7 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 /** TODO nockty add detailed documentation here. */
+@JsonSerialize(using = GameStatePlayingSerializer.class)
 public class GameStatePlaying implements GameStateTerminal {
   private static final int MAX_TRICK_NUMBER = 8;
   private int currentTrickNumber;
@@ -221,6 +225,14 @@ public class GameStatePlaying implements GameStateTerminal {
 
   public Trick getCurrentTrick() {
     return currentTrick;
+  }
+
+  public Contract getContract() {
+    return contract;
+  }
+
+  public int getMultiplier() {
+    return multiplier;
   }
 
   /**

@@ -1,5 +1,10 @@
 import {CardValue} from "../assets/cards";
-import {MoveType} from "../websocket/events/types";
+import {MoveType} from "../websocket/messages/types";
+
+export type Player = {
+  username: string,
+  rating: number
+}
 
 export enum Position {
   top = 'top',
@@ -13,15 +18,15 @@ export type UsernamesByPosition = {
 };
 
 export enum GameRoundPhase {
-  BIDDING = 'BIDDING',
-  MAIN = 'MAIN',
+  BIDDING = 'bidding',
+  MAIN = 'main',
 }
 
 export type Trick = {
-  [Position.top]?: CardValue;
-  [Position.left]?: CardValue;
-  [Position.right]?: CardValue;
-  [Position.bottom]?: CardValue;
+  no: number,
+  cards: {
+    [username: string]: CardValue
+  }
 };
 
 export enum SpecialBidding {
@@ -42,39 +47,34 @@ export type SpecialBiddingMove = {
   bidding: SpecialBidding,
 }
 
-export enum ContractValue {
-  EIGHTY = '80',
-  NINETY = '90',
-  HUNDRED = '100',
-  HUNDRED_TEN = '110',
-  HUNDRED_TWENTY = '120',
-  HUNDRED_THIRTY = '130',
-  HUNDRED_FOURTY = '140',
-  HUNDRED_FIFTY = '150',
-  HUNDRED_SIXTY = '160',
-  CAPOT = '250',
-  GENERALE = '500',
-}
-
 export type ContractBiddingMove = {
   moveType: MoveType.CONTRACT_BIDDING,
-  value: ContractValue,
-  suit: Suit,
+  contract: Contract,
 }
 
 export type LegalBiddingMove = SpecialBiddingMove | ContractBiddingMove;
 
+export type LegalPlayingMove = {
+  card: CardValue
+}
+
+export type Contract = {
+  owner?: string,
+  suit: Suit,
+  value: number
+}
+
 export type GameState = {
-  usernames: string[]
-  usernamesByPosition: UsernamesByPosition;
-  currentPlayer: Position;
-  cardsInHand: CardValue[];
+  users: Player[],
+  usernamesByPosition: UsernamesByPosition,
+  currentPlayer: Position,
+  cards: {
+    [username: string]: CardValue[]
+  },
 
-  currentPhase: GameRoundPhase;
-  currentlySelectedContract: Partial<LegalBiddingMove> | null;
-  lastBiddingContract: Partial<LegalBiddingMove>;
-  legalBiddingMoves: LegalBiddingMove[];
-
+  currentPhase: GameRoundPhase,
+  currentlySelectedContract: Partial<LegalBiddingMove> | null,
+  highestBidding?: Contract,
+  legalMoves: LegalBiddingMove[] | LegalPlayingMove[];
   currentTrick: Trick;
-  legalPlayingMoves: CardValue[];
 };

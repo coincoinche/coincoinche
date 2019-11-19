@@ -16,8 +16,9 @@ public class DataSourceConfig {
   private static final Logger logger = LoggerFactory.getLogger(DataSourceConfig.class);
 
   /**
-   * Programmatically configure a connection to the Heroku Postgres database.
-   * This is only avaiable for the heroku application profile.
+   * Programmatically configure a connection to the Heroku Postgres database. This is only available
+   * for the heroku application profile.
+   *
    * @return the datasource used for the connection.
    */
   @Bean

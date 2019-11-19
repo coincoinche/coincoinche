@@ -1,15 +1,20 @@
 package com.coincoinche.engine;
 
 import com.coincoinche.engine.cards.Card;
+import com.coincoinche.engine.cards.Trick;
+import com.coincoinche.engine.serialization.json.MovePlayingDeserializer;
+import com.coincoinche.engine.serialization.json.MovePlayingSerializer;
 import com.coincoinche.engine.teams.Player;
-import com.coincoinche.events.CardPlayedEvent;
-import com.fasterxml.jackson.annotation.JsonValue;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import java.util.List;
 
 /**
  * MovePlaying represents a move during the playing phase of the game. It is basically a card
  * belonging to a player's hand.
  */
+@JsonSerialize(using = MovePlayingSerializer.class)
+@JsonDeserialize(using = MovePlayingDeserializer.class)
 public class MovePlaying extends Move implements Comparable<MovePlaying> {
 
   private Card card;
@@ -68,23 +73,12 @@ public class MovePlaying extends Move implements Comparable<MovePlaying> {
   }
 
   @Override
-  public String toString() {
-    return card.toString();
+  public String getShortName() {
+    return card.getShortName();
   }
 
   @Override
-  @JsonValue
-  public String toJson() {
-    return this.card.getShortName();
-  }
-
-  /**
-   * Create a playing move from a CardPlayedEvent event.
-   *
-   * @param event - card played event from the client.
-   * @return the newly constructed bidding move.
-   */
-  public static MovePlaying fromEvent(CardPlayedEvent event) {
-    return cardMove(Card.valueOfByShortName(event.getCard()));
+  public String toString() {
+    return card.toString();
   }
 }

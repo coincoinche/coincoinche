@@ -36,7 +36,7 @@ public class ContractPoints extends Contract {
   }
 
   @Override
-  public String getShortName() {
+  public String getValueShortName() {
     return String.valueOf(value);
   }
 

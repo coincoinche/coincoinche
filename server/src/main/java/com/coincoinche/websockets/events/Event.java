@@ -1,6 +1,8 @@
-package com.coincoinche.events;
+package com.coincoinche.websockets.events;
 
+/** Event represents a message sent from the client via websocket. */
 public class Event {
+
   protected EventType type;
 
   public Event() {}

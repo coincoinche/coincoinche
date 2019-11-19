@@ -1,5 +1,5 @@
 import * as React from "react";
-import { EventType, SocketMessage } from "./events/types";
+import { MessageType, SocketMessage } from "./messages/types";
 import { API_BASE_URL } from '../constants';
 
 const Stomp = require('stompjs');
@@ -7,7 +7,7 @@ const SockJS = require('sockjs-client');
 
 export type InjectedProps = {
   sendMessage: (socketEndpoint: string, message: SocketMessage) => void;
-  registerOnMessageReceivedCallback: (topic: string, messageType: EventType, callback: MessageCallback) => void;
+  registerOnMessageReceivedCallback: (topic: string, messageType: MessageType, callback: MessageCallback) => void;
   socketConnected: boolean;
   subscribe: (topic: string) => void;
 }
@@ -21,7 +21,7 @@ type MessageCallback = (message: SocketMessage & any) => void;
 type State = {
   callbacks: {
     [topic: string]: {
-      [k in EventType]?: MessageCallback;
+      [k in MessageType]?: MessageCallback;
     };
   }
   socketConnected: boolean;
@@ -43,15 +43,16 @@ function withWebsocketConnection<BaseProps>(WrappedComponent: React.ComponentTyp
       const parsedMessage: SocketMessage = JSON.parse(message.body);
       console.log("onMessageReceived", parsedMessage);
       // @ts-ignore
-      if (!!this.state.callbacks[topic] && !!this.state.callbacks[topic][parsedMessage.type]) {
+      if (!!this.state.callbacks[topic] && !!this.state.callbacks[topic][parsedMessage.message]) {
+        console.log("running message callback");
         // @ts-ignore
-        this.state.callbacks[topic][parsedMessage.type](parsedMessage);
+        this.state.callbacks[topic][parsedMessage.message](parsedMessage);
       }
     };
 
     registerCallback = (
       topic: string,
-      messageType: EventType,
+      messageType: MessageType,
       callback: MessageCallback,
     ) => {
       this.setState(prevState => ({

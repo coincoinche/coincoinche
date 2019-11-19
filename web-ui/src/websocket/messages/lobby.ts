@@ -1,6 +1,6 @@
-import {EventType} from "./types";
+import {MessageType} from "./types";
 
 export const makeJoinLobbyMessage = (username: string) => ({
-  type: EventType.JOIN_LOBBY,
+  message: MessageType.JOIN_LOBBY,
   username
 });
