@@ -24,7 +24,7 @@ public class GameEngineTestHelper {
   protected CoincheGame coincheGame;
 
   public abstract static class TestCase {
-    private String name;
+    protected String name;
 
     protected TestCase(String name) {
       this.name = name;
