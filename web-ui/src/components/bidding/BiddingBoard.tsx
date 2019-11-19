@@ -3,19 +3,19 @@ import styled from "styled-components";
 import ValueSelector from "./ValueSelector";
 import Container from "../utils/Container";
 import SuitSelector from "./SuitSelector";
-import {ContractValue, LegalBiddingMove, SpecialBidding, Suit} from "../../game-engine/gameStateTypes";
-import {MoveType} from "../../websocket/events/types";
+import {LegalBiddingMove, SpecialBidding, Suit} from "../../game-engine/gameStateTypes";
+import { MoveType } from '../../websocket/messages/types';
 
-const getDisplayedValue = (value: ContractValue) => {
-  if (value === ContractValue.CAPOT) {
+const getDisplayedValue = (value: number): string => {
+  if (value === 250) {
     return 'CAPOT';
   }
 
-  if (value === ContractValue.GENERALE) {
+  if (value === 500) {
     return 'GENERALE';
   }
 
-  return value;
+  return value.toString();
 };
 
 const ValuesGroup = styled.div`
@@ -38,15 +38,14 @@ const Separator = styled.div`
 `;
 
 type Props = {
-  authorisedContractValues: ContractValue[];
+  authorisedContractValues: number[];
   authorisedSpecialBiddings: SpecialBidding[];
   authorisedContractSuits: Suit[];
-  lastContract: Partial<LegalBiddingMove>;
   onContractPicked: (contract: LegalBiddingMove) => void;
 };
 
 type State = {
-  selectedValue: ContractValue | null;
+  selectedValue: number | null;
   selectedSuit: Suit | null;
   selectedSpecialBidding: SpecialBidding | null;
 }
@@ -58,7 +57,7 @@ export default class BiddingBoard extends React.Component<Props, State> {
     selectedSpecialBidding: null,
   };
 
-  onValueClicked = (value: ContractValue) => {
+  onValueClicked = (value: number) => {
     this.setState({
       selectedValue: value,
       selectedSpecialBidding: null,
@@ -104,8 +103,10 @@ export default class BiddingBoard extends React.Component<Props, State> {
     if ((prevSelectedSuit === null || prevSelectedValue === null) && (selectedSuit !== null && selectedValue !== null)) {
       this.props.onContractPicked({
         moveType: MoveType.CONTRACT_BIDDING,
-        value: selectedValue!,
-        suit: selectedSuit!,
+        contract: {
+          value: selectedValue!,
+          suit: selectedSuit!
+        }
       });
       this.setState({
         selectedValue: null,
@@ -116,22 +117,11 @@ export default class BiddingBoard extends React.Component<Props, State> {
   }
 
   render() {
-    const { authorisedContractValues, authorisedSpecialBiddings, authorisedContractSuits, lastContract } = this.props;
-    const contractValues = Object.values(ContractValue);
+    const { authorisedContractSuits, authorisedContractValues, authorisedSpecialBiddings } = this.props;
+
+    const contractValues = [80, 90, 100, 110, 120, 130, 140, 150, 160, 250, 500];
     const contractSuits = Object.values(Suit);
     const specialBiddings = Object.values(SpecialBidding);
-    let lastContractValue: string | undefined;
-    let lastContractSuit: string | undefined;
-    let lastContractSpecial: string | undefined;
-    if (lastContract) {
-      if (lastContract.moveType === MoveType.SPECIAL_BIDDING) {
-        lastContractSpecial = lastContract.bidding;
-      }
-      if (lastContract.moveType === MoveType.CONTRACT_BIDDING) {
-        lastContractValue = lastContract.value;
-        lastContractSuit = lastContract.suit
-      }
-    }
 
     return (
       <Container
@@ -150,13 +140,12 @@ export default class BiddingBoard extends React.Component<Props, State> {
                 .map(value => {
                   const disabled = !authorisedContractValues.includes(value);
                   const onClick = disabled ? () => {} : () => this.onValueClicked(value);
-                  const minWidth = [ContractValue.CAPOT, ContractValue.GENERALE].includes(value) ? '85px' : undefined;
+                  const minWidth = [250, 500].includes(value) ? '85px' : undefined;
 
                   return (
                     <ValueSelector
                       minWidth={minWidth}
                       key={value}
-                      selectedByOpponent={lastContractValue === value}
                       disabled={disabled}
                       onClick={onClick}
                       selectedByPlayer={this.state.selectedValue === value}
@@ -177,7 +166,6 @@ export default class BiddingBoard extends React.Component<Props, State> {
                   <SuitSelector
                     src={require(`../../assets/suits/${suit}.png`)}
                     key={suit}
-                    selectedByOpponent={lastContractSuit === suit}
                     onClick={onClick}
                     selectedByPlayer={this.state.selectedSuit === suit}
                     disabled={disabled}
@@ -192,7 +180,6 @@ export default class BiddingBoard extends React.Component<Props, State> {
           {
             specialBiddings
               .map(bidding => {
-                const selectedByOpponent = bidding === lastContractSpecial;
                 const disabled = !authorisedSpecialBiddings.includes(bidding);
                 const onClick = disabled ? () => {} : () => this.onSpecialBiddingClicked(bidding);
 
@@ -200,7 +187,6 @@ export default class BiddingBoard extends React.Component<Props, State> {
                   <ValueSelector
                     minWidth="90px"
                     key={bidding}
-                    selectedByOpponent={selectedByOpponent}
                     disabled={disabled}
                     onClick={onClick}
                     selectedByPlayer={this.state.selectedSpecialBidding === bidding}
