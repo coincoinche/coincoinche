@@ -2,12 +2,15 @@ package com.coincoinche.engine;
 
 import com.coincoinche.engine.contracts.Contract;
 import com.coincoinche.engine.contracts.ContractFactory;
+import com.coincoinche.engine.serialization.json.GameStateBiddingSerializer;
 import com.coincoinche.engine.teams.Player;
 import com.coincoinche.engine.teams.Team;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import java.util.ArrayList;
 import java.util.List;
 
 /** TODO nockty add detailed documentation here. */
+@JsonSerialize(using = GameStateBiddingSerializer.class)
 public class GameStateBidding implements GameStateTransition {
 
   private Player currentPlayer;
