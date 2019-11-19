@@ -3,6 +3,7 @@ package com.coincoinche.engine.cards;
 import com.coincoinche.engine.teams.Player;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /** Trick of the playing phase of the game. */
 public class Trick {
@@ -32,6 +33,32 @@ public class Trick {
 
   public static Trick emptyTrick(Suit trumpSuit) {
     return new Trick(trumpSuit, new ArrayList<PlayedCard>());
+  }
+
+  /**
+   * Get the trick's card of the given player.
+   *
+   * @param player is the player who played a card in the trick.
+   * @return the player's card or null if the player hasn't played a card.
+   */
+  public Card getPlayerCard(Player player) {
+    for (PlayedCard playedCard : playedCards) {
+      if (playedCard.player.equals(player)) {
+        return playedCard.card;
+      }
+    }
+    return null;
+  }
+
+  /**
+   * Get the players who played a card in the trick.
+   *
+   * @return the list of players.
+   */
+  public List<Player> getPlayers() {
+    return playedCards.stream()
+        .map(pc -> pc.player)
+        .collect(Collectors.toCollection(ArrayList::new));
   }
 
   /**
