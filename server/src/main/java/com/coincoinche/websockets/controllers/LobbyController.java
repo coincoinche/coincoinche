@@ -4,12 +4,15 @@ import com.coincoinche.MatchMaker;
 import com.coincoinche.engine.CoincheGame;
 import com.coincoinche.engine.teams.Player;
 import com.coincoinche.engine.teams.Team;
-import com.coincoinche.events.Event;
-import com.coincoinche.events.EventType;
-import com.coincoinche.events.GameStartedEvent;
-import com.coincoinche.events.PlayerJoinedLobbyEvent;
 import com.coincoinche.model.User;
+import com.coincoinche.ratingplayer.EloPlayer;
 import com.coincoinche.repositories.UserRepository;
+import com.coincoinche.websockets.events.EventType;
+import com.coincoinche.websockets.events.JoinedLobbyEvent;
+import com.coincoinche.websockets.messages.GameStartedMessage;
+import com.coincoinche.websockets.messages.InvalidEventMessage;
+import com.coincoinche.websockets.messages.Message;
+import com.coincoinche.websockets.messages.SuccessMessage;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -44,24 +47,22 @@ public class LobbyController {
    */
   @MessageMapping("/lobby/join")
   @SendTo("/topic/lobby")
-  public Event joinLobby(@Payload PlayerJoinedLobbyEvent message) {
-    logger.debug(
-        String.format(
-            "Received message %s, username %s", message.getType(), message.getUsername()));
+  public Message joinLobby(@Payload JoinedLobbyEvent event) {
+    logger.debug("Received event %s, username %s", event.getType(), event.getUsername());
 
-    if (!message.getType().equals(EventType.PLAYER_JOINED_LOBBY)) {
-      return new Event(EventType.INVALID_MESSAGE);
+    if (!event.getType().equals(EventType.JOINED_LOBBY)) {
+      return new InvalidEventMessage();
     }
 
     // Create user if not exists.
-    List<User> users = this.userRepository.findByUsername(message.getUsername());
+    List<User> users = this.userRepository.findByUsername(event.getUsername());
     if (users.size() == 0) {
-      this.userRepository.save(new User(message.getUsername()));
+      this.userRepository.save(new User(event.getUsername()));
     }
 
-    this.matchMaker.register(message.getUsername());
+    this.matchMaker.register(event.getUsername());
 
-    return new Event(EventType.SUCCESS);
+    return new SuccessMessage();
   }
 
   /**
@@ -91,7 +92,18 @@ public class LobbyController {
             .collect(Collectors.toList())
             .toArray(new String[4]);
 
-    this.template.convertAndSend("/topic/lobby", new GameStartedEvent(gameId, orderedUsernames));
+    EloPlayer[] eloPlayers = new EloPlayer[4];
+    int eloPlayerIndex = 0;
+    for (String username : orderedUsernames) {
+      List<User> users = userRepository.findByUsername(username);
+      if (users.isEmpty()) {
+        // TODO nockty handle this properly
+        throw new RuntimeException(String.format("%s user not found", username));
+      }
+      eloPlayers[eloPlayerIndex] = new EloPlayer(users.get(0));
+      eloPlayerIndex++;
+    }
+    this.template.convertAndSend("/topic/lobby", new GameStartedMessage(gameId, eloPlayers));
     this.gameController.registerNewGame(gameId, game);
   }
 }
