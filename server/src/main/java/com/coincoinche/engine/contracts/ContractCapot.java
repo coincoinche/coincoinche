@@ -26,7 +26,7 @@ public class ContractCapot extends Contract {
   }
 
   @Override
-  public String getShortName() {
-    return "CAP";
+  public String getValueShortName() {
+    return String.valueOf(CAPOT_VALUE);
   }
 }
