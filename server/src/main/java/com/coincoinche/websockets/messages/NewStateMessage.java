@@ -19,6 +19,13 @@ public class NewStateMessage extends Message {
   private CoincheGame game;
   private Player player;
 
+  /**
+   * Create a message for notifying a new game state.
+   *
+   * @param game is the global coinche game whose state is updated.
+   * @param player is the player who receives the message (some information from the state is
+   *     censored, for instance other players' cards).
+   */
   public NewStateMessage(CoincheGame game, Player player) {
     super();
     this.game = game;

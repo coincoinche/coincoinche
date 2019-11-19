@@ -84,6 +84,13 @@ public class GameController {
     }
   }
 
+  /**
+   * Route for making a move on the game.
+   *
+   * @param gameId is the id of the game.
+   * @param username is the user making the move.
+   * @param jsonMove is the JSON representation of the move being made.
+   */
   @MessageMapping("/game/{gameId}/player/{username}/move")
   public void move(
       @DestinationVariable String gameId,

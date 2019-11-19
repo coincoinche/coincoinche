@@ -42,7 +42,7 @@ public class LobbyController {
   /**
    * Endpoint called to register the player and find other players to start a new game.
    *
-   * @param message - incoming message.
+   * @param event - incoming event.
    * @return message acknowledging reception.
    */
   @MessageMapping("/lobby/join")
