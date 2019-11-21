@@ -210,6 +210,13 @@ class MainGameScreen extends React.Component<Props, State> {
     }
 
     const placeholderCards = new Array(8).fill(CardValue.blue_back);
+    const topUsername: string = this.state.usernamesByPosition[Position.top];
+    const bottomUsername: string = this.state.usernamesByPosition[Position.bottom];
+    const leftUsername: string = this.state.usernamesByPosition[Position.left];
+    const rightUsername: string = this.state.usernamesByPosition[Position.right];
+    const getRating = (username: string): number => {
+      return this.state.users.filter((p: Player) => p.username === username)[0].rating;
+    }
 
     return <Container direction="column">
       <HandOfCards
@@ -217,6 +224,9 @@ class MainGameScreen extends React.Component<Props, State> {
           rotationDegrees={180}
           scale={0.8}
           onCardPlayed={(card: CardValue) => this.onCardPlayed(Position.top, card)}
+          playerName={topUsername}
+          playerRating={getRating(topUsername)}
+          currentPlayer={this.state.currentPlayer === Position.top}
       />
       <Container direction="row" justifyContent="space-around" width="100%">
         <HandOfCards
@@ -224,6 +234,9 @@ class MainGameScreen extends React.Component<Props, State> {
           rotationDegrees={90}
           scale={0.8}
           onCardPlayed={(card: CardValue) => this.onCardPlayed(Position.left, card)}
+          playerName={leftUsername}
+          playerRating={getRating(leftUsername)}
+          currentPlayer={this.state.currentPlayer === Position.left}
         />
         {
           currentPhase === GameRoundPhase.BIDDING && <BiddingBoard
@@ -246,6 +259,9 @@ class MainGameScreen extends React.Component<Props, State> {
           rotationDegrees={-90}
           scale={0.8}
           onCardPlayed={(card: CardValue) => this.onCardPlayed(Position.right, card)}
+          playerName={rightUsername}
+          playerRating={getRating(rightUsername)}
+          currentPlayer={this.state.currentPlayer === Position.right}
         />
       </Container>
       <HandOfCards
@@ -253,6 +269,9 @@ class MainGameScreen extends React.Component<Props, State> {
         rotationDegrees={0}
         onCardPlayed={(card: CardValue) => this.onCardPlayed(Position.bottom, card)}
         cardsBorderHighlight={legalCardsToPlay}
+        playerName={bottomUsername}
+        playerRating={getRating(bottomUsername)}
+        currentPlayer={this.state.currentPlayer === Position.bottom}
       />
     </Container>;
   }
