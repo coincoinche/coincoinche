@@ -9,6 +9,7 @@ export type InjectedProps = {
   sendMessage: (socketEndpoint: string, message: SocketMessage) => void;
   registerOnMessageReceivedCallback: (topic: string, messageType: MessageType, callback: MessageCallback) => void;
   socketConnected: boolean;
+  retryTimeMs: number;
   subscribe: (topic: string) => void;
 }
 
@@ -25,6 +26,8 @@ type State = {
     };
   }
   socketConnected: boolean;
+  connexionFailures: number;
+  retryTimeMs: number;
 }
 
 function withWebsocketConnection<BaseProps>(WrappedComponent: React.ComponentType<WrappedComponentProps<BaseProps>>) {
@@ -33,6 +36,8 @@ function withWebsocketConnection<BaseProps>(WrappedComponent: React.ComponentTyp
     state = {
       callbacks: {},
       socketConnected: false,
+      connexionFailures: 0,
+      retryTimeMs: 0,
     };
 
     componentDidMount(): void {
@@ -68,17 +73,30 @@ function withWebsocketConnection<BaseProps>(WrappedComponent: React.ComponentTyp
     };
 
     onError = (error: any) => {
-      console.error("onError", error);
+      let retryTimeMs: number;
+      this.setState(({connexionFailures}) => {
+        retryTimeMs = new Date().getTime() + this.getRetryTimeoutMs(connexionFailures + 1);
+        return {
+          connexionFailures: connexionFailures + 1,
+          retryTimeMs,
+        }
+      }, () => {
+        setTimeout(this.connect, this.getRetryTimeoutMs(this.state.connexionFailures))
+      });
     };
 
     connect = () => {
-      const socketClient = new SockJS(`${API_BASE_URL}/ws`);
-      this.stompClient = Stomp.over(socketClient);
+      this.stompClient = Stomp.over(new SockJS(`${API_BASE_URL}/ws`));
       this.stompClient.connect({}, this.onConnected, this.onError);
     };
 
     onConnected = () => {
       this.setState({socketConnected: true});
+    };
+
+    getRetryTimeoutMs = (connectionFailures: number) => {
+      const timoutIncrementMsPerFailure = 2000;
+      return connectionFailures * timoutIncrementMsPerFailure;
     };
 
     subscribe = (topic: string) => {
@@ -97,6 +115,7 @@ function withWebsocketConnection<BaseProps>(WrappedComponent: React.ComponentTyp
     render() {
       return <WrappedComponent
         socketConnected={this.state.socketConnected}
+        retryTimeMs={this.state.retryTimeMs}
         sendMessage={this.sendMessage}
         registerOnMessageReceivedCallback={this.registerCallback}
         subscribe={this.subscribe}

@@ -6,20 +6,30 @@ import withWebsocketConnection, { InjectedProps } from "../websocket/withWebsock
 import {MessageType, GameStartedMessage, SocketEndpoint, TopicTemplate} from "../websocket/messages/types";
 import { Player } from "../game-engine/gameStateTypes";
 import { makeJoinLobbyMessage } from "../websocket/messages/lobby";
+import styled from "styled-components";
 
 type State = {
   gameId: string | null;
   username: string;
   users: Player[];
+  socketConnectionRetryTimeoutMs: number;
 }
 
 type Props = InjectedProps
 
+const ConnectionStatus = styled.p`
+  font-family: arial,helvetica,verdana;
+  font-size: 18pt;
+  color: #c9c9c9;
+`;
+
 class Lobby extends React.Component<Props, State> {
+  retryTimeoutUpdaterFunctionId = 0;
   state = {
     gameId: null,
     users: [],
     username: Math.floor(Math.random() * 10000000).toString(),
+    socketConnectionRetryTimeoutMs: 0,
   };
 
   componentDidMount(): void {
@@ -28,10 +38,15 @@ class Lobby extends React.Component<Props, State> {
       MessageType.GAME_STARTED,
       (msg: GameStartedMessage) => this.setState({ gameId: msg.content.gameId, users: msg.content.users }),
     );
+    this.retryTimeoutUpdaterFunctionId = setInterval(() =>
+      this.setState({
+        socketConnectionRetryTimeoutMs: this.props.retryTimeMs - new Date().getTime(),
+      }), 1000)
   }
 
   componentDidUpdate(prevProps: Readonly<InjectedProps>): void {
     if (!prevProps.socketConnected && this.props.socketConnected) {
+      clearInterval(this.retryTimeoutUpdaterFunctionId);
       this.props.subscribe(TopicTemplate.LOBBY);
       // TODO ask user to input a username
       this.props.sendMessage(SocketEndpoint.JOIN_LOBBY, makeJoinLobbyMessage(this.state.username));
@@ -45,13 +60,36 @@ class Lobby extends React.Component<Props, State> {
       return <MainGameScreen username={username} gameId={gameId!} {...this.props} users={users!} />
     }
 
+    let title;
+    if (this.props.socketConnected) {
+      title = (
+        <ConnectionStatus>
+          La connexion a réussie, nous devons maintenant attendre les autres joueurs!
+        </ConnectionStatus>
+      )
+    } else if (this.props.retryTimeMs > new Date().getTime()) {
+      title = (
+        <ConnectionStatus>
+          La connexion a echouée,
+          mais on réessaye dans {Math.round(this.state.socketConnectionRetryTimeoutMs / 1000)} secondes!
+        </ConnectionStatus>
+      )
+    } else {
+      title = (
+        <ConnectionStatus>Connexion en cours</ConnectionStatus>
+      )
+    }
+
     return (
-      <Loader
-        type="BallTriangle"
-        color="#00BFFF"
-        height={100}
-        width={100}
-      />
+      <div>
+        {title}
+        <Loader
+          type="ThreeDots"
+          color="#c9c9c9"
+          height={100}
+          width={100}
+        />
+      </div>
     )
   }
 }
