@@ -31,7 +31,7 @@ public class DataSourceConfig {
     try {
       dbUri = new URI(databaseUrl);
     } catch (URISyntaxException e) {
-      logger.error(String.format("Invalid DATABASE_URL: %s", databaseUrl), e);
+      logger.error(String.format("Invalid DATABASE_URL: {}", databaseUrl), e);
       return null;
     }
 

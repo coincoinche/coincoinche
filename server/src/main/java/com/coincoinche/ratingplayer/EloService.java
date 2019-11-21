@@ -33,7 +33,7 @@ public class EloService {
       updateEloTeamRatings(winner, loser);
       logger.debug("Successfully updated Elo ratings");
     } catch (Exception e) {
-      logger.error(String.format("%s: skip Elo ratings update", e));
+      logger.error(String.format("{}: skip Elo ratings update", e));
     }
   }
 

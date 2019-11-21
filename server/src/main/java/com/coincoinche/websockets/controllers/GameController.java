@@ -57,7 +57,7 @@ public class GameController {
   }
 
   private void pushStateToAllPlayers(String gameId, CoincheGame game) {
-    logger.debug("Game %s: pushing new state to all players", gameId);
+    logger.debug("Game {}: pushing new state to all players", gameId);
     for (Player player : game.getPlayers()) {
       pushStateToPlayer(gameId, game, player);
     }
@@ -72,14 +72,14 @@ public class GameController {
   @MessageMapping("/game/{gameId}/player/{username}/ready")
   public void getFirstGameState(
       @DestinationVariable String gameId, @DestinationVariable String username) {
-    logger.debug("Game %s: received event READY by user %s", gameId, username);
+    logger.debug("Game {}: received event READY by user {}", gameId, username);
     // TODO error handling if the game is not found
     CoincheGame game = this.repository.getGame(gameId);
     try {
       Player player = game.getPlayer(username);
       pushStateToPlayer(gameId, game, player);
     } catch (IllegalArgumentException e) {
-      logger.error("%s: player %s not found in game %s", e, username, gameId);
+      logger.error("{}: player {} not found in game {}", e, username, gameId);
       e.printStackTrace();
     }
   }
@@ -97,7 +97,7 @@ public class GameController {
       @DestinationVariable String username,
       @Payload String jsonMove) {
     // TODO nockty: check that the move comes from the current player!
-    logger.debug("Game %s User %s: received move %s", gameId, username, jsonMove);
+    logger.debug("Game {} User {}: received move {}", gameId, username, jsonMove);
     CoincheGame game = repository.getGame(gameId);
     // create legal move
     logger.debug("create legal move");
@@ -106,7 +106,7 @@ public class GameController {
       move = MoveFactory.createMove(jsonMove);
     } catch (IllegalMoveException e) {
       // if the move is illegal, get a random legal move instead
-      logger.warn("Game %s: %s sent an illegal move: %s", gameId, username, jsonMove);
+      logger.warn("Game {}: {} sent an illegal move: {}", gameId, username, jsonMove);
       List<Move> legalMoves = game.getCurrentRound().getLegalMoves();
       move = legalMoves.get(new Random().nextInt(legalMoves.size()));
     }
@@ -128,13 +128,13 @@ public class GameController {
       pushStateToAllPlayers(gameId, game);
     } catch (IllegalMoveException e) {
       // should never happen
-      logger.error("Inconsistent error: legal move is illegal: %s", move);
+      logger.error("Inconsistent error: legal move is illegal: {}", move);
       e.printStackTrace();
     }
   }
 
   private void terminateGame(String gameId, CoincheGame game, GameResult<Team> result) {
-    logger.info(String.format("Game finished: %s", result));
+    logger.info("Game finished: {}", result);
     Team winnerTeam = result.getWinnerTeam();
     Team loserTeam = result.getLoserTeam();
     eloService.updateRatings(winnerTeam, loserTeam);

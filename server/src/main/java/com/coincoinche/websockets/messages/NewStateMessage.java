@@ -98,7 +98,7 @@ public class NewStateMessage extends Message {
     try {
       stateJson = mapper.writeValueAsString(state);
     } catch (JsonProcessingException e) {
-      logger.error("Can't encode game state to JSON: %s", state);
+      logger.error("Can't encode game state to JSON: {}", state);
       e.printStackTrace();
     }
     return String.format(

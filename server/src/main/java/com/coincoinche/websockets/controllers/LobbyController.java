@@ -48,7 +48,7 @@ public class LobbyController {
   @MessageMapping("/lobby/join")
   @SendTo("/topic/lobby")
   public Message joinLobby(@Payload JoinedLobbyEvent event) {
-    logger.debug("Received event %s, username %s", event.getType(), event.getUsername());
+    logger.debug("Received event {}, username {}", event.getType(), event.getUsername());
 
     if (!event.getType().equals(EventType.JOINED_LOBBY)) {
       return new InvalidEventMessage();
