@@ -202,7 +202,6 @@ class MainGameScreen extends React.Component<Props, State> {
     }
 
     let legalCardsToPlay: boolean[] = [];
-    console.log("updating legal cards to play");
     let currentTrick: Trick | null;
     if (this.state.currentPhase === GameRoundPhase.MAIN) {
       legalCardsToPlay = this.state.cards[this.props.username].map(
@@ -212,7 +211,6 @@ class MainGameScreen extends React.Component<Props, State> {
       currentTrick = this.state.currentTrick;
     }
 
-    const placeholderCards = new Array(8).fill(CardValue.blue_back);
     const topUsername: string = this.state.usernamesByPosition[Position.top];
     const bottomUsername: string = this.state.usernamesByPosition[Position.bottom];
     const leftUsername: string = this.state.usernamesByPosition[Position.left];
@@ -238,7 +236,7 @@ class MainGameScreen extends React.Component<Props, State> {
       <Container direction="row" justifyContent="space-around" width="80%">
       {contractComponent}
       <HandOfCards
-          cards={placeholderCards}
+          cards={this.state.cards[topUsername] || []}
           rotationDegrees={180}
           scale={0.8}
           onCardPlayed={(card: CardValue) => this.onCardPlayed(Position.top, card)}
@@ -250,7 +248,7 @@ class MainGameScreen extends React.Component<Props, State> {
       </Container>
       <Container direction="row" justifyContent="space-around" width="80%">
         <HandOfCards
-          cards={placeholderCards}
+          cards={this.state.cards[leftUsername] || []}
           rotationDegrees={90}
           scale={0.8}
           onCardPlayed={(card: CardValue) => this.onCardPlayed(Position.left, card)}
@@ -275,7 +273,7 @@ class MainGameScreen extends React.Component<Props, State> {
           />
         }
         <HandOfCards
-          cards={placeholderCards}
+          cards={this.state.cards[rightUsername] || []}
           rotationDegrees={-90}
           scale={0.8}
           onCardPlayed={(card: CardValue) => this.onCardPlayed(Position.right, card)}
