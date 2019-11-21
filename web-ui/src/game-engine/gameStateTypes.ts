@@ -71,10 +71,10 @@ export type GameState = {
   cards: {
     [username: string]: CardValue[]
   },
-
+  multiplier: number,
   currentPhase: GameRoundPhase,
   currentlySelectedContract: Partial<LegalBiddingMove> | null,
-  highestBidding?: Contract,
+  highestBidding: Contract | null,
   legalMoves: LegalBiddingMove[] | LegalPlayingMove[];
   currentTrick: Trick;
 };

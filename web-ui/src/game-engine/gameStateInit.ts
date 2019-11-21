@@ -6,9 +6,10 @@ export const gameStateInit = (users: Player[], bottomPlayerIndex: number): GameS
   usernamesByPosition: buildUsernamesByPosition(users.map(u => u.username), bottomPlayerIndex),
   currentPlayer: Position.bottom,
   cards: {},
-
+  highestBidding: null,
   currentPhase: GameRoundPhase.BIDDING,
   currentlySelectedContract: null,
+  multiplier: 1,
   legalMoves: [],
   currentTrick: {
     no: 1,

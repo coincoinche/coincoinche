@@ -15,17 +15,18 @@ import {
   Player,
   Suit,
   Trick,
-  LegalPlayingMove
+  LegalPlayingMove,
 } from "../../game-engine/gameStateTypes";
 import {gameStateInit} from "../../game-engine/gameStateInit";
 import {GameStateModifier, applyMessage} from "../../game-engine/gameStateModifiers";
 import {inboundGameMessageParser, outboundGameEventConverter} from "../../websocket/messages/game";
 import {RouteComponentProps, withRouter} from "react-router";
 import {playerIndexFromPosition} from "../../game-engine/playerPositionning";
+import ContractComponent from '../../components/ContractComponent';
 
 const UPDATE_TRICK_TIMOUT_MS = 2000;
 
-const hasChanged = (prevTrick: Trick, currTrick: Trick): boolean => {
+const hasTrickChanged = (prevTrick: Trick, currTrick: Trick): boolean => {
   let i = 0;
   for (const username in prevTrick.cards) {
     if (Object.prototype.hasOwnProperty.call(prevTrick.cards, username)) {
@@ -106,10 +107,11 @@ class MainGameScreen extends React.Component<Props, State> {
   };
 
   shouldComponentUpdate(nextProps: Readonly<InjectedProps>, nexState: Readonly<GameState>): boolean {
-    if (this.state.currentPhase !== GameRoundPhase.MAIN) {
+    if (this.state.currentPhase === GameRoundPhase.BIDDING) {
       return true;
     }
-    return hasChanged(this.state.currentTrick, nexState.currentTrick);
+    // main phase
+    return hasTrickChanged(this.state.currentTrick, nexState.currentTrick);
   }
 
   componentDidUpdate(prevProps: Readonly<InjectedProps>): void {
@@ -173,6 +175,7 @@ class MainGameScreen extends React.Component<Props, State> {
     this.props.sendMessage(
       `/app/game/${this.props.gameId}/player/${this.props.username}/move`, msg
     );
+
   };
 
   render() {
@@ -217,8 +220,23 @@ class MainGameScreen extends React.Component<Props, State> {
     const getRating = (username: string): number => {
       return this.state.users.filter((p: Player) => p.username === username)[0].rating;
     }
-
+    let contractComponent = <ContractComponent
+      owner={null}
+      suit={null}
+      value={null}
+      multiplier={1}
+    />
+    if (this.state.highestBidding) {
+      contractComponent = <ContractComponent
+        owner={this.state.highestBidding.owner || null}
+        suit={this.state.highestBidding.suit}
+        value={this.state.highestBidding.value}
+        multiplier={this.state.multiplier}
+      />;
+    }
     return <Container direction="column">
+      <Container direction="row" justifyContent="space-around" width="80%">
+      {contractComponent}
       <HandOfCards
           cards={placeholderCards}
           rotationDegrees={180}
@@ -228,7 +246,9 @@ class MainGameScreen extends React.Component<Props, State> {
           playerRating={getRating(topUsername)}
           currentPlayer={this.state.currentPlayer === Position.top}
       />
-      <Container direction="row" justifyContent="space-around" width="100%">
+      {contractComponent}
+      </Container>
+      <Container direction="row" justifyContent="space-around" width="80%">
         <HandOfCards
           cards={placeholderCards}
           rotationDegrees={90}
