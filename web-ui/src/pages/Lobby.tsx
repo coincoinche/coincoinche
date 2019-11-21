@@ -64,18 +64,19 @@ class Lobby extends React.Component<Props, State> {
     if (this.props.socketConnected) {
       title = (
         <ConnectionStatus>
-          Successfully connected to server, waiting for other players
+          La connexion a réussie, nous devons maintenant attendre les autres joueurs!
         </ConnectionStatus>
       )
     } else if (this.props.retryTimeMs > new Date().getTime()) {
       title = (
         <ConnectionStatus>
-          Connexion failed, retrying in {Math.round(this.state.socketConnectionRetryTimeoutMs / 1000)}
+          La connexion a echouée,
+          mais on réessaye dans {Math.round(this.state.socketConnectionRetryTimeoutMs / 1000)} secondes!
         </ConnectionStatus>
       )
     } else {
       title = (
-        <ConnectionStatus>Connecting to server</ConnectionStatus>
+        <ConnectionStatus>Connexion en cours</ConnectionStatus>
       )
     }
 
