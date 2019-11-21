@@ -8,12 +8,6 @@ import { Player } from "../game-engine/gameStateTypes";
 import {makeJoinLobbyMessage, makeQuitLobbyMessage} from "../websocket/messages/lobby";
 import styled from "styled-components";
 import {RouteComponentProps, withRouter} from "react-router";
-import {
-  getBackgroundColor,
-  getBorderColor,
-  getColor,
-  getHoverBackgroundColor, getHoverBorderColor, getHoverColor
-} from "../components/bidding/selector-style";
 
 type State = {
   gameId: string | null;
