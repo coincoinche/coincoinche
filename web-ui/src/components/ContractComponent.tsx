@@ -44,9 +44,7 @@ const ContractComponent = ({ owner, value, suit, multiplier }: Props) => {
                 `
       }
       {
-        value !== null || `
-                -
-                `
+        value !== null || "-"
       }
       <br />Multiplicateur : {multiplier}
     </ContractContainer>
