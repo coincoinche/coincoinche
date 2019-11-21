@@ -9,6 +9,7 @@ import com.coincoinche.ratingplayer.EloPlayer;
 import com.coincoinche.repositories.UserRepository;
 import com.coincoinche.websockets.events.EventType;
 import com.coincoinche.websockets.events.JoinedLobbyEvent;
+import com.coincoinche.websockets.events.QuitLobbyEvent;
 import com.coincoinche.websockets.messages.GameStartedMessage;
 import com.coincoinche.websockets.messages.InvalidEventMessage;
 import com.coincoinche.websockets.messages.Message;
@@ -61,6 +62,26 @@ public class LobbyController {
     }
 
     this.matchMaker.register(event.getUsername());
+
+    return new SuccessMessage();
+  }
+
+  /**
+   * Endpoint called to remove the player from the lobby.
+   *
+   * @param event - incoming event.
+   * @return message acknowledging reception.
+   */
+  @MessageMapping("/lobby/quit")
+  @SendTo("/topic/lobby")
+  public Message quitLobby(@Payload QuitLobbyEvent event) {
+    logger.debug("Received event {}, username {}", event.getType(), event.getUsername());
+
+    if (!event.getType().equals(EventType.QUIT_LOBBY)) {
+      return new InvalidEventMessage();
+    }
+
+    this.matchMaker.remove(event.getUsername());
 
     return new SuccessMessage();
   }

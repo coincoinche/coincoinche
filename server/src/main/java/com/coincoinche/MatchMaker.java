@@ -17,6 +17,10 @@ public class MatchMaker {
     this.startGameIfPossible();
   }
 
+  public void remove(String username) {
+    this.playerQueue.removeIf((String usernameInQueue) -> usernameInQueue.equals(username));
+  }
+
   private void startGameIfPossible() {
     if (playerQueue.size() > 3) {
       String[] usernames = {

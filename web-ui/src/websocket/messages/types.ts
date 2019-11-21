@@ -9,10 +9,12 @@ export enum TopicTemplate {
 
 export enum SocketEndpoint {
   JOIN_LOBBY = '/app/lobby/join',
+  QUIT_LOBBY = '/app/lobby/quit',
 }
 
 export enum MessageType {
   JOIN_LOBBY = 'JOINED_LOBBY',
+  QUIT_LOBBY = 'QUIT_LOBBY',
   GAME_STARTED = 'GAME_STARTED',
   NEW_STATE = 'NEW_STATE',
   MOVE = 'MOVE',
