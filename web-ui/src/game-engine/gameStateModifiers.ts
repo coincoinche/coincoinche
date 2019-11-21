@@ -46,8 +46,13 @@ export class GameStateModifier {
     return this;
   };
 
-  setHighestBidding = (contract: Contract) => {
+  setHighestBidding = (contract: Contract | null) => {
     this.gameState.highestBidding = contract;
+    return this;
+  }
+
+  setMultiplier = (multiplier: number) => {
+    this.gameState.multiplier = multiplier;
     return this;
   }
 
@@ -64,6 +69,7 @@ const applyNewStateMessage = (msg: NewStateMessage, gameState: GameState): GameS
     .setPlayersCards(msg.content.cards)
     .setLegalMoves(msg.content.moves)
     .setCurrentPlayer(msg.content.state.currentPlayer)
+    .setMultiplier(msg.content.state.multiplier)
     // @ts-ignore
     .setCurrentPhase(GameRoundPhase[msg.content.state.phase.toUpperCase()])
     .setCurrentlySelectedContract(null)

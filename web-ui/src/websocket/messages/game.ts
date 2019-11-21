@@ -88,7 +88,8 @@ export const inboundGameMessageParser: { [type in MessageType]?: (msg: any) => M
         state: {
           phase: msg.content.state.phase,
           currentPlayer: msg.content.state.currentPlayer,
-          highestBidding: contractFromString(msg.content.state.highestBidding),
+          highestBidding: msg.content.state.highestBidding,
+          multiplier: msg.content.state.multiplier,
           currentTrick: {
             no: msg.content.state.currentTrick ? msg.content.state.currentTrick.no : 1,
             cards: {}
