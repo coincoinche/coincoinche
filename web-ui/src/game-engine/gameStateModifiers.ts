@@ -65,8 +65,6 @@ export class GameStateModifier {
 }
 
 const applyNewStateMessage = (msg: NewStateMessage, gameState: GameState): GameState => {
-  console.log(msg);
-  console.log(msg.content.state.multiplier);
   const gameStateModifier = new GameStateModifier(gameState)
     .setPlayersCards(msg.content.cards)
     .setLegalMoves(msg.content.moves)
