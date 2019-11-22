@@ -8,11 +8,13 @@ import com.coincoinche.engine.game.GameResult;
 import com.coincoinche.engine.teams.Player;
 import com.coincoinche.engine.teams.Team;
 import com.coincoinche.ratingplayer.EloService;
+import com.coincoinche.ratingplayer.UserNotFoundException;
 import com.coincoinche.repositories.GameRepository;
 import com.coincoinche.repositories.InMemoryGameRepository;
 import com.coincoinche.websockets.messages.GameFinishedMessage;
 import com.coincoinche.websockets.messages.NewStateMessage;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -130,21 +132,36 @@ public class GameController {
       // should never happen
       logger.error("Inconsistent error: legal move is illegal: {}", move);
       e.printStackTrace();
+    } catch (UserNotFoundException e) {
+      e.printStackTrace();
     }
   }
 
-  private void terminateGame(String gameId, CoincheGame game, GameResult<Team> result) {
+  private void terminateGame(String gameId, CoincheGame game, GameResult<Team> result)
+      throws UserNotFoundException {
     logger.info("Game finished: {}", result);
     Team winnerTeam = result.getWinnerTeam();
     Team loserTeam = result.getLoserTeam();
-    eloService.updateRatings(winnerTeam, loserTeam);
+    Map<String, Integer> newEloPerUsername = eloService.updateRatings(winnerTeam, loserTeam);
+    Map<Team, Integer> teamsPoints = result.getTeamsPoints();
+
     for (Player player : game.getPlayers()) {
       if (winnerTeam.getPlayers().contains(player)) {
-        this.template.convertAndSend(
-            getIndividualTopicPath(gameId, player.getUsername()), new GameFinishedMessage(true));
+        GameFinishedMessage msg =
+            new GameFinishedMessage(
+                true,
+                teamsPoints.get(result.getWinnerTeam()),
+                teamsPoints.get(result.getLoserTeam()),
+                newEloPerUsername);
+        this.template.convertAndSend(getIndividualTopicPath(gameId, player.getUsername()), msg);
       } else {
-        this.template.convertAndSend(
-            getIndividualTopicPath(gameId, player.getUsername()), new GameFinishedMessage(false));
+        GameFinishedMessage msg =
+            new GameFinishedMessage(
+                false,
+                teamsPoints.get(result.getLoserTeam()),
+                teamsPoints.get(result.getWinnerTeam()),
+                newEloPerUsername);
+        this.template.convertAndSend(getIndividualTopicPath(gameId, player.getUsername()), msg);
       }
     }
   }

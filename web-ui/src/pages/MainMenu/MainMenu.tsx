@@ -46,12 +46,12 @@ export default class MainMenu extends React.Component<{}, State> {
   render() {
     return <Container>
       <Logo src={logo} className="App-logo" alt="logo" />
-      <Title>Coincoinche</Title>
+      <Title fontSize={140}>Coincoinche</Title>
       <Menu>
         <Link to="/game" style={{ textDecoration: 'none' }}>
           <MenuItem>Jeu classé</MenuItem>
         </Link>
-        <Link to="/game" style={{ textDecoration: 'none' }}>
+        <Link to="/game/end" style={{ textDecoration: 'none' }}>
           <MenuItem>Jeu libre</MenuItem>
         </Link>
         <Link to="/ladder" style={{ textDecoration: 'none' }}>

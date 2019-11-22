@@ -2,6 +2,8 @@ package com.coincoinche.ratingplayer;
 
 import com.coincoinche.engine.teams.Team;
 import com.coincoinche.repositories.UserRepository;
+import java.util.HashMap;
+import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,19 +27,18 @@ public class EloService {
    *
    * @param winnerTeam is the coinche team winning the game.
    * @param loserTeam is the coinche team losing the game.
+   * @return a Map containing the new elo rating per username.
    */
-  public void updateRatings(Team winnerTeam, Team loserTeam) {
-    try {
-      EloTeam winner = eloTeamFactory.createEloTeamFromCoincheTeam(winnerTeam);
-      EloTeam loser = eloTeamFactory.createEloTeamFromCoincheTeam(loserTeam);
-      updateEloTeamRatings(winner, loser);
-      logger.debug("Successfully updated Elo ratings");
-    } catch (Exception e) {
-      logger.error(String.format("{}: skip Elo ratings update", e));
-    }
+  public Map<String, Integer> updateRatings(Team winnerTeam, Team loserTeam)
+      throws UserNotFoundException {
+    EloTeam winner = eloTeamFactory.createEloTeamFromCoincheTeam(winnerTeam);
+    EloTeam loser = eloTeamFactory.createEloTeamFromCoincheTeam(loserTeam);
+    logger.debug("Successfully updated Elo ratings");
+    return updateEloTeamRatings(winner, loser);
   }
 
-  private void updateEloTeamRatings(EloTeam winner, EloTeam loser) {
+  private Map<String, Integer> updateEloTeamRatings(EloTeam winner, EloTeam loser) {
+    Map<String, Integer> newEloRatings = new HashMap<>();
     int ratingWinner = winner.getRating();
     int ratingLoser = loser.getRating();
     double quotientWinner = Math.pow(10, ratingWinner / 400);
@@ -45,16 +46,20 @@ public class EloService {
     double expectedWinner = quotientWinner / (quotientWinner + quotientLoser);
     double expectedLoser = quotientLoser / (quotientWinner + quotientLoser);
     for (EloPlayer player : winner.getPlayers()) {
+      newEloRatings.put(player.getUser().getUsername(), player.getRating());
       player.setRating(
           (int)
               Math.round(player.getRating() + player.getRatingAdjustment() * (1 - expectedWinner)));
       userRepository.save(player.getUser());
     }
     for (EloPlayer player : loser.getPlayers()) {
+      newEloRatings.put(player.getUser().getUsername(), player.getRating());
       player.setRating(
           (int)
               Math.round(player.getRating() + player.getRatingAdjustment() * (0 - expectedLoser)));
       userRepository.save(player.getUser());
     }
+
+    return newEloRatings;
   }
 }

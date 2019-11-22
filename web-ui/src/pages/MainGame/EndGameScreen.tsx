@@ -4,6 +4,7 @@ import Title from "../../components/misc/Title";
 import {Animated} from "react-animated-css";
 import Container from "../../components/utils/Container";
 import Button from "../../components/misc/Button";
+import {RouteComponentProps, StaticContext} from "react-router";
 
 const TeamTitle = styled.h2`
   color: #c9c9c9;
@@ -59,7 +60,7 @@ const animationParams = {
   }
 };
 
-type Props = {
+type PropsFromRouter = {
   win: boolean;
   yourTeam: {
     points: number;
@@ -79,7 +80,10 @@ type Props = {
   }
 }
 
-export default ({ win, yourTeam, theirTeam }: Props) => {
+type Props = RouteComponentProps<{}, StaticContext, PropsFromRouter>
+
+const EndGameScreen = ({location, history}: Props) => {
+  const { win, yourTeam, theirTeam } = location.state;
   const { title, yourTeamTitle, yourTeamPlayers, theirTeamPlayers, theirTeamTitle, exitButton, scoreBoard } = animationParams;
   return (
     <Container direction="column">
@@ -172,8 +176,10 @@ export default ({ win, yourTeam, theirTeam }: Props) => {
         animationOut="fadeOut"
         isVisible={true}
       >
-        <Button>Retour au menu</Button>
+        <Button onClick={() => history.push("/")}>Retour au menu</Button>
       </Animated>
     </Container>
   )
-}
+};
+
+export default EndGameScreen;
