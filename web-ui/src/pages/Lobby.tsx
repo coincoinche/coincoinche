@@ -5,8 +5,9 @@ import Loader from 'react-loader-spinner';
 import withWebsocketConnection, { InjectedProps } from "../websocket/withWebsocketConnection";
 import {MessageType, GameStartedMessage, SocketEndpoint, TopicTemplate} from "../websocket/messages/types";
 import { Player } from "../game-engine/gameStateTypes";
-import { makeJoinLobbyMessage } from "../websocket/messages/lobby";
+import {makeJoinLobbyMessage, makeQuitLobbyMessage} from "../websocket/messages/lobby";
 import styled from "styled-components";
+import {RouteComponentProps, withRouter} from "react-router";
 
 type State = {
   gameId: string | null;
@@ -15,13 +16,37 @@ type State = {
   socketConnectionRetryTimeoutMs: number;
 }
 
-type Props = InjectedProps
+type Props = InjectedProps & RouteComponentProps;
 
 const ConnectionStatus = styled.p`
   font-family: arial,helvetica,verdana;
   font-size: 18pt;
   color: #c9c9c9;
 `;
+
+const ExitLobbyButton = styled.div`
+  background-color: darkgreen;
+  font-weight: bold;
+  color: yellowgreen;
+  text-align: center;
+  line-height: 50px;
+  width: 200px;
+  height: 50px;
+  border-radius: 50px;
+  border: 3px solid black;
+  margin: 50px;
+  &:hover {
+    background-color: yellowgreen;
+    color: darkgreen;
+  }
+`;
+
+const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`;
+
 
 class Lobby extends React.Component<Props, State> {
   retryTimeoutUpdaterFunctionId = 0;
@@ -53,6 +78,11 @@ class Lobby extends React.Component<Props, State> {
     }
   }
 
+  onQuitLobbyButtonClicked = () => {
+    this.props.sendMessage(SocketEndpoint.QUIT_LOBBY, makeQuitLobbyMessage(this.state.username));
+    this.props.history.push('/');
+  };
+
   render() {
     const { gameId, username, users } = this.state;
 
@@ -81,7 +111,7 @@ class Lobby extends React.Component<Props, State> {
     }
 
     return (
-      <div>
+      <Container>
         {title}
         <Loader
           type="ThreeDots"
@@ -89,9 +119,10 @@ class Lobby extends React.Component<Props, State> {
           height={100}
           width={100}
         />
-      </div>
+        <ExitLobbyButton onClick={this.onQuitLobbyButtonClicked}>Revenir au menu</ExitLobbyButton>
+      </Container>
     )
   }
 }
 
-export default withWebsocketConnection<{}>(Lobby);
+export default withWebsocketConnection<{}>(withRouter(Lobby));
