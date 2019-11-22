@@ -23,6 +23,7 @@ import {inboundGameMessageParser, outboundGameEventConverter} from "../../websoc
 import {RouteComponentProps, withRouter} from "react-router";
 import {playerIndexFromPosition} from "../../game-engine/playerPositionning";
 import ContractComponent from '../../components/ContractComponent';
+import ScoresComponent from '../../components/ScoresComponent';
 
 const UPDATE_TRICK_TIMOUT_MS = 2000;
 
@@ -244,7 +245,7 @@ class MainGameScreen extends React.Component<Props, State> {
           playerRating={getRating(topUsername)}
           currentPlayer={this.state.currentPlayer === Position.top}
       />
-      {contractComponent}
+      <ScoresComponent youScore={this.state.scores.you} themScore={this.state.scores.them} />
       </Container>
       <Container direction="row" justifyContent="space-around" width="80%">
         <HandOfCards

@@ -95,6 +95,10 @@ export const inboundGameMessageParser: { [type in MessageType]?: (msg: any) => M
             cards: {}
           }
         },
+        scores: {
+          you: msg.content.scores.you,
+          them: msg.content.scores.them
+        },
         cards: {},
         moves: msg.content.moves.map((s: string) => legalMoveFromString(msg.content.state.phase, s))
       }

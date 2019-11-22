@@ -25,6 +25,7 @@ const emojiFromSuit = (suit: string | null): string => {
 }
 
 const ContractContainer = styled.div`
+    width: 200px;
     margin: 15px;
     background-color: #FFFFFF;
     padding: 10px;
