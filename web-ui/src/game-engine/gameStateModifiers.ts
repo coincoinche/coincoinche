@@ -66,6 +66,16 @@ export class GameStateModifier {
     return this;
   }
 
+  updatePreviousTrick = (trick: Trick) => {
+    this.gameState.previousTrick = trick;
+    return this;
+  }
+
+  setShowPreviousTrick = (b: boolean) => {
+    this.gameState.showPreviousTrick = b;
+    return this;
+  }
+
   retrieveNewState = () => this.gameState;
 }
 
@@ -85,6 +95,9 @@ const applyNewStateMessage = (msg: NewStateMessage, gameState: GameState): GameS
   if (msg.content.state.currentTrick) {
     gameStateModifier.updateCurrentTrick(msg.content.state.currentTrick);
   }
+  if (msg.content.state.previousTrick) {
+    gameStateModifier.updatePreviousTrick(msg.content.state.previousTrick);
+  }
   return gameStateModifier.retrieveNewState();
 }
 
@@ -96,3 +109,7 @@ export const applyMessage = (msg: Message, gameState: GameState): GameState => {
       throw new InvalidEventError('Unknown message type.');
   }
 };
+
+export const showPreviousTrick = (show: boolean, gameState: GameState): GameState => {
+  return new GameStateModifier(gameState).setShowPreviousTrick(show).retrieveNewState();
+}

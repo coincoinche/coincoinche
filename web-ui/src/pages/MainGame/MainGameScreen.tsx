@@ -18,14 +18,14 @@ import {
   LegalPlayingMove,
 } from "../../game-engine/gameStateTypes";
 import {gameStateInit} from "../../game-engine/gameStateInit";
-import {GameStateModifier, applyMessage} from "../../game-engine/gameStateModifiers";
+import {GameStateModifier, applyMessage, showPreviousTrick} from "../../game-engine/gameStateModifiers";
 import {inboundGameMessageParser, outboundGameEventConverter} from "../../websocket/messages/game";
 import {RouteComponentProps, withRouter} from "react-router";
 import {playerIndexFromPosition} from "../../game-engine/playerPositionning";
 import ContractComponent from '../../components/ContractComponent';
 import ScoresComponent from '../../components/ScoresComponent';
 
-const UPDATE_TRICK_TIMOUT_MS = 2000;
+const SHOW_PREVIOUS_TRICK_TIMEOUT_MS = 2500;
 
 const hasTrickChanged = (prevTrick: Trick, currTrick: Trick): boolean => {
   let i = 0;
@@ -112,18 +112,11 @@ class MainGameScreen extends React.Component<Props, State> {
       return true;
     }
     // main phase
-    return hasTrickChanged(this.state.currentTrick, nexState.currentTrick);
+    return hasTrickChanged(this.state.currentTrick, nexState.currentTrick)
+      || this.state.showPreviousTrick !== nexState.showPreviousTrick;
   }
 
   componentDidUpdate(prevProps: Readonly<InjectedProps>): void {
-    if (this.state.currentPhase === GameRoundPhase.MAIN) {
-      setTimeout(() => {
-        this.setState(prevState =>
-          new GameStateModifier(prevState).updateCurrentTrick(this.state.currentTrick).retrieveNewState()
-        )
-      }, UPDATE_TRICK_TIMOUT_MS)
-    }
-
     if (!prevProps.socketConnected && this.props.socketConnected) {
       this.props.subscribe(getGameTopic(this.props.gameId, this.props.username));
       this.props.subscribe(getBroadcastGameTopic(this.props.gameId));
@@ -132,7 +125,12 @@ class MainGameScreen extends React.Component<Props, State> {
 
   applyMessageToState = (messageType: MessageType, jsonMsg: string) => {
     const msg = inboundGameMessageParser[messageType]!(jsonMsg);
-    this.setState(prevState => applyMessage(msg, prevState))
+    this.setState(prevState => applyMessage(msg, prevState));
+    // if trick is empty, let previous trick so that players see it before it's removed
+    if (this.state.currentTrick.no > 0 && Object.entries(this.state.currentTrick.cards).length === 0) {
+      this.setState(prevState => showPreviousTrick(true, prevState));
+      setTimeout(() => { this.setState(prevState => showPreviousTrick(false, prevState)); }, SHOW_PREVIOUS_TRICK_TIMEOUT_MS);
+    }
   };
 
   onCardPlayed = (player: Position, card: CardValue) => {
@@ -203,13 +201,17 @@ class MainGameScreen extends React.Component<Props, State> {
     }
 
     let legalCardsToPlay: boolean[] = [];
-    let currentTrick: Trick | null;
+    let currentTrick: Trick | null = null;
     if (this.state.currentPhase === GameRoundPhase.MAIN) {
       legalCardsToPlay = this.state.cards[this.props.username].map(
         (card: CardValue) =>
           (this.state.legalMoves as LegalPlayingMove[]).map((m: LegalPlayingMove) => m.card).includes(card)
       );
       currentTrick = this.state.currentTrick;
+    }
+    let previousTrick: Trick | null = null;
+    if (this.state.currentPhase === GameRoundPhase.MAIN && this.state.previousTrick) {
+      previousTrick = this.state.previousTrick;
     }
 
     const topUsername: string = this.state.usernamesByPosition[Position.top];
@@ -266,12 +268,20 @@ class MainGameScreen extends React.Component<Props, State> {
           />
         }
         {
-          currentPhase === GameRoundPhase.MAIN && <CardBoard
+          currentPhase === GameRoundPhase.MAIN && !this.state.showPreviousTrick && <CardBoard
             left={currentTrick!.cards[this.state.usernamesByPosition[Position.left]]}
             right={currentTrick!.cards[this.state.usernamesByPosition[Position.right]]}
             bottom={currentTrick!.cards[this.state.usernamesByPosition[Position.bottom]]}
             top={currentTrick!.cards[this.state.usernamesByPosition[Position.top]]}
           />
+        }
+        {
+          currentPhase === GameRoundPhase.MAIN && this.state.showPreviousTrick && <CardBoard
+            left={previousTrick!.cards[this.state.usernamesByPosition[Position.left]]}
+            right={previousTrick!.cards[this.state.usernamesByPosition[Position.right]]}
+            bottom={previousTrick!.cards[this.state.usernamesByPosition[Position.bottom]]}
+            top={previousTrick!.cards[this.state.usernamesByPosition[Position.top]]}
+        />
         }
         <HandOfCards
           cards={this.state.cards[rightUsername] || []}

@@ -28,7 +28,6 @@ import java.util.stream.StreamSupport;
 @JsonSerialize(using = GameStatePlayingSerializer.class)
 public class GameStatePlaying implements GameStateTerminal {
   private static final int MAX_TRICK_NUMBER = 8;
-  private int currentTrickNumber;
   private Trick currentTrick;
   private Player lastTrickMaster;
   private Contract contract;
@@ -36,13 +35,12 @@ public class GameStatePlaying implements GameStateTerminal {
   private Map<Player, Integer> playerPoints = new HashMap<>();
   private List<Team> teams;
   private int multiplier = 1;
+  private List<Trick> trickHistory = new ArrayList<>();
 
-  GameStatePlaying(
-      Player currentPlayer, Contract contract, Trick currentTrick, int currentTrickNumber) {
+  GameStatePlaying(Player currentPlayer, Contract contract, Trick currentTrick) {
     this.currentPlayer = currentPlayer;
     this.contract = contract;
     this.currentTrick = currentTrick;
-    this.currentTrickNumber = currentTrickNumber;
   }
 
   /**
@@ -55,7 +53,7 @@ public class GameStatePlaying implements GameStateTerminal {
   public static GameStatePlaying initialGameStatePlaying(Player firstPlayer, Contract contract) {
     Trick currentTrick = Trick.emptyTrick(contract.getSuit());
     // start state with trick #1
-    return new GameStatePlaying(firstPlayer, contract, currentTrick, 1);
+    return new GameStatePlaying(firstPlayer, contract, currentTrick);
   }
 
   @Override
@@ -184,7 +182,7 @@ public class GameStatePlaying implements GameStateTerminal {
     // add points to master
     Player master = currentTrick.getMaster();
     int points = currentTrick.getValue();
-    if (currentTrickNumber == 8) {
+    if (getCurrentTrickNumber() == 8) {
       // 10 de der
       points += 10;
     }
@@ -192,13 +190,13 @@ public class GameStatePlaying implements GameStateTerminal {
     // update last master
     lastTrickMaster = master;
     // clear trick
+    trickHistory.add(currentTrick);
     currentTrick = Trick.emptyTrick(getTrumpSuit());
-    currentTrickNumber++;
   }
 
   @Override
   public boolean mustChange() {
-    return currentTrickNumber > MAX_TRICK_NUMBER;
+    return getCurrentTrickNumber() > MAX_TRICK_NUMBER;
   }
 
   public void setTeams(List<Team> teams) {
@@ -220,11 +218,15 @@ public class GameStatePlaying implements GameStateTerminal {
   }
 
   public int getCurrentTrickNumber() {
-    return currentTrickNumber;
+    return trickHistory.size() + 1;
   }
 
   public Trick getCurrentTrick() {
     return currentTrick;
+  }
+
+  public List<Trick> getTrickHistory() {
+    return trickHistory;
   }
 
   public Contract getContract() {

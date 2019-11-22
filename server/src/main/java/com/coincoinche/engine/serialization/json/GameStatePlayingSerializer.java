@@ -7,6 +7,7 @@ import com.coincoinche.engine.teams.Player;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import java.io.IOException;
+import java.util.List;
 
 /** Custom Serializer for GameStatePlaying objects. */
 public class GameStatePlayingSerializer extends GameStateSerializer<GameStatePlaying> {
@@ -22,11 +23,9 @@ public class GameStatePlayingSerializer extends GameStateSerializer<GameStatePla
     super(t);
   }
 
-  private void writeCurrentTrick(GameStatePlaying state, JsonGenerator gen) throws IOException {
-    gen.writeFieldName("currentTrick");
+  private void writeTrick(int trickNumber, Trick trick, JsonGenerator gen) throws IOException {
     gen.writeStartObject();
-    gen.writeNumberField("no", state.getCurrentTrickNumber());
-    Trick trick = state.getCurrentTrick();
+    gen.writeNumberField("no", trickNumber);
     gen.writeFieldName("cards");
     gen.writeStartObject();
     for (Player player : trick.getPlayers()) {
@@ -34,6 +33,21 @@ public class GameStatePlayingSerializer extends GameStateSerializer<GameStatePla
     }
     gen.writeEndObject();
     gen.writeEndObject();
+  }
+
+  private void writePreviousTrick(GameStatePlaying state, JsonGenerator gen) throws IOException {
+    List<Trick> trickHistory = state.getTrickHistory();
+    gen.writeFieldName("previousTrick");
+    if (trickHistory.isEmpty()) {
+      gen.writeNull();
+      return;
+    }
+    writeTrick(state.getCurrentTrickNumber() - 1, trickHistory.get(trickHistory.size() - 1), gen);
+  }
+
+  private void writeCurrentTrick(GameStatePlaying state, JsonGenerator gen) throws IOException {
+    gen.writeFieldName("currentTrick");
+    writeTrick(state.getCurrentTrickNumber(), state.getCurrentTrick(), gen);
   }
 
   @Override
@@ -49,6 +63,7 @@ public class GameStatePlayingSerializer extends GameStateSerializer<GameStatePla
       gen.writeNumberField("multiplier", multiplier);
     }
     writeCurrentTrick(value, gen);
+    writePreviousTrick(value, gen);
     gen.writeEndObject();
   }
 }
