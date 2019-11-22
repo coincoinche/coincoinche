@@ -116,14 +116,6 @@ class MainGameScreen extends React.Component<Props, State> {
   }
 
   componentDidUpdate(prevProps: Readonly<InjectedProps>): void {
-    if (this.state.currentPhase === GameRoundPhase.MAIN) {
-      setTimeout(() => {
-        this.setState(prevState =>
-          new GameStateModifier(prevState).updateCurrentTrick(this.state.currentTrick).retrieveNewState()
-        )
-      }, UPDATE_TRICK_TIMOUT_MS)
-    }
-
     if (!prevProps.socketConnected && this.props.socketConnected) {
       this.props.subscribe(getGameTopic(this.props.gameId, this.props.username));
       this.props.subscribe(getBroadcastGameTopic(this.props.gameId));
