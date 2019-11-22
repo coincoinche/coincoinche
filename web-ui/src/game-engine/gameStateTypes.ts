@@ -81,4 +81,6 @@ export type GameState = {
   highestBidding: Contract | null,
   legalMoves: LegalBiddingMove[] | LegalPlayingMove[];
   currentTrick: Trick;
+  previousTrick: Trick | null;
+  showPreviousTrick: boolean;
 };

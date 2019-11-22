@@ -50,6 +50,7 @@ export type NewStateMessage = {
       currentPlayer: string,
       highestBidding?: Contract
       currentTrick?: Trick
+      previousTrick?: Trick | null
       multiplier: number
     },
     cards: {
