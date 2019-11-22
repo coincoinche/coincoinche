@@ -56,8 +56,23 @@ export class GameStateModifier {
     return this;
   }
 
+  setScores = (scores: {you: number, them: number}) => {
+    this.gameState.scores = scores;
+    return this;
+  }
+
   updateCurrentTrick = (trick: Trick) => {
     this.gameState.currentTrick = trick;
+    return this;
+  }
+
+  updatePreviousTrick = (trick: Trick) => {
+    this.gameState.previousTrick = trick;
+    return this;
+  }
+
+  setShowPreviousTrick = (b: boolean) => {
+    this.gameState.showPreviousTrick = b;
     return this;
   }
 
@@ -70,6 +85,7 @@ const applyNewStateMessage = (msg: NewStateMessage, gameState: GameState): GameS
     .setLegalMoves(msg.content.moves)
     .setCurrentPlayer(msg.content.state.currentPlayer)
     .setMultiplier(msg.content.state.multiplier)
+    .setScores(msg.content.scores)
     // @ts-ignore
     .setCurrentPhase(GameRoundPhase[msg.content.state.phase.toUpperCase()])
     .setCurrentlySelectedContract(null)
@@ -78,6 +94,9 @@ const applyNewStateMessage = (msg: NewStateMessage, gameState: GameState): GameS
   }
   if (msg.content.state.currentTrick) {
     gameStateModifier.updateCurrentTrick(msg.content.state.currentTrick);
+  }
+  if (msg.content.state.previousTrick) {
+    gameStateModifier.updatePreviousTrick(msg.content.state.previousTrick);
   }
   return gameStateModifier.retrieveNewState();
 }
@@ -90,3 +109,7 @@ export const applyMessage = (msg: Message, gameState: GameState): GameState => {
       throw new InvalidEventError('Unknown message type.');
   }
 };
+
+export const showPreviousTrick = (show: boolean, gameState: GameState): GameState => {
+  return new GameStateModifier(gameState).setShowPreviousTrick(show).retrieveNewState();
+}

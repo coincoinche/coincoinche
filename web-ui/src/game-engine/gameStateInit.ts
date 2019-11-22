@@ -15,4 +15,10 @@ export const gameStateInit = (users: Player[], bottomPlayerIndex: number): GameS
     no: 1,
     cards: {}
   },
+  previousTrick: null,
+  scores: {
+    you: 0,
+    them: 0
+  },
+  showPreviousTrick: false
 });

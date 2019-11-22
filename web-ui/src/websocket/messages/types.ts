@@ -52,11 +52,16 @@ export type NewStateMessage = {
       currentPlayer: string,
       highestBidding?: Contract
       currentTrick?: Trick
+      previousTrick?: Trick | null
       multiplier: number
     },
     cards: {
       [username: string]: CardValue[]
     },
+    scores: {
+      you: number,
+      them: number
+    }
     moves: LegalBiddingMove[] | LegalPlayingMove[];
   }
 }

@@ -93,7 +93,15 @@ export const inboundGameMessageParser: { [type in MessageType]?: (msg: any) => M
           currentTrick: {
             no: msg.content.state.currentTrick ? msg.content.state.currentTrick.no : 1,
             cards: {}
+          },
+          previousTrick: {
+            no: msg.content.state.previousTrick ? msg.content.state.previousTrick.no : 0,
+            cards: {}
           }
+        },
+        scores: {
+          you: msg.content.scores.you,
+          them: msg.content.scores.them
         },
         cards: {},
         moves: msg.content.moves.map((s: string) => legalMoveFromString(msg.content.state.phase, s))
@@ -118,7 +126,16 @@ export const inboundGameMessageParser: { [type in MessageType]?: (msg: any) => M
         }
       }
     }
-
+    if (msg.content.state.previousTrick) {
+      for (const username in msg.content.state.previousTrick.cards) {
+        if (Object.prototype.hasOwnProperty.call(msg.content.state.previousTrick.cards, username)) {
+        // @ts-ignore
+        newStateMessage.content.state.previousTrick.cards[username] =
+          // @ts-ignore
+          CardValue[msg.content.state.previousTrick.cards[username].toLowerCase()];
+        }
+      }
+    }
     // @ts-ignore
     return newStateMessage;
   }
