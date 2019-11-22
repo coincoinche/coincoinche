@@ -46,18 +46,18 @@ public class EloService {
     double expectedWinner = quotientWinner / (quotientWinner + quotientLoser);
     double expectedLoser = quotientLoser / (quotientWinner + quotientLoser);
     for (EloPlayer player : winner.getPlayers()) {
-      newEloRatings.put(player.getUser().getUsername(), player.getRating());
       player.setRating(
           (int)
               Math.round(player.getRating() + player.getRatingAdjustment() * (1 - expectedWinner)));
       userRepository.save(player.getUser());
+      newEloRatings.put(player.getUser().getUsername(), player.getRating());
     }
     for (EloPlayer player : loser.getPlayers()) {
-      newEloRatings.put(player.getUser().getUsername(), player.getRating());
       player.setRating(
           (int)
               Math.round(player.getRating() + player.getRatingAdjustment() * (0 - expectedLoser)));
       userRepository.save(player.getUser());
+      newEloRatings.put(player.getUser().getUsername(), player.getRating());
     }
 
     return newEloRatings;
