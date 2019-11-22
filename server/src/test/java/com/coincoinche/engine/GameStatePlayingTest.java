@@ -40,7 +40,7 @@ public class GameStatePlayingTest extends GameEngineTestHelper {
       Trick currentTrick = createTrick(currentPlayer, trumpSuit);
       GameStatePlaying state =
           new GameStatePlaying(
-              currentPlayer, ContractFactory.createContract(80, trumpSuit), currentTrick, 1);
+              currentPlayer, ContractFactory.createContract(80, trumpSuit), currentTrick);
       List<Move> actual = state.getLegalMoves();
       int expectedSize = expected.size();
       int actualSize = actual.size();
