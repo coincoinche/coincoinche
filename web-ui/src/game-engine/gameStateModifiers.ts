@@ -56,6 +56,11 @@ export class GameStateModifier {
     return this;
   }
 
+  setScores = (scores: {you: number, them: number}) => {
+    this.gameState.scores = scores;
+    return this;
+  }
+
   updateCurrentTrick = (trick: Trick) => {
     this.gameState.currentTrick = trick;
     return this;
@@ -70,6 +75,7 @@ const applyNewStateMessage = (msg: NewStateMessage, gameState: GameState): GameS
     .setLegalMoves(msg.content.moves)
     .setCurrentPlayer(msg.content.state.currentPlayer)
     .setMultiplier(msg.content.state.multiplier)
+    .setScores(msg.content.scores)
     // @ts-ignore
     .setCurrentPhase(GameRoundPhase[msg.content.state.phase.toUpperCase()])
     .setCurrentlySelectedContract(null)

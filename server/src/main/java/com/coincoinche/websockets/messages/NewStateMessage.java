@@ -6,6 +6,7 @@ import com.coincoinche.engine.GameState;
 import com.coincoinche.engine.Move;
 import com.coincoinche.engine.cards.Card;
 import com.coincoinche.engine.teams.Player;
+import com.coincoinche.engine.teams.Team;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.List;
@@ -90,6 +91,26 @@ public class NewStateMessage extends Message {
     return stringBuffer.toString();
   }
 
+  private String getScoresJson() {
+    StringBuffer stringBuffer = new StringBuffer();
+    stringBuffer.append("{");
+    Team playerTeam;
+    Team otherTeam;
+    if (game.getRedTeam().getPlayers().contains(player)) {
+      playerTeam = (Team) game.getRedTeam();
+      otherTeam = (Team) game.getBlueTeam();
+    } else {
+      playerTeam = (Team) game.getBlueTeam();
+      otherTeam = (Team) game.getRedTeam();
+    }
+    int youPoints = playerTeam.getPoints();
+    int themPoints = otherTeam.getPoints();
+    stringBuffer.append(String.format("\"you\":%s,", youPoints));
+    stringBuffer.append(String.format("\"them\":%s", themPoints));
+    stringBuffer.append("}");
+    return stringBuffer.toString();
+  }
+
   @Override
   public String getJsonContent() {
     GameState state = game.getCurrentRound().getState();
@@ -102,6 +123,7 @@ public class NewStateMessage extends Message {
       e.printStackTrace();
     }
     return String.format(
-        "{\"state\":%s,\"cards\":%s,\"moves\":%s}", stateJson, getCardsJson(), getMovesJson());
+        "{\"state\":%s,\"cards\":%s,\"moves\":%s,\"scores\":%s}",
+        stateJson, getCardsJson(), getMovesJson(), getScoresJson());
   }
 }

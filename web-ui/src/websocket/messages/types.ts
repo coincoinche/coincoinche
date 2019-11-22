@@ -55,6 +55,10 @@ export type NewStateMessage = {
     cards: {
       [username: string]: CardValue[]
     },
+    scores: {
+      you: number,
+      them: number
+    }
     moves: LegalBiddingMove[] | LegalPlayingMove[];
   }
 }

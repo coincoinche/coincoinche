@@ -15,4 +15,8 @@ export const gameStateInit = (users: Player[], bottomPlayerIndex: number): GameS
     no: 1,
     cards: {}
   },
+  scores: {
+    you: 0,
+    them: 0
+  }
 });
