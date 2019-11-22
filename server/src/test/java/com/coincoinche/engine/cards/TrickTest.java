@@ -1,7 +1,8 @@
-package com.coincoinche.engine;
+package com.coincoinche.engine.cards;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.coincoinche.engine.GameEngineTestHelper;
 import com.coincoinche.engine.cards.Suit;
 import com.coincoinche.engine.cards.Trick;
 import com.coincoinche.engine.cards.ValuedCard;
