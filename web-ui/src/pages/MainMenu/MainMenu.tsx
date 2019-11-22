@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import {Link} from "react-router-dom";
 
 import logo from '../../assets/coincoinche_logo.png';
+import Title from "../../components/misc/Title";
 
 type State = {};
 
@@ -12,14 +13,6 @@ const Container = styled.div`
   align-items: center;
   justify-content: center;
   padding-top: 30px;
-`;
-
-const Title = styled.div`
-  color: #FFE136;
-  text-shadow: -7px 0 black, 0 7px black, 7px 0 black, 0 -7px black;
-  font-family: 'Cookie',cursive;
-  font-size: 140pt;
-  padding-bottom: 20px;
 `;
 
 const Logo = styled.img`
