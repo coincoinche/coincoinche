@@ -55,12 +55,6 @@ public class LobbyController {
       return new InvalidEventMessage();
     }
 
-    // Create user if not exists.
-    List<User> users = this.userRepository.findByUsername(event.getUsername());
-    if (users.size() == 0) {
-      this.userRepository.save(new User(event.getUsername()));
-    }
-
     this.matchMaker.register(event.getUsername());
 
     return new SuccessMessage();

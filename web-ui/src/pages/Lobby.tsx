@@ -7,11 +7,12 @@ import {MessageType, GameStartedMessage, SocketEndpoint, TopicTemplate} from "..
 import { Player } from "../game-engine/gameStateTypes";
 import {makeJoinLobbyMessage, makeQuitLobbyMessage} from "../websocket/messages/lobby";
 import styled from "styled-components";
-import {RouteComponentProps, withRouter} from "react-router";
+import {RouteComponentProps, withRouter, Redirect} from "react-router";
+import Cookies from "js-cookie";
 
 type State = {
   gameId: string | null;
-  username: string;
+  username: string | undefined;
   users: Player[];
   socketConnectionRetryTimeoutMs: number;
 }
@@ -53,7 +54,7 @@ class Lobby extends React.Component<Props, State> {
   state = {
     gameId: null,
     users: [],
-    username: Math.floor(Math.random() * 10000000).toString(),
+    username: Cookies.get('username'),
     socketConnectionRetryTimeoutMs: 0,
   };
 
@@ -84,6 +85,9 @@ class Lobby extends React.Component<Props, State> {
   };
 
   render() {
+    if (! this.state.username) {
+      return <Redirect to="/login" />
+    }
     const { gameId, username, users } = this.state;
 
     if (!!gameId) {
