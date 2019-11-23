@@ -45,6 +45,18 @@ public class User {
     this.ratingAdjustment = DEFAULT_RATING_ADJUSTMENT;
   }
 
+  /**
+   * Create a new user.
+   *
+   * @param username is the new user's username.
+   * @param password is the new user's password.
+   */
+  public User(String username, String password) {
+    this.username = username;
+    this.password = password;
+    this.rating = DEFAULT_RATING;
+    this.ratingAdjustment = DEFAULT_RATING_ADJUSTMENT;
+  }
   public UUID getId() {
     return id;
   }

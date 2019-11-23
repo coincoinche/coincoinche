@@ -4,12 +4,14 @@ import com.coincoinche.model.User;
 import com.coincoinche.repositories.UserRepository;
 import com.coincoinche.websockets.events.EventType;
 import com.coincoinche.websockets.events.LogInEvent;
+import com.coincoinche.websockets.events.SignUpEvent;
 import com.coincoinche.websockets.messages.InvalidEventMessage;
 import com.coincoinche.websockets.messages.LoggedInMessage;
 import com.coincoinche.websockets.messages.Message;
+import com.coincoinche.websockets.messages.UserCreatedMessage;
+import com.coincoinche.websockets.messages.UserExistsMessage;
 import com.coincoinche.websockets.messages.WrongPasswordMessage;
 import com.coincoinche.websockets.messages.WrongUsernameMessage;
-
 
 import java.util.List;
 
@@ -35,7 +37,7 @@ public class LoginController {
    */
   @MessageMapping("/login")
   @SendTo("/topic/login")
-  public Message joinLobby(@Payload LogInEvent event) {
+  public Message logIn(@Payload LogInEvent event) {
     String username = event.getUsername();
     logger.debug("Received event {}, username {}", event.getType(), username);
 
@@ -44,7 +46,6 @@ public class LoginController {
     }
 
     List<User> users = this.userRepository.findByUsername(username);
-    logger.debug("user size {}", users.size());
     if (users.size() == 0) {
       return new WrongUsernameMessage();
     }
@@ -54,5 +55,30 @@ public class LoginController {
     }
 
     return new WrongPasswordMessage();
+  }
+
+  /**
+   * Endpoint called to sign up a new player.
+   *
+   * @param event - incoming event.
+   * @return message acknowledging reception.
+   */
+  @MessageMapping("/signup")
+  @SendTo("/topic/signup")
+  public Message signUp(@Payload SignUpEvent event) {
+    String username = event.getUsername();
+    logger.debug("Received event {}, username {}", event.getType(), username);
+
+    if (!event.getType().equals(EventType.SIGN_UP)) {
+      return new InvalidEventMessage();
+    }
+
+    List<User> users = this.userRepository.findByUsername(username);
+    if (users.size() != 0) {
+      return new UserExistsMessage();
+    }
+    // Create user.
+    this.userRepository.save(new User(event.getUsername(), event.getPassword()));
+    return new UserCreatedMessage();
   }
 }
