@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import {Link} from "react-router-dom";
 
 import logo from '../../assets/coincoinche_logo.png';
+import LoginComponentToolbar from '../../components/LoginToolbarComponent';
 
 type State = {};
 
@@ -52,6 +53,7 @@ const MenuItem = styled.li`
 export default class MainMenu extends React.Component<{}, State> {
   render() {
     return <Container>
+      <LoginComponentToolbar />
       <Logo src={logo} className="App-logo" alt="logo" />
       <Title>Coincoinche</Title>
       <Menu>
