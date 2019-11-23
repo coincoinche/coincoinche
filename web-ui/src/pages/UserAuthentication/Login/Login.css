@@ -1,0 +1,32 @@
+.loginForm {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    padding-top: 10%;
+}
+
+.labelContainer {
+    display: flex;
+    flex-direction: column;
+}
+
+.inputContainer {
+    display: flex;
+    flex-direction: column;
+}
+
+.loginLabel {
+    padding: 5px;
+    margin-bottom: 5px;
+}
+
+input {
+    margin-bottom: 5px;
+}
+.submitButton {
+    padding-top: 15px;
+}
+
+.errorMessage {
+    color: red;
+}

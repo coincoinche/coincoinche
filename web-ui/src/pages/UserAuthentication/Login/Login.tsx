@@ -3,6 +3,8 @@ import withWebsocketConnection, { InjectedProps } from "../../../websocket/withW
 import {MessageType, SocketEndpoint, TopicTemplate, LoggedInMessage, WrongUsernameMessage, WrongPasswordMessage} from "../../../websocket/messages/types";
 import { makeLogInMessage } from '../../../websocket/messages/login';
 import Cookies from 'js-cookie';
+import { Redirect } from 'react-router';
+import './Login.css';
 
 type Props = InjectedProps
 
@@ -75,20 +77,28 @@ class Login extends React.Component<Props, State> {
   }
 
   render() {
+    if (this.state.authenticated) {
+      return <Redirect to="/" />
+    }
     return(
         <form onSubmit={this.handleSubmit}>
-            <div><label> User Name : <input type="text" name="username"/> </label></div>
-            <div><label> Password: <input type="password" name="password"/> </label></div>
-            {this.state.wrongUsername && <div>
-              <label style={{color:'red'}}> This user doesn't exist </label>
-            </div>}
-            {this.state.wrongPassword && <div>
-              <label style={{color:'red'}}> These username and password don't match </label>
-            </div>}
-            {this.state.authenticated && <div>
-              <label style={{color:'red'}}> Connected ! </label>
-            </div>}
-            <div><input type="submit" value="Sign In"/></div>
+          <div className="loginForm">
+            <div className="labelContainer">
+              <label className="loginLabel"> Nom d'utilisateur :</label>
+              <label className="loginLabel"> Mot de passe : </label>
+            </div>
+            <div className="inputContainer">
+              <input type="text" name="username"/>
+              <input type="password" name="password"/>
+            </div>
+          </div>
+          {this.state.wrongUsername && <div>
+            <label className="errorMessage"> Cet utilisateur n'existe pas </label>
+          </div>}
+          {this.state.wrongPassword && <div>
+            <label className="errorMessage"> Le mot de passe est invalide </label>
+          </div>}
+          <div className="submitButton"><input type="submit" value="Se connecter"/></div>
         </form>
     )
   }
