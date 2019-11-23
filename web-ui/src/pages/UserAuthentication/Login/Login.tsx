@@ -1,24 +1,26 @@
 import React from 'react';
 import withWebsocketConnection, { InjectedProps } from "../../../websocket/withWebsocketConnection";
-import {EventType, SocketEndpoint, TopicTemplate} from "../../../websocket/events/types";
-import MainMenu from "../../MainMenu/MainMenu";
-import { makeLogInMessage } from '../../../websocket/events/login';
+import {MessageType, SocketEndpoint, TopicTemplate, LoggedInMessage, WrongUsernameMessage, WrongPasswordMessage} from "../../../websocket/messages/types";
+import { makeLogInMessage } from '../../../websocket/messages/login';
+import Cookies from 'js-cookie';
 
 type Props = InjectedProps
 
 type State = {
+  wrongUsername: boolean;
   wrongPassword: boolean;
-  redirect: boolean;
-  username: string | null;
+  authenticated: boolean;
+  username: string;
 }
 
 class Login extends React.Component<Props, State> {
   constructor(props:any) {
     super(props);
     this.state = {
+      wrongUsername : false,
       wrongPassword : false,
-      redirect : false,
-      username : null,
+      authenticated : false,
+      username : '',
     }
     this.handleSubmit = this.handleSubmit.bind(this);
   }
@@ -26,13 +28,37 @@ class Login extends React.Component<Props, State> {
   componentDidMount(): void {
     this.props.registerOnMessageReceivedCallback(
       TopicTemplate.LOGIN,
-      EventType.WRONG_ID,
-      () => this.setState({ wrongPassword : true }),
+      MessageType.WRONG_USERNAME,
+      (msg: WrongUsernameMessage) => {
+        this.setState({
+          authenticated : false,
+          wrongUsername : true,
+          wrongPassword : false,
+        })
+      },
     );
     this.props.registerOnMessageReceivedCallback(
       TopicTemplate.LOGIN,
-      EventType.CONNECTED,
-      () => this.setState({ redirect : true }),
+      MessageType.WRONG_PASSWORD,
+      (msg:WrongPasswordMessage) => {
+        this.setState({
+          authenticated : false,
+          wrongUsername : false,
+          wrongPassword : true,
+        })
+      },
+    );
+    this.props.registerOnMessageReceivedCallback(
+      TopicTemplate.LOGIN,
+      MessageType.LOGGED_IN,
+      (msg: LoggedInMessage) => {
+        Cookies.set('username', this.state.username);
+        this.setState({
+          authenticated : true,
+          wrongUsername : false,
+          wrongPassword : false,
+        });
+      },
     )
   }
 
@@ -43,17 +69,25 @@ class Login extends React.Component<Props, State> {
   }
 
   handleSubmit(event:any) {
-    this.props.sendMessage(SocketEndpoint.USER_LOGIN, makeLogInMessage('connected'));
+    event.preventDefault();
+    this.props.sendMessage(SocketEndpoint.USER_LOGIN, makeLogInMessage(event.target[0].value, event.target[1].value));
+    this.setState({username:event.target[0].value});
   }
 
   render() {
-    if (this.state.redirect) {
-      return <MainMenu />
-    }
     return(
         <form onSubmit={this.handleSubmit}>
             <div><label> User Name : <input type="text" name="username"/> </label></div>
             <div><label> Password: <input type="password" name="password"/> </label></div>
+            {this.state.wrongUsername && <div>
+              <label style={{color:'red'}}> This user doesn't exist </label>
+            </div>}
+            {this.state.wrongPassword && <div>
+              <label style={{color:'red'}}> These username and password don't match </label>
+            </div>}
+            {this.state.authenticated && <div>
+              <label style={{color:'red'}}> Connected ! </label>
+            </div>}
             <div><input type="submit" value="Sign In"/></div>
         </form>
     )

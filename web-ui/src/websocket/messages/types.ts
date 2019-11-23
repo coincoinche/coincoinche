@@ -5,11 +5,13 @@ export enum TopicTemplate {
   LOBBY='/topic/lobby',
   GAME='/topic/game/{gameId}/player/{username}',
   GAME_BROADCAST='/topic/game/{gameId}',
+  LOGIN='/topic/login',
 }
 
 export enum SocketEndpoint {
   JOIN_LOBBY = '/app/lobby/join',
   QUIT_LOBBY = '/app/lobby/quit',
+  USER_LOGIN = '/app/login',
 }
 
 export enum MessageType {
@@ -22,6 +24,10 @@ export enum MessageType {
   MOVE_CARD = 'MOVE_CARD',
   GAME_FINISHED = 'GAME_FINISHED',
   CLIENT_READY = 'CLIENT_READY',
+  LOG_IN = 'LOG_IN',
+  WRONG_USERNAME = 'WRONG_USERNAME',
+  WRONG_PASSWORD = 'WRONG_PASSWORD',
+  LOGGED_IN = 'LOGGED_IN',
 }
 
 export enum MoveType {
@@ -81,6 +87,18 @@ export type CardPlayedEvent = {
   message: MessageType.MOVE_CARD,
   playerIndex: number,
   move: LegalPlayingMove,
+};
+
+export type LoggedInMessage = {
+  message: MessageType.LOGGED_IN,
+};
+
+export type WrongUsernameMessage = {
+  message: MessageType.WRONG_USERNAME,
+};
+
+export type WrongPasswordMessage = {
+  message: MessageType.WRONG_PASSWORD,
 };
 
 export type Message = NewStateMessage;
