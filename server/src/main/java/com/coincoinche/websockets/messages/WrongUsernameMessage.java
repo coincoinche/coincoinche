@@ -8,7 +8,7 @@ public class WrongUsernameMessage extends Message {
     return "WRONG_USERNAME";
   }
 
-@Override
+  @Override
   public String getJsonContent() {
     return "{}";
   }

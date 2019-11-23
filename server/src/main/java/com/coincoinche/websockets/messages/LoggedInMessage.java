@@ -8,7 +8,7 @@ public class LoggedInMessage extends Message {
     return "LOGGED_IN";
   }
 
-@Override
+  @Override
   public String getJsonContent() {
     return "{}";
   }

@@ -8,7 +8,7 @@ public class WrongPasswordMessage extends Message {
     return "WRONG_PASSWORD";
   }
 
-@Override
+  @Override
   public String getJsonContent() {
     return "{}";
   }

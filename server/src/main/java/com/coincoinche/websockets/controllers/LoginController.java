@@ -1,7 +1,5 @@
 package com.coincoinche.websockets.controllers;
 
-import java.util.List;
-
 import com.coincoinche.model.User;
 import com.coincoinche.repositories.UserRepository;
 import com.coincoinche.websockets.events.EventType;
@@ -11,6 +9,9 @@ import com.coincoinche.websockets.messages.LoggedInMessage;
 import com.coincoinche.websockets.messages.Message;
 import com.coincoinche.websockets.messages.WrongPasswordMessage;
 import com.coincoinche.websockets.messages.WrongUsernameMessage;
+
+
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
