@@ -1,37 +1,57 @@
 package com.coincoinche.websockets.controllers;
 
-import com.coincoinche.events.Event;
-import com.coincoinche.events.EventType;
-import com.coincoinche.events.UserLoggedIn;
+import java.util.List;
+
+import com.coincoinche.model.User;
+import com.coincoinche.repositories.UserRepository;
+import com.coincoinche.websockets.events.EventType;
+import com.coincoinche.websockets.events.LogInEvent;
+import com.coincoinche.websockets.messages.InvalidEventMessage;
+import com.coincoinche.websockets.messages.LoggedInMessage;
+import com.coincoinche.websockets.messages.Message;
+import com.coincoinche.websockets.messages.WrongPasswordMessage;
+import com.coincoinche.websockets.messages.WrongUsernameMessage;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
 
-
 @Controller
 public class LoginController {
   private static final Logger logger = LoggerFactory.getLogger(LoginController.class);
 
+  @Autowired private UserRepository userRepository;
+
   /**
-   * Endpoint called to log the user.
+   * Endpoint called to log the player in.
    *
-   * @param message - incoming message.
+   * @param event - incoming event.
    * @return message acknowledging reception.
    */
   @MessageMapping("/login")
   @SendTo("/topic/login")
-  public Event logUser(@Payload UserLoggedIn message) {
-    logger.debug(
-        String.format(
-            "Received message %s, username %s", message.getType(), message.getUsername()));
+  public Message joinLobby(@Payload LogInEvent event) {
+    String username = event.getUsername();
+    logger.debug("Received event {}, username {}", event.getType(), username);
 
-    if (!message.getType().equals(EventType.USER_LOGGED_IN)) {
-      return new Event(EventType.INVALID_MESSAGE);
+    if (!event.getType().equals(EventType.LOG_IN)) {
+      return new InvalidEventMessage();
     }
-    return new Event(EventType.SUCCESS);
+
+    List<User> users = this.userRepository.findByUsername(username);
+    logger.debug("user size {}", users.size());
+    if (users.size() == 0) {
+      return new WrongUsernameMessage();
+    }
+    User user = users.get(0);
+    if (user.getPassword().equals(event.getPassword())) {
+      return new LoggedInMessage();
+    }
+
+    return new WrongPasswordMessage();
   }
 }
