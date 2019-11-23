@@ -7,6 +7,7 @@ import Ladder from "./pages/Ladder/Ladder";
 import Lobby from "./pages/Lobby";
 import Login from "./pages/UserAuthentication/Login/Login";
 import Logout from "./pages/UserAuthentication/Logout/Logout";
+import SignUp from "./pages/UserAuthentication/SignUp/SignUp";
 
 const App: React.FC = () => {
   return (
@@ -24,6 +25,9 @@ const App: React.FC = () => {
           </Route>
           <Route path="/logout">
             <Logout />
+          </Route>
+          <Route path="/signup">
+            <SignUp />
           </Route>
           <Route path="/">
             <MainMenu />

@@ -3,26 +3,34 @@ import styled from 'styled-components';
 import Cookies from 'js-cookie';
 
 const Link = styled.a`
+  color : white;
+  padding-left : 10px;
+`;
+const Container = styled.a`
   position : absolute;
   right : 30px;
   top : 30px;
-  color : white;
-`;
+`
 
 export default class LoginToolbarComponent extends React.Component {
   render() {
     return (
-      <div>
+      <Container>
         {Cookies.get('username') ?
           <Link href="/logout">
             Se déconnecter
           </Link>
         :
-          <Link href="/login">
-            S'authentifier
-          </Link>
+          <div>
+            <Link href="/login">
+              S'authentifier
+            </Link>
+            <Link href="/signup">
+              S'inscrire
+            </Link>
+          </div>
         }
-      </div>
+      </Container>
     )
   }
 }
