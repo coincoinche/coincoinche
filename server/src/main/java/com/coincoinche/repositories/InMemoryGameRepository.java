@@ -1,13 +1,14 @@
 package com.coincoinche.repositories;
 
 import com.coincoinche.engine.CoincheGame;
-import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class InMemoryGameRepository implements GameRepository {
-  private HashMap<String, CoincheGame> repository;
+  private Map<String, CoincheGame> repository;
 
   public InMemoryGameRepository() {
-    this.repository = new HashMap<>();
+    this.repository = new ConcurrentHashMap<>();
   }
 
   public void saveGame(String gameId, CoincheGame game) {
