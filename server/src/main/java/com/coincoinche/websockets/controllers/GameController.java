@@ -165,5 +165,7 @@ public class GameController {
         this.template.convertAndSend(getIndividualTopicPath(gameId, player.getUsername()), msg);
       }
     }
+    logger.debug("Removing game {} from memory", gameId);
+    repository.removeGame(gameId);
   }
 }

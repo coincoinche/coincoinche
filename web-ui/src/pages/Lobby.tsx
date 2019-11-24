@@ -45,7 +45,18 @@ class Lobby extends React.Component<Props, State> {
     this.props.registerOnMessageReceivedCallback(
       TopicTemplate.LOBBY,
       MessageType.GAME_STARTED,
-      (msg: GameStartedMessage) => this.setState({ gameId: msg.content.gameId, users: msg.content.users }),
+      (msg: GameStartedMessage) => {
+        // if there is already a game going on: skip
+        if (this.state.gameId) {
+          return;
+        }
+        // set the game ID if the user is in the game's users
+        msg.content.users.forEach(user => {
+          if (this.state.username === user.username) {
+            this.setState({ gameId: msg.content.gameId, users: msg.content.users });
+          }
+        });
+      },
     );
     this.retryTimeoutUpdaterFunctionId = setInterval(() =>
       this.setState({
