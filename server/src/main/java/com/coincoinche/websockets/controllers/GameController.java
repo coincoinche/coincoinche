@@ -133,6 +133,7 @@ public class GameController {
       logger.error("Inconsistent error: legal move is illegal: {}", move);
       e.printStackTrace();
     } catch (UserNotFoundException e) {
+      logger.error("Failed to terminate game");
       e.printStackTrace();
     }
   }

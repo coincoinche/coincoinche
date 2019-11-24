@@ -132,7 +132,7 @@ const EndGameScreen = ({location, history}: Props) => {
                 yourTeam.players.map(({ username, previousElo, newElo }) => (
                   <Container direction="row" justifyContent="space-between" minWidth="20em">
                     <Text>{username}</Text>
-                    <Text>{previousElo} -> {newElo}</Text>
+                    <Text>{previousElo} ⟶ {newElo}</Text>
                   </Container>
               ))}
             </Container>
@@ -162,7 +162,7 @@ const EndGameScreen = ({location, history}: Props) => {
               theirTeam.players.map(({ username, previousElo, newElo }) => (
                 <Container direction="row" justifyContent="space-between" minWidth="20em">
                   <Text>{username}</Text>
-                  <Text>{previousElo} -> {newElo}</Text>
+                  <Text>{previousElo} ⟶ {newElo}</Text>
                 </Container>
             ))}
           </Animated>

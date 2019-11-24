@@ -33,7 +33,6 @@ public class EloService {
       throws UserNotFoundException {
     EloTeam winner = eloTeamFactory.createEloTeamFromCoincheTeam(winnerTeam);
     EloTeam loser = eloTeamFactory.createEloTeamFromCoincheTeam(loserTeam);
-    logger.debug("Successfully updated Elo ratings");
     return updateEloTeamRatings(winner, loser);
   }
 
