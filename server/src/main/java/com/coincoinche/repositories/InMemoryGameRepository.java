@@ -17,4 +17,8 @@ public class InMemoryGameRepository implements GameRepository {
   public CoincheGame getGame(String gameId) {
     return this.repository.get(gameId);
   }
+
+  public void removeGame(String gameId) {
+    this.repository.remove(gameId);
+  }
 }

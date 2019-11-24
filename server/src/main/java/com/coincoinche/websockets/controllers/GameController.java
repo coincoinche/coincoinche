@@ -147,5 +147,7 @@ public class GameController {
             getIndividualTopicPath(gameId, player.getUsername()), new GameFinishedMessage(false));
       }
     }
+    logger.debug("Removing game {} from memory", gameId);
+    repository.removeGame(gameId);
   }
 }
