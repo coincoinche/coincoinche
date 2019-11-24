@@ -8,6 +8,7 @@ import { Player } from "../game-engine/gameStateTypes";
 import {makeJoinLobbyMessage, makeQuitLobbyMessage} from "../websocket/messages/lobby";
 import styled from "styled-components";
 import {RouteComponentProps, withRouter} from "react-router";
+import Button from "../components/misc/Button";
 
 type State = {
   gameId: string | null;
@@ -22,23 +23,6 @@ const ConnectionStatus = styled.p`
   font-family: arial,helvetica,verdana;
   font-size: 18pt;
   color: #c9c9c9;
-`;
-
-const ExitLobbyButton = styled.div`
-  background-color: darkgreen;
-  font-weight: bold;
-  color: yellowgreen;
-  text-align: center;
-  line-height: 50px;
-  width: 200px;
-  height: 50px;
-  border-radius: 50px;
-  border: 3px solid black;
-  margin: 50px;
-  &:hover {
-    background-color: yellowgreen;
-    color: darkgreen;
-  }
 `;
 
 const Container = styled.div`
@@ -119,7 +103,7 @@ class Lobby extends React.Component<Props, State> {
           height={100}
           width={100}
         />
-        <ExitLobbyButton onClick={this.onQuitLobbyButtonClicked}>Revenir au menu</ExitLobbyButton>
+        <Button onClick={this.onQuitLobbyButtonClicked}>Revenir au menu</Button>
       </Container>
     )
   }

@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import {Link} from "react-router-dom";
 
 import logo from '../../assets/coincoinche_logo.png';
+import Title from "../../components/misc/Title";
 
 type State = {};
 
@@ -12,14 +13,6 @@ const Container = styled.div`
   align-items: center;
   justify-content: center;
   padding-top: 30px;
-`;
-
-const Title = styled.div`
-  color: #FFE136;
-  text-shadow: -7px 0 black, 0 7px black, 7px 0 black, 0 -7px black;
-  font-family: 'Cookie',cursive;
-  font-size: 140pt;
-  padding-bottom: 20px;
 `;
 
 const Logo = styled.img`
@@ -53,12 +46,12 @@ export default class MainMenu extends React.Component<{}, State> {
   render() {
     return <Container>
       <Logo src={logo} className="App-logo" alt="logo" />
-      <Title>Coincoinche</Title>
+      <Title fontSize={140}>Coincoinche</Title>
       <Menu>
         <Link to="/game" style={{ textDecoration: 'none' }}>
           <MenuItem>Jeu classé</MenuItem>
         </Link>
-        <Link to="/game" style={{ textDecoration: 'none' }}>
+        <Link to="/game/end" style={{ textDecoration: 'none' }}>
           <MenuItem>Jeu libre</MenuItem>
         </Link>
         <Link to="/ladder" style={{ textDecoration: 'none' }}>
