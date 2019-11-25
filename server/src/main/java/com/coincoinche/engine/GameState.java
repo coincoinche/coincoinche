@@ -5,7 +5,7 @@ import java.util.List;
 
 /** Interface representing the state of a game phase. */
 public interface GameState {
-  List<Move> getLegalMoves();
+  public List<Move> getLegalMoves();
 
   /**
    * Rotate players both for the state and the round. This method must ensure consistency of the
@@ -13,9 +13,9 @@ public interface GameState {
    *
    * @param round is the coinche game round.
    */
-  void rotatePlayers(CoincheGameRound round);
+  public void rotatePlayers(CoincheGameRound round);
 
-  boolean mustChange();
+  public boolean mustChange();
 
-  Player getCurrentPlayer();
+  public Player getCurrentPlayer();
 }

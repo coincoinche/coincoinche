@@ -7,15 +7,16 @@ import java.util.List;
 /** Factory to create contracts. */
 public class ContractFactory {
 
-  static Contract createPointsContract(int value, Suit suit) throws IllegalArgumentException {
+  protected static Contract createPointsContract(int value, Suit suit)
+      throws IllegalArgumentException {
     return new ContractPoints(value, suit);
   }
 
-  static Contract createCapotContract(Suit suit) {
+  protected static Contract createCapotContract(Suit suit) {
     return new ContractCapot(suit);
   }
 
-  static Contract createGeneraleContract(Suit suit) {
+  protected static Contract createGeneraleContract(Suit suit) {
     return new ContractGenerale(suit);
   }
 

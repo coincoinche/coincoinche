@@ -13,7 +13,7 @@ public class CoincheGameRound extends RedBlueRotatingPlayersGame<Player> {
   private CoincheGame globalGame;
   private GameState state;
 
-  public CoincheGameRound(Team redTeam, Team blueTeam) {
+  protected CoincheGameRound(Team redTeam, Team blueTeam) {
     super(redTeam, blueTeam);
     new Deck().dealCardsToTeams(redTeam, blueTeam);
   }
@@ -22,7 +22,7 @@ public class CoincheGameRound extends RedBlueRotatingPlayersGame<Player> {
    * This should be called after a move was applied to a game round. It rotates players in the round
    * and change its state if necessary.
    */
-  GameResult<Team> moveWasApplied() {
+  protected GameResult<Team> moveWasApplied() {
     // rotate players before checking if the state must change
     state.rotatePlayers(this);
     // handle the case when all players pass the bidding phase: new round must start
@@ -58,11 +58,11 @@ public class CoincheGameRound extends RedBlueRotatingPlayersGame<Player> {
     return super.getCurrentPlayer();
   }
 
-  public void setGlobalGame(CoincheGame globalGame) {
+  protected void setGlobalGame(CoincheGame globalGame) {
     this.globalGame = globalGame;
   }
 
-  public void setState(GameState state) {
+  protected void setState(GameState state) {
     this.state = state;
   }
 
@@ -74,7 +74,7 @@ public class CoincheGameRound extends RedBlueRotatingPlayersGame<Player> {
     return state;
   }
 
-  public CoincheGame getGlobalGame() {
+  protected CoincheGame getGlobalGame() {
     return globalGame;
   }
 }

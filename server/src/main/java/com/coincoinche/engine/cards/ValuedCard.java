@@ -29,7 +29,7 @@ public class ValuedCard extends Card {
 
   private boolean trump;
 
-  public ValuedCard(Suit suit, Rank rank, boolean trump) {
+  protected ValuedCard(Suit suit, Rank rank, boolean trump) {
     super(suit, rank);
     this.trump = trump;
   }
