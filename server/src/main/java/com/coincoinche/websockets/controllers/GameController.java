@@ -151,16 +151,16 @@ public class GameController {
         GameFinishedMessage msg =
             new GameFinishedMessage(
                 true,
-                teamsPoints.get(result.getWinnerTeam()),
-                teamsPoints.get(result.getLoserTeam()),
+                teamsPoints.get(winnerTeam),
+                teamsPoints.get(loserTeam),
                 newEloPerUsername);
         this.template.convertAndSend(getIndividualTopicPath(gameId, player.getUsername()), msg);
       } else {
         GameFinishedMessage msg =
             new GameFinishedMessage(
                 false,
-                teamsPoints.get(result.getLoserTeam()),
-                teamsPoints.get(result.getWinnerTeam()),
+                teamsPoints.get(winnerTeam),
+                teamsPoints.get(loserTeam),
                 newEloPerUsername);
         this.template.convertAndSend(getIndividualTopicPath(gameId, player.getUsername()), msg);
       }
