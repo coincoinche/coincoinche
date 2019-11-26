@@ -61,7 +61,7 @@ class SignUp extends React.Component<Props, State> {
 
   handleSubmit(event:any) {
     event.preventDefault();
-    if (event.target[1].value != event.target[2].value) {
+    if (event.target[1].value !== event.target[2].value) {
       this.setState({
         wrongPassword : true,
         userExists : false,

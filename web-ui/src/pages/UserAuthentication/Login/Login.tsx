@@ -5,6 +5,7 @@ import { makeLogInMessage } from '../../../websocket/messages/login';
 import Cookies from 'js-cookie';
 import { Redirect } from 'react-router';
 import './Login.css';
+import MainMenu from '../../MainMenu/MainMenu';
 
 type Props = InjectedProps
 
@@ -13,6 +14,7 @@ type State = {
   wrongPassword: boolean;
   authenticated: boolean;
   username: string;
+  guest: boolean;
 }
 
 class Login extends React.Component<Props, State> {
@@ -23,8 +25,10 @@ class Login extends React.Component<Props, State> {
       wrongPassword : false,
       authenticated : false,
       username : '',
+      guest: false,
     }
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.guestClick = this.guestClick.bind(this);
   }
 
   componentDidMount(): void {
@@ -70,6 +74,11 @@ class Login extends React.Component<Props, State> {
     }
   }
 
+  guestClick(event: any) {
+    event.preventDefault();
+    this.setState({guest: true, username: "guest-" + Math.floor(Math.random() * 1000000000).toString()});
+  }
+
   handleSubmit(event:any) {
     event.preventDefault();
     this.props.sendMessage(SocketEndpoint.USER_LOGIN, makeLogInMessage(event.target[0].value, event.target[1].value));
@@ -77,6 +86,9 @@ class Login extends React.Component<Props, State> {
   }
 
   render() {
+    if (this.state.guest) {
+      return <MainMenu username={this.state.username} />
+    }
     if (this.state.authenticated) {
       return <Redirect to="/" />
     }
@@ -106,6 +118,12 @@ class Login extends React.Component<Props, State> {
           </div>}
           <div className="submitButton"><input type="submit" value="Se connecter"/></div>
         </form>
+        <div style={{"width": "50%"}}>
+          <b>ALTERNATIVE :</b> Si vous ne souhaitez pas monter le ladder, vous pouvez également vous connecter en tant qu'invité.
+        </div>
+        <button className="guestButton" onClick={this.guestClick}>
+            Se connecter en tant qu'invité
+        </button>
         </div>
     )
   }

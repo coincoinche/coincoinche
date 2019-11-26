@@ -6,6 +6,10 @@ import logo from '../../assets/coincoinche_logo.png';
 import LoginComponentToolbar from '../../components/LoginToolbarComponent';
 import Title from "../../components/misc/Title";
 
+type Props = {
+  username?: string | undefined,
+}
+
 type State = {};
 
 const Container = styled.div`
@@ -43,14 +47,19 @@ const MenuItem = styled.li`
   }
 `;
 
-export default class MainMenu extends React.Component<{}, State> {
+export default class MainMenu extends React.Component<Props, State> {
   render() {
     return <Container>
       <LoginComponentToolbar />
       <Logo src={logo} className="App-logo" alt="logo" />
       <Title fontSize={140}>Coincoinche</Title>
       <Menu>
-        <Link to="/game" style={{ textDecoration: 'none' }}>
+        <Link to={{
+          pathname: '/game',
+          state: {
+            username: this.props.username
+          }
+        }} style={{ textDecoration: 'none' }}>
           <MenuItem>Jeu classé</MenuItem>
         </Link>
         <Link to="/game/end" style={{ textDecoration: 'none' }}>

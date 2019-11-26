@@ -64,21 +64,21 @@ const hasTrickChanged = (prevTrick: Trick, currTrick: Trick): boolean => {
 
 type Props = RouteComponentProps & InjectedProps & {
   gameId: string;
-  username: string;
+  username: string | undefined;
   users: Player[];
 }
 
 type State = GameState;
 
-const getGameTopic = (gameId: string, username: string) => TopicTemplate.GAME
+const getGameTopic = (gameId: string, username: string | undefined) => TopicTemplate.GAME
   .replace('{gameId}', gameId)
-  .replace('{username}', username);
+  .replace('{username}', username!);
 
 const getBroadcastGameTopic = (gameId: string) => TopicTemplate.GAME_BROADCAST
   .replace('{gameId}', gameId);
 
 class MainGameScreen extends React.Component<Props, State> {
-  state: State = gameStateInit(this.props.users, this.props.users.map(u => u.username).indexOf(this.props.username));
+  state: State = gameStateInit(this.props.users, this.props.users.map(u => u.username).indexOf(this.props.username!));
 
   componentDidMount(): void {
     const playerTopic = getGameTopic(this.props.gameId, this.props.username);
@@ -178,7 +178,7 @@ class MainGameScreen extends React.Component<Props, State> {
     console.log("card was played, sending event to server...");
     if (
         this.state.currentPhase !== GameRoundPhase.MAIN ||
-        !this.state.cards[this.props.username].includes(card) ||
+        !this.state.cards[this.props.username!].includes(card) ||
         !(this.state.legalMoves as LegalPlayingMove[])
           .map((m: LegalPlayingMove) => m.card).includes(card) ||
         player !== this.state.currentPlayer
@@ -223,7 +223,7 @@ class MainGameScreen extends React.Component<Props, State> {
   render() {
     let cardsInHand: CardValue[] = [];
     if (this.state.cards) {
-      cardsInHand = this.state.cards[this.props.username] || [];
+      cardsInHand = this.state.cards[this.props.username!] || [];
     }
     const currentPhase = this.state.currentPhase;
 
@@ -246,7 +246,7 @@ class MainGameScreen extends React.Component<Props, State> {
     let legalCardsToPlay: boolean[] = [];
     let currentTrick: Trick | null = null;
     if (this.state.currentPhase === GameRoundPhase.MAIN) {
-      legalCardsToPlay = this.state.cards[this.props.username].map(
+      legalCardsToPlay = this.state.cards[this.props.username!].map(
         (card: CardValue) =>
           (this.state.legalMoves as LegalPlayingMove[]).map((m: LegalPlayingMove) => m.card).includes(card)
       );

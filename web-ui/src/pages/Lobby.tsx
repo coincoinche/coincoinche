@@ -7,7 +7,7 @@ import {MessageType, GameStartedMessage, SocketEndpoint, TopicTemplate} from "..
 import { Player } from "../game-engine/gameStateTypes";
 import {makeJoinLobbyMessage, makeQuitLobbyMessage} from "../websocket/messages/lobby";
 import styled from "styled-components";
-import {RouteComponentProps, withRouter, Redirect} from "react-router";
+import {RouteComponentProps, withRouter, Redirect, StaticContext} from "react-router";
 import Cookies from "js-cookie";
 import Button from "../components/misc/Button";
 
@@ -18,7 +18,7 @@ type State = {
   socketConnectionRetryTimeoutMs: number;
 }
 
-type Props = InjectedProps & RouteComponentProps;
+type Props = InjectedProps & RouteComponentProps<{}, StaticContext, {username: string | undefined}>;
 
 const ConnectionStatus = styled.p`
   font-family: arial,helvetica,verdana;
@@ -43,6 +43,9 @@ class Lobby extends React.Component<Props, State> {
   };
 
   componentDidMount(): void {
+    if (this.props.location.state.username) {
+      this.setState({username: this.props.location.state.username});
+    }
     this.props.registerOnMessageReceivedCallback(
       TopicTemplate.LOBBY,
       MessageType.GAME_STARTED,
@@ -80,7 +83,7 @@ class Lobby extends React.Component<Props, State> {
   };
 
   render() {
-    if (! this.state.username) {
+    if (!this.state.username && !this.props.location.state.username) {
       return <Redirect to="/login" />
     }
     const { gameId, username, users } = this.state;
