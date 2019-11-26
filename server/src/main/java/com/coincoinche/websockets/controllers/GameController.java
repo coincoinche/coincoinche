@@ -75,8 +75,11 @@ public class GameController {
   public void getFirstGameState(
       @DestinationVariable String gameId, @DestinationVariable String username) {
     logger.debug("Game {}: received event READY by user {}", gameId, username);
-    // TODO error handling if the game is not found
     CoincheGame game = this.repository.getGame(gameId);
+    if (game == null) {
+      logger.error("game {} not found when trying to get first game state", gameId);
+      return;
+    }
     try {
       Player player = game.getPlayer(username);
       pushStateToPlayer(gameId, game, player);
@@ -98,9 +101,21 @@ public class GameController {
       @DestinationVariable String gameId,
       @DestinationVariable String username,
       @Payload String jsonMove) {
-    // TODO nockty: check that the move comes from the current player!
     logger.debug("Game {} User {}: received move {}", gameId, username, jsonMove);
     CoincheGame game = repository.getGame(gameId);
+    if (game == null) {
+      logger.error("game {} not found when trying to make a move on the game", gameId);
+      return;
+    }
+    String currentUserName = game.getCurrentPlayer().getUsername();
+    if (!currentUserName.equals(username)) {
+      logger.warn(
+          "No-op in game {}: user {} tried to make a move during {}'s turn",
+          gameId,
+          username,
+          currentUserName);
+      return;
+    }
     // create legal move
     logger.debug("create legal move");
     Move move;
