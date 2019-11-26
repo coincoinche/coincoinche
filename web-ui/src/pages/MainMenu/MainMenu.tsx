@@ -51,8 +51,8 @@ export default class MainMenu extends React.Component<{}, State> {
         <Link to="/game" style={{ textDecoration: 'none' }}>
           <MenuItem>Jeu classé</MenuItem>
         </Link>
-        <Link to="/game/end" style={{ textDecoration: 'none' }}>
-          <MenuItem>Jeu libre</MenuItem>
+        <Link to="/rules" style={{ textDecoration: 'none' }}>
+          <MenuItem>Règles</MenuItem>
         </Link>
         <Link to="/ladder" style={{ textDecoration: 'none' }}>
           <MenuItem>Ladder</MenuItem>

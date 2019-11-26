@@ -2,10 +2,10 @@ import React from 'react';
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import './App.css';
 import MainMenu from "./pages/MainMenu/MainMenu";
-import './App.css';
 import Ladder from "./pages/Ladder/Ladder";
 import Lobby from "./pages/Lobby";
 import EndGameScreen from "./pages/MainGame/EndGameScreen";
+import Rules from "./pages/Rules/Rules";
 
 const App: React.FC = () => {
   return (
@@ -21,6 +21,9 @@ const App: React.FC = () => {
             </Route>
             <Route path="/ladder">
               <Ladder />
+            </Route>
+            <Route path="/rules">
+              <Rules />
             </Route>
             <Route path="/">
               <MainMenu />
