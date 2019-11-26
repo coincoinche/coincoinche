@@ -107,7 +107,7 @@ public class GameController {
       logger.error("game {} not found when trying to make a move on the game", gameId);
       return;
     }
-    String currentUserName = game.getCurrentPlayer().getUsername();
+    String currentUserName = game.getCurrentRound().getCurrentPlayer().getUsername();
     if (!currentUserName.equals(username)) {
       logger.warn(
           "No-op in game {}: user {} tried to make a move during {}'s turn",
