@@ -165,18 +165,12 @@ public class GameController {
       if (winnerTeam.getPlayers().contains(player)) {
         GameFinishedMessage msg =
             new GameFinishedMessage(
-                true,
-                teamsPoints.get(winnerTeam),
-                teamsPoints.get(loserTeam),
-                newEloPerUsername);
+                true, teamsPoints.get(winnerTeam), teamsPoints.get(loserTeam), newEloPerUsername);
         this.template.convertAndSend(getIndividualTopicPath(gameId, player.getUsername()), msg);
       } else {
         GameFinishedMessage msg =
             new GameFinishedMessage(
-                false,
-                teamsPoints.get(winnerTeam),
-                teamsPoints.get(loserTeam),
-                newEloPerUsername);
+                false, teamsPoints.get(winnerTeam), teamsPoints.get(loserTeam), newEloPerUsername);
         this.template.convertAndSend(getIndividualTopicPath(gameId, player.getUsername()), msg);
       }
     }
