@@ -81,6 +81,12 @@ class Login extends React.Component<Props, State> {
       return <Redirect to="/" />
     }
     return(
+        <div className="globalContainer">
+        <div style={{"width": "50%"}}>
+          <b>ATTENTION !</b> Pour le moment, Coincoinche ne garantit pas la sécurité des mots de passe utilisés sur ce site.
+          Par conséquent, veuillez utiliser <b>impérativement</b> un mot de passe unique (<i>i.e.</i> que vous n'utilisez
+          nulle part ailleurs) pour ce site. Il s'agit de toute manière d'une bonne pratique de sécurité de manière générale.
+        </div>
         <form onSubmit={this.handleSubmit}>
           <div className="loginForm">
             <div className="labelContainer">
@@ -100,6 +106,7 @@ class Login extends React.Component<Props, State> {
           </div>}
           <div className="submitButton"><input type="submit" value="Se connecter"/></div>
         </form>
+        </div>
     )
   }
 }
