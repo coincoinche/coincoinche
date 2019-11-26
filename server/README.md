@@ -1,4 +1,4 @@
-# Coincoinche -- backend
+# Coincoinche - backend
 
 The server is coded in Java 11.
 Database is Postgres 12.0.
@@ -8,6 +8,8 @@ Database is Postgres 12.0.
 ### Using Docker
 
 There is a Dockerfile so you can build the application with `docker build -t coincoinche-server .` and run it with `docker run coincoinche-server`.
+
+**NB:** because the backend depends on the database, it is not possible to run the server without the database. For this reason, the more convenient way to run the server is just to use the `docker-compose` file to run the whole stack.
 
 ### Linux
 
@@ -19,13 +21,15 @@ Alternatively, you can:
 
 **NB:** if you want to skip style check when building the application (for development purposes), add the `-Dcheckstyle.skip` option.
 
+**NB:** because the backend depends on the database, it is not possible to run the server without the database. For this reason, the more convenient way to run the server is just to use the `docker-compose` file to run the whole stack.
+
 ## Development
 
 ### Linter
 
 `checkstyle` is used for linting. We adhere to the rules defined by the [Google style guide](https://google.github.io/styleguide/javaguide.html).
 
-### Automatically format java files before commit.
+### Automatically format java files before commit
 
 To format java files, we use [google-java-format](https://github.com/google/google-java-format). Here are instructions to use it as a pre-commit hook:
 - Download `google-java-format-1.7-all-deps.jar` from https://github.com/google/google-java-format/releases
@@ -39,35 +43,14 @@ java -jar google-java-format-1.7-all-deps.jar -i $(git diff --name-only HEAD|gre
 git add $(git diff --name-only HEAD|grep \.java$)
 ```
 
+### Manual formatting of all java files
+
+The command to format all java files (run it in the `server` folder having `google-java-format-1.7-all-deps.jar` downloaded there):
+
+```
+java -jar google-java-format-1.7-all-deps.jar -i $(find src  -type f -name "*.java")
+```
+
 ### Unit tests
 
 Run unit tests with `./mvnw test`.
-
-### Integration tests
-
-Run integration tests with `./mvnw failsafe:integration-test`.
-
-### Local database setup
-
-#### Database creation using the app docker-comnpose file
-If you used docker-compose, you can connect to the database from the terminal:
-`docker-compose exec database /bin/bash`
-Then, inside the container
-`psql -U server main`
-
-#### Database creation using standalone local docker
-`docker run \
-         --name postgres \
-         -e POSTGRES_DB=main \
-         -e POSTGRES_USER=server \
-         -e PGDATA=/var/lib/postgresql/data/pgdata \
-         -d -p 0.0.0.0:5432:5432 \
-         -v .psql/data/pgdata:/var/lib/postgresql/data/pgdata \
-         postgres:12.0
-`
-
-Then run `docker exec -it postgres /bin/bash` to connect to the container and `psql -U server main` to connect to the database.
-
-#### Install required Postgres extensions:
-- Connect to the database: `psql -U server main`
-- Run `CREATE EXTENSION pgcrypto;`. This extension is used to generate UUIDs.
