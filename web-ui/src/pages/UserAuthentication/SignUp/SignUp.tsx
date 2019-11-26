@@ -23,7 +23,7 @@ class SignUp extends React.Component<Props, State> {
       userExists : false,
       userCreated : false,
       username : ''
-    }
+    };
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 

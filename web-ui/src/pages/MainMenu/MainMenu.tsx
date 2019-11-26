@@ -50,7 +50,7 @@ const MenuItem = styled.li`
 export default class MainMenu extends React.Component<Props, State> {
   render() {
     return <Container>
-      <LoginComponentToolbar />
+      <LoginComponentToolbar username={this.props.username} />
       <Logo src={logo} className="App-logo" alt="logo" />
       <Title fontSize={140}>Coincoinche</Title>
       <Menu>
