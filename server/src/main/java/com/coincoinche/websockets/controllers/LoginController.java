@@ -12,9 +12,7 @@ import com.coincoinche.websockets.messages.UserCreatedMessage;
 import com.coincoinche.websockets.messages.UserExistsMessage;
 import com.coincoinche.websockets.messages.WrongPasswordMessage;
 import com.coincoinche.websockets.messages.WrongUsernameMessage;
-
 import java.util.List;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

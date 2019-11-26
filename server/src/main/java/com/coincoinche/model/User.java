@@ -57,6 +57,7 @@ public class User {
     this.rating = DEFAULT_RATING;
     this.ratingAdjustment = DEFAULT_RATING_ADJUSTMENT;
   }
+
   public UUID getId() {
     return id;
   }
