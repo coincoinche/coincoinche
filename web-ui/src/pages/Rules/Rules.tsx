@@ -119,6 +119,9 @@ const Rules: React.FC = () => {
           Si plusieurs joueurs n'ont pas la couleur demandée et coupent, c'est le joueur qui a mis l'atout le plus élevé qui remporte le pli.
         </Text>
         <Text>
+          Les joueurs jouant atout doivent obligatoirement monter sur un autre atout déjà joué s’ils le peuvent, que ce soient lorsqu'ils coupent ou lorsque la couleur du pli est l'atout.
+        </Text>
+        <Text>
           Pas de panique, le jeu mettra en surbrillance les cartes qu'il est possible de jouer à chaque coup!
         </Text>
       </Paragraph>
