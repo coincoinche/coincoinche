@@ -21,7 +21,7 @@ public class GameStateBidding implements GameStateTransition {
   private boolean surcoinched;
   private List<Team> teams;
 
-  GameStateBidding(
+  protected GameStateBidding(
       Player currentPlayer,
       Player lastPlayer,
       Contract highestBidding,
@@ -83,19 +83,19 @@ public class GameStateBidding implements GameStateTransition {
     return highestBidding != null && (surcoinched || currentPlayer.equals(lastPlayer));
   }
 
-  public void setCoinched(boolean coinched) {
+  protected void setCoinched(boolean coinched) {
     this.coinched = coinched;
   }
 
-  public void setSurcoinched(boolean surcoinched) {
+  protected void setSurcoinched(boolean surcoinched) {
     this.surcoinched = surcoinched;
   }
 
-  public void setHighestBidding(Contract highestBidding) {
+  protected void setHighestBidding(Contract highestBidding) {
     this.highestBidding = highestBidding;
   }
 
-  public void setTeams(List<Team> teams) {
+  protected void setTeams(List<Team> teams) {
     this.teams = teams;
   }
 
@@ -111,7 +111,7 @@ public class GameStateBidding implements GameStateTransition {
     return surcoinched;
   }
 
-  public void setLastPlayer(Player lastPlayer) {
+  protected void setLastPlayer(Player lastPlayer) {
     this.lastPlayer = lastPlayer;
   }
 

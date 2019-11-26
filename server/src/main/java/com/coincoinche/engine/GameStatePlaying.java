@@ -1,7 +1,5 @@
 package com.coincoinche.engine;
 
-import static com.coincoinche.engine.CoincheGame.MAX_TRICKS_POINTS;
-
 import com.coincoinche.engine.cards.Card;
 import com.coincoinche.engine.cards.Suit;
 import com.coincoinche.engine.cards.Trick;
@@ -37,7 +35,7 @@ public class GameStatePlaying implements GameStateTerminal {
   private int multiplier = 1;
   private List<Trick> trickHistory = new ArrayList<>();
 
-  GameStatePlaying(Player currentPlayer, Contract contract, Trick currentTrick) {
+  protected GameStatePlaying(Player currentPlayer, Contract contract, Trick currentTrick) {
     this.currentPlayer = currentPlayer;
     this.contract = contract;
     this.currentTrick = currentTrick;
@@ -178,7 +176,7 @@ public class GameStatePlaying implements GameStateTerminal {
    *
    * <strong>NB:</strong> <i>A priori</i>, this method only makes sense for a complete trick.
    */
-  public void closeTrick() {
+  protected void closeTrick() {
     // add points to master
     Player master = currentTrick.getMaster();
     int points = currentTrick.getValue();
@@ -199,11 +197,11 @@ public class GameStatePlaying implements GameStateTerminal {
     return getCurrentTrickNumber() > MAX_TRICK_NUMBER;
   }
 
-  public void setTeams(List<Team> teams) {
+  protected void setTeams(List<Team> teams) {
     this.teams = teams;
   }
 
-  public void setMultiplier(int multiplier) {
+  protected void setMultiplier(int multiplier) {
     this.multiplier = multiplier;
   }
 
@@ -280,7 +278,8 @@ public class GameStatePlaying implements GameStateTerminal {
       return teamsPoints;
     }
     teamsPoints.put(attackTeam, 0);
-    teamsPoints.put(defenseTeam, (MAX_TRICKS_POINTS + contract.getEarnedPoints()) * multiplier);
+    teamsPoints.put(
+        defenseTeam, (CoincheGame.getMaxTricksPoints() + contract.getEarnedPoints()) * multiplier);
     return teamsPoints;
   }
 

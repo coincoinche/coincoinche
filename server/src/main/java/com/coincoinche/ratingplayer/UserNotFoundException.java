@@ -5,7 +5,6 @@ package com.coincoinche.ratingplayer;
  */
 public class UserNotFoundException extends Exception {
 
-  // the exception is serializable so we define this field
   private static final long serialVersionUID = 6174990858430620881L;
 
   public UserNotFoundException(String errorMessage) {

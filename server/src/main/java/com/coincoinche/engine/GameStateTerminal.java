@@ -5,5 +5,5 @@ import java.util.Map;
 
 /** Interface representing the state of a terminal game phase. */
 public interface GameStateTerminal extends GameState {
-  Map<Team, Integer> getTeamsPoints();
+  public Map<Team, Integer> getTeamsPoints();
 }
