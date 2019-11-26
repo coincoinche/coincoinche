@@ -79,7 +79,14 @@ export type NewStateMessage = {
 
 export type GameFinishedEvent = {
   message: MessageType.GAME_FINISHED,
-  winning: boolean,
+  content: {
+    win: boolean,
+    yourTeamPoints: number,
+    otherTeamPoints: number,
+    eloUpdate: {
+      [username: string]: number;
+    }
+  }
 }
 
 export type PlayerBadeEvent = {

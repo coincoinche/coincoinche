@@ -1,7 +1,5 @@
 package com.coincoinche.engine;
 
-import static com.coincoinche.engine.CoincheGame.MAX_TRICKS_POINTS;
-
 import com.coincoinche.engine.cards.Card;
 import com.coincoinche.engine.cards.Suit;
 import com.coincoinche.engine.cards.Trick;
@@ -24,20 +22,34 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-/** TODO nockty add detailed documentation here. */
+/**
+ * State of the game during the playing phase. This is the phase of the game when players are
+ * playing their cards to win tricks. The state is mainly represented with the following attributes:
+ *
+ * <ul>
+ *   <li>current player
+ *   <li>current trick
+ *   <li>master of the previous trick
+ *   <li>contract decided during the bidding phase
+ *   <li>player points (won by winning tricks)
+ *   <li>teams taking part in the game
+ *   <li>multiplier of the contract (coinche=2, surcoinche=4)
+ *   <li>history of previous tricks
+ * </ul>
+ */
 @JsonSerialize(using = GameStatePlayingSerializer.class)
 public class GameStatePlaying implements GameStateTerminal {
   private static final int MAX_TRICK_NUMBER = 8;
+  private Player currentPlayer;
   private Trick currentTrick;
   private Player lastTrickMaster;
   private Contract contract;
-  private Player currentPlayer;
   private Map<Player, Integer> playerPoints = new HashMap<>();
   private List<Team> teams;
   private int multiplier = 1;
   private List<Trick> trickHistory = new ArrayList<>();
 
-  GameStatePlaying(Player currentPlayer, Contract contract, Trick currentTrick) {
+  protected GameStatePlaying(Player currentPlayer, Contract contract, Trick currentTrick) {
     this.currentPlayer = currentPlayer;
     this.contract = contract;
     this.currentTrick = currentTrick;
@@ -178,7 +190,7 @@ public class GameStatePlaying implements GameStateTerminal {
    *
    * <strong>NB:</strong> <i>A priori</i>, this method only makes sense for a complete trick.
    */
-  public void closeTrick() {
+  protected void closeTrick() {
     // add points to master
     Player master = currentTrick.getMaster();
     int points = currentTrick.getValue();
@@ -199,15 +211,14 @@ public class GameStatePlaying implements GameStateTerminal {
     return getCurrentTrickNumber() > MAX_TRICK_NUMBER;
   }
 
-  public void setTeams(List<Team> teams) {
+  protected void setTeams(List<Team> teams) {
     this.teams = teams;
   }
 
-  public void setMultiplier(int multiplier) {
+  protected void setMultiplier(int multiplier) {
     this.multiplier = multiplier;
   }
 
-  // TODO nockty see if we can use a default method here
   @Override
   public Player getCurrentPlayer() {
     return currentPlayer;
@@ -280,7 +291,8 @@ public class GameStatePlaying implements GameStateTerminal {
       return teamsPoints;
     }
     teamsPoints.put(attackTeam, 0);
-    teamsPoints.put(defenseTeam, (MAX_TRICKS_POINTS + contract.getEarnedPoints()) * multiplier);
+    teamsPoints.put(
+        defenseTeam, (CoincheGame.getMaxTricksPoints() + contract.getEarnedPoints()) * multiplier);
     return teamsPoints;
   }
 

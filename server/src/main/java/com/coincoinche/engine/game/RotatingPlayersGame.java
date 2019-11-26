@@ -14,6 +14,10 @@ public class RotatingPlayersGame<P> {
     this.players = players;
   }
 
+  public List<P> getPlayers() {
+    return players;
+  }
+
   /**
    * Get the player who should play currently.
    *
@@ -52,9 +56,5 @@ public class RotatingPlayersGame<P> {
       playersIndexes.put(p, players.indexOf(p));
     }
     return playersIndexes;
-  }
-
-  public List<P> getPlayers() {
-    return players;
   }
 }

@@ -8,11 +8,13 @@ import com.coincoinche.engine.game.GameResult;
 import com.coincoinche.engine.teams.Player;
 import com.coincoinche.engine.teams.Team;
 import com.coincoinche.ratingplayer.EloService;
+import com.coincoinche.ratingplayer.UserNotFoundException;
 import com.coincoinche.repositories.GameRepository;
 import com.coincoinche.repositories.InMemoryGameRepository;
 import com.coincoinche.websockets.messages.GameFinishedMessage;
 import com.coincoinche.websockets.messages.NewStateMessage;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -73,8 +75,11 @@ public class GameController {
   public void getFirstGameState(
       @DestinationVariable String gameId, @DestinationVariable String username) {
     logger.debug("Game {}: received event READY by user {}", gameId, username);
-    // TODO error handling if the game is not found
     CoincheGame game = this.repository.getGame(gameId);
+    if (game == null) {
+      logger.error("game {} not found when trying to get first game state", gameId);
+      return;
+    }
     try {
       Player player = game.getPlayer(username);
       pushStateToPlayer(gameId, game, player);
@@ -96,9 +101,21 @@ public class GameController {
       @DestinationVariable String gameId,
       @DestinationVariable String username,
       @Payload String jsonMove) {
-    // TODO nockty: check that the move comes from the current player!
     logger.debug("Game {} User {}: received move {}", gameId, username, jsonMove);
     CoincheGame game = repository.getGame(gameId);
+    if (game == null) {
+      logger.error("game {} not found when trying to make a move on the game", gameId);
+      return;
+    }
+    String currentUserName = game.getCurrentPlayer().getUsername();
+    if (!currentUserName.equals(username)) {
+      logger.warn(
+          "No-op in game {}: user {} tried to make a move during {}'s turn",
+          gameId,
+          username,
+          currentUserName);
+      return;
+    }
     // create legal move
     logger.debug("create legal move");
     Move move;
@@ -130,22 +147,34 @@ public class GameController {
       // should never happen
       logger.error("Inconsistent error: legal move is illegal: {}", move);
       e.printStackTrace();
+    } catch (UserNotFoundException e) {
+      logger.error("Failed to terminate game");
+      e.printStackTrace();
     }
   }
 
-  private void terminateGame(String gameId, CoincheGame game, GameResult<Team> result) {
+  private void terminateGame(String gameId, CoincheGame game, GameResult<Team> result)
+      throws UserNotFoundException {
     logger.info("Game finished: {}", result);
     Team winnerTeam = result.getWinnerTeam();
     Team loserTeam = result.getLoserTeam();
-    eloService.updateRatings(winnerTeam, loserTeam);
+    Map<String, Integer> newEloPerUsername = eloService.updateRatings(winnerTeam, loserTeam);
+    Map<Team, Integer> teamsPoints = result.getTeamsPoints();
+
     for (Player player : game.getPlayers()) {
       if (winnerTeam.getPlayers().contains(player)) {
-        this.template.convertAndSend(
-            getIndividualTopicPath(gameId, player.getUsername()), new GameFinishedMessage(true));
+        GameFinishedMessage msg =
+            new GameFinishedMessage(
+                true, teamsPoints.get(winnerTeam), teamsPoints.get(loserTeam), newEloPerUsername);
+        this.template.convertAndSend(getIndividualTopicPath(gameId, player.getUsername()), msg);
       } else {
-        this.template.convertAndSend(
-            getIndividualTopicPath(gameId, player.getUsername()), new GameFinishedMessage(false));
+        GameFinishedMessage msg =
+            new GameFinishedMessage(
+                false, teamsPoints.get(winnerTeam), teamsPoints.get(loserTeam), newEloPerUsername);
+        this.template.convertAndSend(getIndividualTopicPath(gameId, player.getUsername()), msg);
       }
     }
+    logger.debug("Removing game {} from memory", gameId);
+    repository.removeGame(gameId);
   }
 }

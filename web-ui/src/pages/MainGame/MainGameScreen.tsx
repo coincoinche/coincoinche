@@ -5,7 +5,14 @@ import Container from "../../components/utils/Container";
 import CardBoard from "../../components/cards/CardBoard";
 import BiddingBoard from "../../components/bidding/BiddingBoard";
 import {InjectedProps} from "../../websocket/withWebsocketConnection";
-import {MessageType, PlayerBadeEvent, TopicTemplate, MoveType, CardPlayedEvent} from "../../websocket/messages/types";
+import {
+  MessageType,
+  PlayerBadeEvent,
+  TopicTemplate,
+  MoveType,
+  CardPlayedEvent,
+  GameFinishedEvent
+} from "../../websocket/messages/types";
 import {
   GameRoundPhase,
   GameState,
@@ -85,7 +92,7 @@ class MainGameScreen extends React.Component<Props, State> {
     this.props.registerOnMessageReceivedCallback(
       playerTopic,
       MessageType.GAME_FINISHED,
-      (jsonEvent: string) => this.onGameFinished(jsonEvent),
+      (event: GameFinishedEvent) => this.onGameFinished(event),
     );
 
     this.props.subscribe(getGameTopic(this.props.gameId, this.props.username));
@@ -94,9 +101,43 @@ class MainGameScreen extends React.Component<Props, State> {
     this.props.sendMessage(`/app/game/${this.props.gameId}/player/${this.props.username}/ready`, { message: MessageType.CLIENT_READY })
   }
 
-  onGameFinished = (event: string) => {
+  onGameFinished = (event: GameFinishedEvent) => {
     console.log("Game finished! ", event);
-    this.props.history.push('/');
+
+    const { win, yourTeamPoints, otherTeamPoints, eloUpdate } = event.content;
+    const bottomUsername = this.state.usernamesByPosition[Position.bottom];
+    const topUsername = this.state.usernamesByPosition[Position.top];
+    const leftUsername = this.state.usernamesByPosition[Position.left];
+    const rightUsername = this.state.usernamesByPosition[Position.right];
+    const endGameScreenProps = {
+      win,
+      yourTeam: {
+        points: yourTeamPoints,
+        players: [{
+          username: bottomUsername,
+          previousElo: this.getRating(bottomUsername),
+          newElo: eloUpdate[bottomUsername],
+        }, {
+          username: topUsername,
+          previousElo: this.getRating(topUsername),
+          newElo: eloUpdate[topUsername],
+        }],
+      },
+      theirTeam: {
+        points: otherTeamPoints,
+        players: [{
+          username: leftUsername,
+          previousElo: this.getRating(leftUsername),
+          newElo: eloUpdate[leftUsername],
+        }, {
+          username: rightUsername,
+          previousElo: this.getRating(rightUsername),
+          newElo: eloUpdate[rightUsername],
+        }],
+      }
+    };
+
+    this.props.history.push("/game/end", endGameScreenProps);
   };
 
   registerCallback = (messageType: MessageType, topic: string): void => {
@@ -177,6 +218,8 @@ class MainGameScreen extends React.Component<Props, State> {
 
   };
 
+  getRating = (username: string) => this.state.users.filter((p: Player) => p.username === username)[0].rating;
+
   render() {
     let cardsInHand: CardValue[] = [];
     if (this.state.cards) {
@@ -218,9 +261,6 @@ class MainGameScreen extends React.Component<Props, State> {
     const bottomUsername: string = this.state.usernamesByPosition[Position.bottom];
     const leftUsername: string = this.state.usernamesByPosition[Position.left];
     const rightUsername: string = this.state.usernamesByPosition[Position.right];
-    const getRating = (username: string): number => {
-      return this.state.users.filter((p: Player) => p.username === username)[0].rating;
-    }
     let contractComponent = <ContractComponent
       owner={null}
       suit={null}
@@ -244,7 +284,7 @@ class MainGameScreen extends React.Component<Props, State> {
           scale={0.8}
           onCardPlayed={(card: CardValue) => this.onCardPlayed(Position.top, card)}
           playerName={topUsername}
-          playerRating={getRating(topUsername)}
+          playerRating={this.getRating(topUsername)}
           currentPlayer={this.state.currentPlayer === Position.top}
       />
       <ScoresComponent youScore={this.state.scores.you} themScore={this.state.scores.them} />
@@ -256,7 +296,7 @@ class MainGameScreen extends React.Component<Props, State> {
           scale={0.8}
           onCardPlayed={(card: CardValue) => this.onCardPlayed(Position.left, card)}
           playerName={leftUsername}
-          playerRating={getRating(leftUsername)}
+          playerRating={this.getRating(leftUsername)}
           currentPlayer={this.state.currentPlayer === Position.left}
         />
         {
@@ -289,7 +329,7 @@ class MainGameScreen extends React.Component<Props, State> {
           scale={0.8}
           onCardPlayed={(card: CardValue) => this.onCardPlayed(Position.right, card)}
           playerName={rightUsername}
-          playerRating={getRating(rightUsername)}
+          playerRating={this.getRating(rightUsername)}
           currentPlayer={this.state.currentPlayer === Position.right}
         />
       </Container>
@@ -299,7 +339,7 @@ class MainGameScreen extends React.Component<Props, State> {
         onCardPlayed={(card: CardValue) => this.onCardPlayed(Position.bottom, card)}
         cardsBorderHighlight={legalCardsToPlay}
         playerName={bottomUsername}
-        playerRating={getRating(bottomUsername)}
+        playerRating={this.getRating(bottomUsername)}
         currentPlayer={this.state.currentPlayer === Position.bottom}
       />
     </Container>;

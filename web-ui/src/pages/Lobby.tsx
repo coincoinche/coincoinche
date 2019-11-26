@@ -9,6 +9,7 @@ import {makeJoinLobbyMessage, makeQuitLobbyMessage} from "../websocket/messages/
 import styled from "styled-components";
 import {RouteComponentProps, withRouter, Redirect} from "react-router";
 import Cookies from "js-cookie";
+import Button from "../components/misc/Button";
 
 type State = {
   gameId: string | null;
@@ -23,23 +24,6 @@ const ConnectionStatus = styled.p`
   font-family: arial,helvetica,verdana;
   font-size: 18pt;
   color: #c9c9c9;
-`;
-
-const ExitLobbyButton = styled.div`
-  background-color: darkgreen;
-  font-weight: bold;
-  color: yellowgreen;
-  text-align: center;
-  line-height: 50px;
-  width: 200px;
-  height: 50px;
-  border-radius: 50px;
-  border: 3px solid black;
-  margin: 50px;
-  &:hover {
-    background-color: yellowgreen;
-    color: darkgreen;
-  }
 `;
 
 const Container = styled.div`
@@ -62,7 +46,18 @@ class Lobby extends React.Component<Props, State> {
     this.props.registerOnMessageReceivedCallback(
       TopicTemplate.LOBBY,
       MessageType.GAME_STARTED,
-      (msg: GameStartedMessage) => this.setState({ gameId: msg.content.gameId, users: msg.content.users }),
+      (msg: GameStartedMessage) => {
+        // if there is already a game going on: skip
+        if (this.state.gameId) {
+          return;
+        }
+        // set the game ID if the user is in the game's users
+        msg.content.users.forEach(user => {
+          if (this.state.username === user.username) {
+            this.setState({ gameId: msg.content.gameId, users: msg.content.users });
+          }
+        });
+      },
     );
     this.retryTimeoutUpdaterFunctionId = setInterval(() =>
       this.setState({
@@ -123,7 +118,7 @@ class Lobby extends React.Component<Props, State> {
           height={100}
           width={100}
         />
-        <ExitLobbyButton onClick={this.onQuitLobbyButtonClicked}>Revenir au menu</ExitLobbyButton>
+        <Button onClick={this.onQuitLobbyButtonClicked}>Revenir au menu</Button>
       </Container>
     )
   }

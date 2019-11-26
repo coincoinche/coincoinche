@@ -12,9 +12,8 @@ import java.util.Map.Entry;
 /** Implementation of a coinche game. */
 public class CoincheGame extends RedBlueRotatingPlayersGame<Player> {
 
-  public static final int MAX_TRICKS_POINTS = 162;
+  private static final int MAX_TRICKS_POINTS = 162;
   private static final int WINNING_POINTS = 1000;
-  // TODO nockty: consider DI for this
   private CoincheGameRound currentRound;
   private boolean newRound = false;
 
@@ -23,7 +22,7 @@ public class CoincheGame extends RedBlueRotatingPlayersGame<Player> {
     initializeGameRound();
   }
 
-  GameResult<Team> moveWasApplied() {
+  protected GameResult<Team> moveWasApplied() {
     GameResult<Team> result = currentRound.moveWasApplied();
     if (!result.isFinished()) {
       newRound = false;
@@ -80,11 +79,19 @@ public class CoincheGame extends RedBlueRotatingPlayersGame<Player> {
     return currentRound;
   }
 
+  public static int getMaxTricksPoints() {
+    return MAX_TRICKS_POINTS;
+  }
+
+  public static int getWinningPoints() {
+    return WINNING_POINTS;
+  }
+
   public boolean isNewRound() {
     return newRound;
   }
 
-  void setCurrentRound(CoincheGameRound currentRound) {
+  protected void setCurrentRound(CoincheGameRound currentRound) {
     this.currentRound = currentRound;
   }
 

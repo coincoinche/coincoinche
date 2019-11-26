@@ -5,7 +5,15 @@ import java.util.List;
 
 /** Interface representing the state of a game phase. */
 public interface GameState {
-  List<Move> getLegalMoves();
+
+  /**
+   * Get the legal moves of the current state of the game, <i>i.e.</i> all the moves that can be
+   * applied to the game according to the rules of coinche. The order of returned moves must be
+   * guaranteed by the implementation.
+   *
+   * @return a list of moves that are legal on the current state.
+   */
+  public List<Move> getLegalMoves();
 
   /**
    * Rotate players both for the state and the round. This method must ensure consistency of the
@@ -13,9 +21,14 @@ public interface GameState {
    *
    * @param round is the coinche game round.
    */
-  void rotatePlayers(CoincheGameRound round);
+  public void rotatePlayers(CoincheGameRound round);
 
-  boolean mustChange();
+  /**
+   * Boolean indicating if the state must change to a new phase of the game.
+   *
+   * @return true if a new phase must begin.
+   */
+  public boolean mustChange();
 
-  Player getCurrentPlayer();
+  public Player getCurrentPlayer();
 }

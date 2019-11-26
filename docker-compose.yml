@@ -9,12 +9,14 @@ services:
     image: postgres:12.0
     ports:
       - "5432:5432"
+    expose:
+      - "5432"
     environment:
-      POSTGRES_DB: 'main'
-      POSTGRES_USER: 'server'
-      PGDATA: '/var/lib/postgresql/data/pgdata'
+      POSTGRES_DB: main
+      POSTGRES_USER: coincoinche
+      PGDATA: /var/lib/postgresql/data/pgdata
     volumes:
-      - ".psql/data/pgdata:/var/lib/postgresql/data/pgdata"
+      - .psql/data/pgdata:/var/lib/postgresql/data/pgdata
 
   # App backend service
   server:
@@ -24,8 +26,8 @@ services:
       dockerfile: Dockerfile
       args:
         ENVIRONMENT: local
-    expose:
-      - 8080
+    ports:
+      - 8080:8080
     depends_on:
       - database
 
@@ -34,13 +36,13 @@ services:
     restart: always
     build:
       context: web-ui
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.dev
       args:
-        REACT_APP_API_BASE_URL: http://localhost/api
-        BACKEND_NAME: server:8080
+        REACT_APP_API_BASE_URL: http://localhost:8080
+    volumes:
+      - ./web-ui/src:/app/src
+      - ./web-ui/public:/app/public
     ports:
-      - 80:80
-    environment:
-      - PORT=80
+      - 80:3000
     depends_on:
       - server

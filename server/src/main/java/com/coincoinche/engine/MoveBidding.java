@@ -22,7 +22,7 @@ import java.util.List;
 @JsonDeserialize(using = MoveBiddingDeserializer.class)
 public class MoveBidding extends Move implements Comparable<MoveBidding> {
 
-  public enum Special {
+  private enum Special {
     PASS("pass"),
     COINCHE("coinche"),
     SURCOINCHE("surcoinche");
@@ -154,7 +154,7 @@ public class MoveBidding extends Move implements Comparable<MoveBidding> {
    *
    * @param player is the player to attach.
    */
-  public void attachPlayer(Player player) {
+  protected void attachPlayer(Player player) {
     this.contract.setPlayer(player);
   }
 

@@ -1,7 +1,6 @@
 package com.coincoinche.engine.contracts;
 
-import static com.coincoinche.engine.CoincheGame.MAX_TRICKS_POINTS;
-
+import com.coincoinche.engine.CoincheGame;
 import com.coincoinche.engine.GameStatePlaying;
 import com.coincoinche.engine.cards.Suit;
 
@@ -10,14 +9,14 @@ public class ContractCapot extends Contract {
 
   private static final int CAPOT_VALUE = 250;
 
-  ContractCapot(Suit suit) {
+  protected ContractCapot(Suit suit) {
     this.suit = suit;
   }
 
   @Override
   public boolean isSuccessful(GameStatePlaying state) {
     return player.getTeam().getPlayers().stream().mapToInt(state::getTrickPointsForPlayer).sum()
-        == MAX_TRICKS_POINTS;
+        == CoincheGame.getMaxTricksPoints();
   }
 
   @Override
