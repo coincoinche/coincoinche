@@ -81,7 +81,6 @@ public class NewStateMessage extends Message {
     StringBuffer stringBuffer = new StringBuffer();
     stringBuffer.append("[");
     for (Move move : legalMoves) {
-      // TODO nockty: fix this (uses toString instead of serializer)
       stringBuffer.append(String.format("\"%s\"", move));
       if (legalMoves.indexOf(move) < legalMoves.size() - 1) {
         stringBuffer.append(",");

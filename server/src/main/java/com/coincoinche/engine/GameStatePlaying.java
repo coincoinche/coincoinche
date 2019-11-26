@@ -205,7 +205,6 @@ public class GameStatePlaying implements GameStateTerminal {
     this.multiplier = multiplier;
   }
 
-  // TODO nockty see if we can use a default method here
   @Override
   public Player getCurrentPlayer() {
     return currentPlayer;

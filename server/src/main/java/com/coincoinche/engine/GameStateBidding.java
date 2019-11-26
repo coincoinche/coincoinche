@@ -115,7 +115,6 @@ public class GameStateBidding implements GameStateTransition {
     this.lastPlayer = lastPlayer;
   }
 
-  // TODO nockty see if we can use a default method here
   @Override
   public Player getCurrentPlayer() {
     return currentPlayer;

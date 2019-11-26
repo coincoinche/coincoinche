@@ -14,7 +14,6 @@ public class CoincheGame extends RedBlueRotatingPlayersGame<Player> {
 
   private static final int MAX_TRICKS_POINTS = 162;
   private static final int WINNING_POINTS = 1000;
-  // TODO nockty: consider DI for this
   private CoincheGameRound currentRound;
   private boolean newRound = false;
 
