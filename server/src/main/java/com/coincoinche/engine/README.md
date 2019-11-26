@@ -28,8 +28,8 @@ Player p2 = new Player("p2");
 Player p3 = new Player("p3");
 Player p4 = new Player("p4");
 
-Team t1 = new Team(p1, p3, Team.Color.RED);
-Team t2 = new Team(p2, p4, Team.Color.BLUE);
+Team t1 = new Team(p1, p3);
+Team t2 = new Team(p2, p4);
 
 CoincheGame game = new CoincheGame(t1, t2);
 ```
