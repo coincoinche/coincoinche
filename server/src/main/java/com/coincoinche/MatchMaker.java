@@ -13,7 +13,16 @@ public class MatchMaker {
     this.playerQueue = new ConcurrentLinkedQueue<>();
   }
 
+  /**
+   * Add a user to the lobby. The same user can't be added twice.
+   *
+   * @param username is the username to add to the lobby.
+   */
   public void register(String username) {
+    // same username can't be in the lobby several times
+    if (this.playerQueue.contains(username)) {
+      return;
+    }
     this.playerQueue.add(username);
     this.startGameIfPossible();
   }
