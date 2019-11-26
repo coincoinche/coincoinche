@@ -1,12 +1,15 @@
-# (WIP) Coincoinche
+# Coincoinche
 
 [![Build Status](https://travis-ci.org/coincoinche/coincoinche.svg?branch=master)](https://travis-ci.org/coincoinche/coincoinche)
 
-Coincoinche is a website to play coinche online. The work is in progress.
+Coincoinche is a website to play coinche online. Users can join games of 4 players to play this amazing game! The website also provides a ladder with Elo ranking so that players can measure their skill!
 
 ## Architecture
 
-All services are wrapped together in a `docker-compose`, so that it's easy to build and run the full stack. Build it with `docker-compose build` and run it with `docker-compose up`.
+The website currently has 3 different services:
+- a Java web application
+- a React frontend
+- a Postgres database
 
 READMEs with more information on the backend and frontend are available in their respective folders.
 
@@ -14,17 +17,36 @@ READMEs with more information on the backend and frontend are available in their
 
 The server is coded in Java 11. `openjdk 11.0.4` is used for development.
 
+More information in the `README.md` located in the `server` folder.
+
 ### Frontend
 
 The fronted is coded in TypeScript with React. The Node version used in the frontend is `8.12.0`.
 
-## Development with Docker
+More information in the `README.md` located in the `web-ui` folder.
 
-The website currently has 3 different services: a Java web application, a React frontend, and a Postgres database. It is convenient to use Docker for local development. To do this, one just has to build and run all the services of the application with `docker-compose`.
+### Database
+
+If you used `docker-compose` to run all three services (see below), then you can connect to the database from the terminal:
+```
+docker-compose exec database /bin/bash
+```
+
+Then, inside the container, run the following command to open a `psql` shell.
 
 ```
-docker-compose -f docker-compose.dev.yml build
-docker-compose -f docker-compose.dev.yml up
+psql -U coincoinche main
+```
+
+## Development with Docker
+
+Since the website is made of several services, it is convenient to use Docker for local development. Among other things, it enables developers to have a consistent environment to run the project. This is also almost the same environment as the production environment.
+
+To run the project, one just has to build and run all the services of the application with `docker-compose`.
+
+```
+docker-compose build
+docker-compose up
 ```
 
 The React frontend runs in development mode, which means files can be edited with a live reload.
