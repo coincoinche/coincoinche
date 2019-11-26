@@ -6,6 +6,7 @@ import {SpecialBidding, Suit} from "../../game-engine/gameStateTypes";
 import Container from "../../components/utils/Container";
 import cardsImages, {CardValue} from "../../assets/cards";
 import Card from "../../components/cards/Card";
+import "./rules.css";
 
 const Text = styled.p`
   color: #c9c9c9;
@@ -24,12 +25,14 @@ const BiddingBoardContainer = styled.div`
 
 const CardContainer = styled.div`
   padding: 10px;
+  display: flex;
+  flex-direction: column;
 `;
 
-const RowOfCards = ({ cards }: {cards: string[]}) => (
+const RowOfCards = ({ cards, labels }: {cards: string[], labels?: string[]}) => (
   <Container direction="row">
     {
-      cards.map(cardValue => (
+      cards.map((cardValue, index) => (
         <CardContainer>
           <Card
             rotationDegrees={0}
@@ -37,6 +40,13 @@ const RowOfCards = ({ cards }: {cards: string[]}) => (
             src={cardsImages[CardValue[cardValue]]}
             alt={cardValue}
           />
+          {
+            labels && (
+              <Text>
+                {labels[index]}
+              </Text>
+            )
+          }
         </CardContainer>
       ))
     }
@@ -45,7 +55,7 @@ const RowOfCards = ({ cards }: {cards: string[]}) => (
 
 const Rules: React.FC = () => {
   return (
-    <Container direction="column">
+    <Container direction="column" className="container">
       <Title fontSize={70}>Règles du jeu</Title>
       <Title fontSize={40}>La coinche en bref</Title>
       <Paragraph>
@@ -98,9 +108,43 @@ const Rules: React.FC = () => {
       <Paragraph>
         <Text>En effet, à quoi sert donc l'atout, à part à compliquer les règles?</Text>
         <Text>
-          Il y a un détail que nous avons omis précédemment: que ce passe-t-il lorsqu'un joueur ne peut pas jouer la couleur demandée lors d'un pli?
+          Il y a un détail que nous avons omis précédemment:
+          que ce passe-t-il lorsqu'un joueur ne peut pas jouer la couleur demandée lors d'un pli?
+          Deux cas sont possibles...
+        </Text>
+        <Text>
+          Si le partenaire du joueur est maître (i.e. c'est le partenaire du joueur qui a posé la carte la plus haute pour ce pli), le joueur peut jouer n'importe quelle carte.
+          Sinon (un adversaire est maitre), le joueur est obligé de poser de l'atout s'il en a (sinon il pose n'importe quelle autre couleur), on dit qu'il "coupe".
+          Dans ce cas, le joueur qui a coupé remportera le pli.
+          Si plusieurs joueurs n'ont pas la couleur demandée et coupent, c'est le joueur qui a mis l'atout le plus élevé qui remporte le pli.
+        </Text>
+        <Text>
+          Pas de panique, le jeu mettra en surbrillance les cartes qu'il est possible de jouer à chaque coup!
         </Text>
       </Paragraph>
+
+      <Title fontSize={40}>Comment compte-on les points?</Title>
+      <Paragraph>
+        <Text>
+          C'est très simple: chaque carte a une valeur.
+          Les points d'une équipe à la fin d'un round sont les points des cartes des plis marqués par l'équipe.
+          Ci-dessous sont detaillés les points que rapportent chaque carte.
+        </Text>
+      </Paragraph>
+      <Text>
+        À l'atout:
+      </Text>
+      <RowOfCards
+        cards={['7h', '8h', 'qh', 'kh', 'th', 'ah', '9h', 'jh']}
+        labels={["0", '0', '3', '4', '10', '11', '14', '20']}
+      />
+      <Text>
+        Pour les autres couleurs:
+      </Text>
+      <RowOfCards
+        cards={['7h', '8h', '9h', 'jh', 'qh', 'kh', 'th', 'ah']}
+        labels={["0", '0', '0', '2', '3', '4', '10', '11']}
+      />
     </Container>
   );
 };

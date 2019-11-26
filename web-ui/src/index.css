@@ -2,7 +2,7 @@ body {
   background-color: #282c34;
   background-image: url("./assets/table_background.jpg");
   background-repeat: no-repeat;
-  /*background-position: center center;*/
+  background-position: center center;
   background-attachment: scroll;
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
