@@ -14,6 +14,10 @@ public class MatchMaker {
   }
 
   public void register(String username) {
+    // same username can't be in the lobby several times
+    if (this.playerQueue.contains(username)) {
+      return;
+    }
     this.playerQueue.add(username);
     this.startGameIfPossible();
   }
