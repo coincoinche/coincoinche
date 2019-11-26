@@ -1,36 +1,52 @@
 import React from 'react';
 import styled from 'styled-components';
 import Cookies from 'js-cookie';
+import Container from './utils/Container';
 
 const Link = styled.a`
   color : white;
   padding-left : 10px;
 `;
-const Container = styled.a`
+
+const ContainerBis = styled.div`
   position : absolute;
   right : 30px;
   top : 30px;
-`
+`;
 
-export default class LoginToolbarComponent extends React.Component {
+const Text = styled.p`
+  color: white;
+`;
+
+type Props = {
+  username?: string;
+}
+
+
+export default class LoginToolbarComponent extends React.Component<Props> {
   render() {
     return (
-      <Container>
+      <ContainerBis>
         {Cookies.get('username') ?
           <Link href="/logout">
             Se déconnecter
           </Link>
         :
-          <div>
+          <Container direction="row">
+            {
+              this.props.username && <Text>
+                Connecté en tant que guest
+              </Text>
+            }
             <Link href="/login">
               S'authentifier
             </Link>
             <Link href="/signup">
               S'inscrire
             </Link>
-          </div>
+          </Container>
         }
-      </Container>
+      </ContainerBis>
     )
   }
 }
