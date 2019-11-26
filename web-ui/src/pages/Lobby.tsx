@@ -43,7 +43,7 @@ class Lobby extends React.Component<Props, State> {
   };
 
   componentDidMount(): void {
-    if (this.props.location.state.username) {
+    if (this.props.location.state && this.props.location.state.username) {
       this.setState({username: this.props.location.state.username});
     }
     this.props.registerOnMessageReceivedCallback(
