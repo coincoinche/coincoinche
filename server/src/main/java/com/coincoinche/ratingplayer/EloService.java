@@ -4,8 +4,6 @@ import com.coincoinche.engine.teams.Team;
 import com.coincoinche.repositories.UserRepository;
 import java.util.HashMap;
 import java.util.Map;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,8 +13,6 @@ public class EloService {
 
   @Autowired private UserRepository userRepository;
   @Autowired EloTeamFactory eloTeamFactory;
-
-  private static final Logger logger = LoggerFactory.getLogger(EloService.class);
 
   public EloService() {
     super();

@@ -14,6 +14,7 @@ import com.coincoinche.websockets.messages.GameStartedMessage;
 import com.coincoinche.websockets.messages.InvalidEventMessage;
 import com.coincoinche.websockets.messages.Message;
 import com.coincoinche.websockets.messages.SuccessMessage;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -101,8 +102,8 @@ public class LobbyController {
     Player player3 = new Player(usernames[2]);
     Player player4 = new Player(usernames[3]);
 
-    Team redTeam = new Team(player1, player3, Team.Color.RED);
-    Team blueTeam = new Team(player2, player4, Team.Color.BLUE);
+    Team redTeam = new Team(player1, player3);
+    Team blueTeam = new Team(player2, player4);
 
     CoincheGame game = new CoincheGame(redTeam, blueTeam);
 
@@ -113,16 +114,13 @@ public class LobbyController {
             .collect(Collectors.toList())
             .toArray(new String[4]);
 
-    EloPlayer[] eloPlayers = new EloPlayer[4];
-    int eloPlayerIndex = 0;
+    List<EloPlayer> eloPlayers = new ArrayList<>();
     for (String username : orderedUsernames) {
       List<User> users = userRepository.findByUsername(username);
       if (users.isEmpty()) {
-        // TODO nockty handle this properly
         throw new RuntimeException(String.format("%s user not found", username));
       }
-      eloPlayers[eloPlayerIndex] = new EloPlayer(users.get(0));
-      eloPlayerIndex++;
+      eloPlayers.add(new EloPlayer(users.get(0)));
     }
     this.template.convertAndSend("/topic/lobby", new GameStartedMessage(gameId, eloPlayers));
     this.gameController.registerNewGame(gameId, game);

@@ -6,14 +6,8 @@ import java.util.List;
 
 /** Team of two coinche players. */
 public class Team implements TeamInterface<Player> {
-  // TODO nockty: delete this if it happens to be useless
-  public enum Color {
-    RED,
-    BLUE
-  }
 
   private List<Player> players;
-  private Color color;
   private int points;
 
   /**
@@ -21,13 +15,11 @@ public class Team implements TeamInterface<Player> {
    *
    * @param player1 is the first player.
    * @param player2 is the second player.
-   * @param color is the team's color (red or blue).
    */
-  public Team(Player player1, Player player2, Color color) {
+  public Team(Player player1, Player player2) {
     player1.setTeam(this);
     player2.setTeam(this);
     this.players = new ArrayList<>(List.of(player1, player2));
-    this.color = color;
   }
 
   public boolean containsPlayer(Player player) {
@@ -36,11 +28,6 @@ public class Team implements TeamInterface<Player> {
 
   public void addPoints(int points) {
     this.points += points;
-  }
-
-  // TODO nockty: check that this is useful.
-  public Color getColor() {
-    return color;
   }
 
   @Override
@@ -55,6 +42,6 @@ public class Team implements TeamInterface<Player> {
 
   @Override
   public String toString() {
-    return String.format("%s: [%s, %s]", color, players.get(0), players.get(1));
+    return String.format("[%s, %s]", players.get(0), players.get(1));
   }
 }

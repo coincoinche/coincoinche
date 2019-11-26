@@ -5,8 +5,6 @@ import com.coincoinche.repositories.UserRepository;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -16,7 +14,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class LadderController {
 
-  private static final Logger logger = LoggerFactory.getLogger(LadderController.class);
   private static final String DEFAULT_LADDER_SIZE = "100";
   @Autowired private UserRepository userRepository;
 
