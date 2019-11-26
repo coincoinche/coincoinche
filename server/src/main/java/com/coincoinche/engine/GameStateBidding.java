@@ -9,7 +9,20 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import java.util.ArrayList;
 import java.util.List;
 
-/** TODO nockty add detailed documentation here. */
+/**
+ * State of the game during the bidding phase. This is the phase of the game when players are
+ * bidding to get the highest contract. The state is mainly represented with the following
+ * attributes:
+ *
+ * <ul>
+ *   <li>current player
+ *   <li>last player who made a non-pass move
+ *   <li>highest bidding so far
+ *   <li>has someone coinched the highest bidding?
+ *   <li>has someone surcoinched the highest bidding?
+ *   <li>teams taking part in the game
+ * </ul>
+ */
 @JsonSerialize(using = GameStateBiddingSerializer.class)
 public class GameStateBidding implements GameStateTransition {
 
@@ -38,10 +51,6 @@ public class GameStateBidding implements GameStateTransition {
     return new GameStateBidding(firstPlayer, null, null, false, false);
   }
 
-  /**
-   * Return legal moves given the state of the bidding game. The order of the returned moves is
-   * guaranteed.
-   */
   @Override
   public List<Move> getLegalMoves() {
     List<Move> legalMoves = getUnsortedLegalMoves();
@@ -115,7 +124,6 @@ public class GameStateBidding implements GameStateTransition {
     this.lastPlayer = lastPlayer;
   }
 
-  // TODO nockty see if we can use a default method here
   @Override
   public Player getCurrentPlayer() {
     return currentPlayer;

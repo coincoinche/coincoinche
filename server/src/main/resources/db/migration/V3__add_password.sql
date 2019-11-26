@@ -1,0 +1,4 @@
+ALTER TABLE "user"
+  ADD COLUMN "password" VARCHAR(25) NOT NULL DEFAULT 'pass';
+
+ALTER TABLE "user" ALTER COLUMN "password" DROP DEFAULT;

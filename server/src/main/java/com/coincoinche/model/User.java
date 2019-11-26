@@ -20,6 +20,9 @@ public class User {
   @Column(columnDefinition = "VARCHAR(25)")
   private String username;
 
+  @Column(columnDefinition = "VARCHAR(25)")
+  private String password;
+
   @Column(columnDefinition = "integer")
   private int rating;
 
@@ -37,6 +40,20 @@ public class User {
    */
   public User(String username) {
     this.username = username;
+    this.password = "pass";
+    this.rating = DEFAULT_RATING;
+    this.ratingAdjustment = DEFAULT_RATING_ADJUSTMENT;
+  }
+
+  /**
+   * Create a new user.
+   *
+   * @param username is the new user's username.
+   * @param password is the new user's password.
+   */
+  public User(String username, String password) {
+    this.username = username;
+    this.password = password;
     this.rating = DEFAULT_RATING;
     this.ratingAdjustment = DEFAULT_RATING_ADJUSTMENT;
   }
@@ -47,6 +64,10 @@ public class User {
 
   public String getUsername() {
     return username;
+  }
+
+  public String getPassword() {
+    return password;
   }
 
   public int getRating() {
